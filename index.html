@@ -1,70 +1,421 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jeremy's Portfolio</title>
+  <title>Jeremy Gonnet — Portfolio</title>
 </head>
 
 <body>
-  <!-- The stunning 3D loading overlay -->
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursor-follower"></div>
+
+  <!-- Loading Screen -->
   <div id="loading-screen" class="loading-screen">
     <div id="canvas-container"></div>
     <div class="loading-content">
-      <h1 class="loading-title">JEREMY</h1>
+      <div class="loading-name">
+        <span class="loading-letter" data-char="J">J</span>
+        <span class="loading-letter" data-char="E">E</span>
+        <span class="loading-letter" data-char="R">R</span>
+        <span class="loading-letter" data-char="E">E</span>
+        <span class="loading-letter" data-char="M">M</span>
+        <span class="loading-letter" data-char="Y">Y</span>
+      </div>
       <div class="loading-bar-container">
         <div class="loading-bar" id="loading-bar"></div>
+        <div class="loading-bar-glow"></div>
       </div>
-      <p class="loading-text" id="loading-text">0%</p>
+      <p class="loading-text" id="loading-text">INITIALIZING</p>
     </div>
   </div>
 
-  <!-- The actual white website content that appears after loading -->
-  <main id="main-content" class="main-content">
-    <div class="glass-profil-wrapper">
-      <div class="profil-header">
-        <h2 class="main-title">JEREMY</h2>
-        <p class="main-subtitle">Creative Developer & 3D Enthusiast</p>
+  <!-- Main Portfolio -->
+  <div id="main-content" class="main-content">
+
+    <!-- Fixed Navigation -->
+    <nav class="nav" id="nav">
+      <div class="nav-logo">JG<span class="nav-logo-dot">.</span></div>
+      <ul class="nav-links">
+        <li><a href="#hero" class="nav-link" data-section="hero">_init</a></li>
+        <li><a href="#about" class="nav-link" data-section="about">_about</a></li>
+        <li><a href="#education" class="nav-link" data-section="education">_education</a></li>
+        <li><a href="#projects" class="nav-link" data-section="projects">_projects</a></li>
+        <li><a href="#skills" class="nav-link" data-section="skills">_skills</a></li>
+        <li><a href="#contact" class="nav-link" data-section="contact">_contact</a></li>
+      </ul>
+      <div class="nav-status">
+        <span class="status-dot"></span>
+        <span class="status-text">AVAILABLE</span>
       </div>
+    </nav>
 
-      <div class="profil-cards-container">
-        <div class="glass-card about-card">
-          <h3>About Me</h3>
-          <p>Crafting immersive digital experiences through code, design, and 3D worlds. Passionate about pushing the
-            boundaries of web technologies.</p>
+    <!-- Scanline overlay -->
+    <div class="scanlines" aria-hidden="true"></div>
+    <!-- Grid overlay -->
+    <div class="grid-overlay" aria-hidden="true"></div>
+
+    <!-- ========== HERO ========== -->
+    <section id="hero" class="section hero-section">
+      <div id="hero-canvas"></div>
+      <div class="hero-content">
+        <div class="hero-tag">&lt; ingénieur data &amp; ia /&gt;</div>
+        <h1 class="hero-title">
+          <span class="hero-title-line glitch" data-text="JEREMY">JEREMY</span>
+          <span class="hero-title-line glitch" data-text="GONNET">GONNET</span>
+        </h1>
+        <p class="hero-subtitle">ECE Lyon · Promo 2028 · Semestre International Corée du Sud</p>
+        <div class="hero-cta">
+          <a href="#about" class="btn btn-primary">Explorer</a>
+          <a href="#contact" class="btn btn-ghost">Me Contacter</a>
         </div>
-
-        <div class="glass-card skills-card">
-          <h3>Expertise</h3>
-          <ul class="skills-list">
-            <li>Three.js / WebGL</li>
-            <li>React / Vue / Next.js</li>
-            <li>GSAP Animations</li>
-            <li>UI/UX Design</li>
-          </ul>
+        <div class="hero-scroll-indicator">
+          <span class="scroll-line"></span>
+          <span class="scroll-label">SCROLL</span>
         </div>
+      </div>
+    </section>
 
-        <div class="glass-card contact-card">
-          <h3>Let's Connect</h3>
-          <p>Ready to build the future together?</p>
-          <div class="contact-links">
-            <a href="mailto:jeremy@example.com" class="contact-link">
-              <span class="icon">✉</span> jeremy@example.com
+    <!-- ========== ABOUT ========== -->
+    <section id="about" class="section about-section reveal">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="section-number">01</span>
+          <h2 class="section-title">À Propos</h2>
+          <span class="section-line"></span>
+        </div>
+        <div class="about-grid">
+          <div class="about-text">
+            <p class="about-intro">
+              Ingénieur étudiant à <span class="highlight">l'ECE Lyon</span>, spécialisé en
+              <span class="highlight">Data &amp; Intelligence Artificielle</span>. Passionné par le développement
+              embarqué, les systèmes intelligents et la création d'expériences numériques innovantes.
+            </p>
+            <p class="about-body">
+              Après un semestre international en <span class="highlight">Corée du Sud</span> (sept–déc 2025),
+              où j'ai approfondi mes connaissances en électronique et en IA, je reviens avec une vision globale
+              et une forte envie de repousser les limites technologiques.
+            </p>
+          </div>
+          <div class="about-stats">
+            <div class="stat-card">
+              <span class="stat-value">20</span>
+              <span class="stat-label">ans</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">2028</span>
+              <span class="stat-label">promotion</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">5+</span>
+              <span class="stat-label">projets</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">10+</span>
+              <span class="stat-label">langages</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== EDUCATION ========== -->
+    <section id="education" class="section education-section reveal">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="section-number">02</span>
+          <h2 class="section-title">Formation</h2>
+          <span class="section-line"></span>
+        </div>
+        <div class="timeline">
+
+          <div class="timeline-item reveal-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">2025 · Sept — Déc</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <h3>Semestre International</h3>
+                <span class="timeline-badge badge-special">🇰🇷 Corée du Sud</span>
+              </div>
+              <p>Échanges universitaires approfondis en Électronique, Intelligence Artificielle et technologies
+                avancées au sein d'un campus international.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">2023 — 2028</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <h3>ECE Lyon</h3>
+                <span class="timeline-badge">Ingénieur</span>
+              </div>
+              <p>École d'ingénieurs généraliste, majeure <strong>Data &amp; Intelligence Artificielle</strong>.
+                Promotion 2028.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">2023</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <h3>Lycée Pierre Termier</h3>
+                <span class="timeline-badge badge-success">Mention Bien</span>
+              </div>
+              <p>Baccalauréat général — Spécialités : <strong>Mathématiques, Physique-Chimie, SVT</strong>.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PROJECTS ========== -->
+    <section id="projects" class="section projects-section reveal">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="section-number">03</span>
+          <h2 class="section-title">Projets</h2>
+          <span class="section-line"></span>
+        </div>
+        <div class="projects-grid">
+
+          <div class="project-card reveal-item">
+            <div class="project-card-glow"></div>
+            <div class="project-number">01</div>
+            <h3 class="project-title">Overcooked Multijoueur</h3>
+            <p class="project-desc">Développement d'un jeu multijoueur en C avec interface graphique Allegro 5.
+              Architecture réseau, gestion des états de jeu et synchronisation en temps réel.</p>
+            <div class="project-tags">
+              <span class="tag">C</span>
+              <span class="tag">Allegro 5</span>
+              <span class="tag">Réseau</span>
+            </div>
+          </div>
+
+          <div class="project-card reveal-item">
+            <div class="project-card-glow"></div>
+            <div class="project-number">02</div>
+            <h3 class="project-title">Manette de Jeu Vidéo</h3>
+            <p class="project-desc">Conception et réalisation d'une manette sur microcontrôleur ATTiny en C++,
+              avec affichage sur écran OLED et communication sans fil.</p>
+            <div class="project-tags">
+              <span class="tag">C++</span>
+              <span class="tag">ATTiny</span>
+              <span class="tag">OLED</span>
+              <span class="tag">Embarqué</span>
+            </div>
+          </div>
+
+          <div class="project-card reveal-item">
+            <div class="project-card-glow"></div>
+            <div class="project-number">03</div>
+            <h3 class="project-title">Fruit Ninja sur FPGA</h3>
+            <p class="project-desc">Implémentation du jeu Fruit Ninja sur FPGA en VHDL, commandé par un
+              capteur ultrason pour une expérience de jeu gestuelle et immersive.</p>
+            <div class="project-tags">
+              <span class="tag">VHDL</span>
+              <span class="tag">FPGA</span>
+              <span class="tag">Ultrason</span>
+            </div>
+          </div>
+
+          <div class="project-card reveal-item">
+            <div class="project-card-glow"></div>
+            <div class="project-number">04</div>
+            <h3 class="project-title">Simulation Réseaux Trophiques</h3>
+            <p class="project-desc">Application de simulation dynamique de réseaux trophiques, modélisant
+              les interactions proie-prédateur et l'évolution des écosystèmes.</p>
+            <div class="project-tags">
+              <span class="tag">Python</span>
+              <span class="tag">Simulation</span>
+              <span class="tag">Data</span>
+            </div>
+          </div>
+
+          <div class="project-card reveal-item">
+            <div class="project-card-glow"></div>
+            <div class="project-number">05</div>
+            <h3 class="project-title">Réveil Électronique</h3>
+            <p class="project-desc">Développement d'un programme C++ sur microcontrôleur pour un réveil
+              électronique avec gestion des alarmes, affichage et interactions utilisateur.</p>
+            <div class="project-tags">
+              <span class="tag">C++</span>
+              <span class="tag">Microcontrôleur</span>
+              <span class="tag">Embarqué</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SKILLS ========== -->
+    <section id="skills" class="section skills-section reveal">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="section-number">04</span>
+          <h2 class="section-title">Compétences</h2>
+          <span class="section-line"></span>
+        </div>
+        <div class="skills-grid">
+
+          <div class="skills-category reveal-item">
+            <h3 class="skills-cat-title">
+              <span class="skills-cat-icon">&lt;/&gt;</span> Langages
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag skill-primary">C</span>
+              <span class="skill-tag skill-primary">C++</span>
+              <span class="skill-tag skill-primary">Python</span>
+              <span class="skill-tag skill-primary">JavaScript</span>
+              <span class="skill-tag">VHDL</span>
+              <span class="skill-tag">PHP</span>
+              <span class="skill-tag">HTML</span>
+              <span class="skill-tag">CSS</span>
+              <span class="skill-tag">jQuery</span>
+              <span class="skill-tag">Java</span>
+            </div>
+          </div>
+
+          <div class="skills-category reveal-item">
+            <h3 class="skills-cat-title">
+              <span class="skills-cat-icon">⚙</span> Frameworks &amp; Libs
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag skill-primary">Tailwind CSS</span>
+              <span class="skill-tag skill-primary">Allegro 5</span>
+            </div>
+          </div>
+
+          <div class="skills-category reveal-item">
+            <h3 class="skills-cat-title">
+              <span class="skills-cat-icon">🗄</span> Bases de Données
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag skill-primary">MySQL</span>
+              <span class="skill-tag">SQL</span>
+            </div>
+          </div>
+
+          <div class="skills-category reveal-item">
+            <h3 class="skills-cat-title">
+              <span class="skills-cat-icon">🛠</span> Outils &amp; IDE
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag">CLion</span>
+              <span class="skill-tag">VSCode</span>
+              <span class="skill-tag">PhpStorm</span>
+              <span class="skill-tag">Quartus</span>
+              <span class="skill-tag">Arduino IDE</span>
+              <span class="skill-tag">Office 365</span>
+            </div>
+          </div>
+
+          <div class="skills-category reveal-item">
+            <h3 class="skills-cat-title">
+              <span class="skills-cat-icon">🧠</span> Soft Skills
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag skill-primary">Esprit d'équipe</span>
+              <span class="skill-tag skill-primary">Autonomie</span>
+              <span class="skill-tag skill-primary">Gestion de projets</span>
+              <span class="skill-tag">Communication</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== INTERESTS ========== -->
+    <section id="interests" class="section interests-section reveal">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="section-number">05</span>
+          <h2 class="section-title">Centres d'intérêt</h2>
+          <span class="section-line"></span>
+        </div>
+        <div class="interests-grid">
+          <div class="interest-card reveal-item">
+            <div class="interest-icon">🏸</div>
+            <span class="interest-label">Badminton</span>
+          </div>
+          <div class="interest-card reveal-item">
+            <div class="interest-icon">⛷️</div>
+            <span class="interest-label">Ski</span>
+          </div>
+          <div class="interest-card reveal-item">
+            <div class="interest-icon">✈️</div>
+            <span class="interest-label">Voyages</span>
+          </div>
+          <div class="interest-card reveal-item">
+            <div class="interest-icon">🎹</div>
+            <span class="interest-label">Piano</span>
+          </div>
+          <div class="interest-card reveal-item">
+            <div class="interest-icon">⚜️</div>
+            <span class="interest-label">Scout · 8 ans</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CONTACT ========== -->
+    <section id="contact" class="section contact-section reveal">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="section-number">06</span>
+          <h2 class="section-title">Contact</h2>
+          <span class="section-line"></span>
+        </div>
+        <div class="contact-wrapper">
+          <p class="contact-intro">
+            Disponible pour des stages, alternances ou collaborations. N'hésitez pas à me contacter !
+          </p>
+          <div class="contact-cards">
+            <a href="mailto:jeremy.gonnet31@gmail.com" class="contact-card">
+              <div class="contact-card-icon">✉</div>
+              <div class="contact-card-content">
+                <span class="contact-card-label">Email</span>
+                <span class="contact-card-value">jeremy.gonnet31@gmail.com</span>
+              </div>
+              <span class="contact-card-arrow">→</span>
             </a>
-            <a href="tel:+33600000000" class="contact-link">
-              <span class="icon">📞</span> +33 6 00 00 00 00
+            <a href="tel:+33782846856" class="contact-card">
+              <div class="contact-card-icon">📞</div>
+              <div class="contact-card-content">
+                <span class="contact-card-label">Téléphone</span>
+                <span class="contact-card-value">+33 7 82 84 68 56</span>
+              </div>
+              <span class="contact-card-arrow">→</span>
             </a>
-            <a href="https://linkedin.com/in/jeremy-portfolio" target="_blank" rel="noopener noreferrer"
-              class="contact-link">
-              <span class="icon">in</span> LinkedIn
+            <a href="https://linkedin.com/in/jeremygonnet" target="_blank" rel="noopener noreferrer"
+              class="contact-card">
+              <div class="contact-card-icon">in</div>
+              <div class="contact-card-content">
+                <span class="contact-card-label">LinkedIn</span>
+                <span class="contact-card-value">linkedin.com/in/jeremygonnet</span>
+              </div>
+              <span class="contact-card-arrow">→</span>
             </a>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>© 2025 Jeremy Gonnet</span>
+      <span class="footer-sep">·</span>
+      <span>ECE Lyon · Data &amp; IA</span>
+    </footer>
+
+  </div>
 
   <script type="module" src="/src/main.ts"></script>
 </body>
