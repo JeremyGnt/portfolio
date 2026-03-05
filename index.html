@@ -3,67 +3,54 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jeremy's Portfolio</title>
+  <title>Jérémy Gonnet — Portfolio</title>
 </head>
 
 <body>
-  <!-- The stunning 3D loading overlay -->
-  <div id="loading-screen" class="loading-screen">
-    <div id="canvas-container"></div>
-    <div class="loading-content">
-      <h1 class="loading-title">JEREMY</h1>
-      <div class="loading-bar-container">
-        <div class="loading-bar" id="loading-bar"></div>
-      </div>
-      <p class="loading-text" id="loading-text">0%</p>
-    </div>
-  </div>
+  <main class="page">
+    <header class="hero">
+      <p class="hero-kicker">Portfolio</p>
+      <h1>Jérémy Gonnet</h1>
+      <p class="hero-subtitle">Creative Developer & 3D Enthusiast</p>
+      <p class="hero-description">
+        Je crée des expériences web élégantes, performantes et centrées sur l’utilisateur.
+      </p>
+    </header>
 
-  <!-- The actual white website content that appears after loading -->
-  <main id="main-content" class="main-content">
-    <div class="glass-profil-wrapper">
-      <div class="profil-header">
-        <h2 class="main-title">JEREMY</h2>
-        <p class="main-subtitle">Creative Developer & 3D Enthusiast</p>
-      </div>
+    <section class="content-grid">
+      <article class="card">
+        <h2>À propos</h2>
+        <p>
+          Passionné par le développement front-end, l’animation web et les expériences immersives.
+          J’aime transformer des idées en interfaces claires, modernes et utiles.
+        </p>
+      </article>
 
-      <div class="profil-cards-container">
-        <div class="glass-card about-card">
-          <h3>About Me</h3>
-          <p>Crafting immersive digital experiences through code, design, and 3D worlds. Passionate about pushing the
-            boundaries of web technologies.</p>
+      <article class="card">
+        <h2>Compétences</h2>
+        <ul>
+          <li>Three.js / WebGL</li>
+          <li>React / Vue / Next.js</li>
+          <li>GSAP Animations</li>
+          <li>UI / UX Design</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Contact</h2>
+        <div class="contact-links">
+          <!-- Remplacer avec les coordonnées finales -->
+          <p>Email sur demande</p>
+          <p>Téléphone sur demande</p>
+          <p>LinkedIn sur demande</p>
         </div>
+      </article>
+    </section>
 
-        <div class="glass-card skills-card">
-          <h3>Expertise</h3>
-          <ul class="skills-list">
-            <li>Three.js / WebGL</li>
-            <li>React / Vue / Next.js</li>
-            <li>GSAP Animations</li>
-            <li>UI/UX Design</li>
-          </ul>
-        </div>
-
-        <div class="glass-card contact-card">
-          <h3>Let's Connect</h3>
-          <p>Ready to build the future together?</p>
-          <div class="contact-links">
-            <a href="mailto:jeremy@example.com" class="contact-link">
-              <span class="icon">✉</span> jeremy@example.com
-            </a>
-            <a href="tel:+33600000000" class="contact-link">
-              <span class="icon">📞</span> +33 6 00 00 00 00
-            </a>
-            <a href="https://linkedin.com/in/jeremy-portfolio" target="_blank" rel="noopener noreferrer"
-              class="contact-link">
-              <span class="icon">in</span> LinkedIn
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
+    <footer class="footer">
+      <p>© <span id="year"></span> Jérémy Gonnet</p>
+    </footer>
   </main>
 
   <script type="module" src="/src/main.ts"></script>
