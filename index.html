@@ -1,57 +1,474 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jérémy Gonnet — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 
 <body>
-  <main class="page">
-    <header class="hero">
-      <p class="hero-kicker">Portfolio</p>
-      <h1>Jérémy Gonnet</h1>
-      <p class="hero-subtitle">Creative Developer & 3D Enthusiast</p>
-      <p class="hero-description">
-        Je crée des expériences web élégantes, performantes et centrées sur l’utilisateur.
-      </p>
-    </header>
 
-    <section class="content-grid">
-      <article class="card">
-        <h2>À propos</h2>
-        <p>
-          Passionné par le développement front-end, l’animation web et les expériences immersives.
-          J’aime transformer des idées en interfaces claires, modernes et utiles.
+  <!-- Background orbs -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-logo">JG</div>
+    <div class="nav-links">
+      <button class="nav-btn active" data-page="about">À propos</button>
+      <button class="nav-btn" data-page="experience">Expériences</button>
+      <button class="nav-btn" data-page="projects">Projets</button>
+      <button class="nav-btn" data-page="contact">Contact</button>
+    </div>
+    <button class="nav-menu-toggle" id="menuToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="nav-btn" data-page="about">À propos</button>
+    <button class="nav-btn" data-page="experience">Expériences</button>
+    <button class="nav-btn" data-page="projects">Projets</button>
+    <button class="nav-btn" data-page="contact">Contact</button>
+  </div>
+
+  <!-- PAGE: À PROPOS -->
+  <main class="page active" id="page-about">
+    <div class="page-inner">
+
+      <!-- Hero -->
+      <section class="hero reveal">
+        <div class="hero-badge">Disponible pour stages</div>
+        <h1 class="hero-title">Jérémy <span class="gradient-text">Gonnet</span></h1>
+        <p class="hero-sub">Étudiant ingénieur · Data &amp; Intelligence Artificielle · ECE Paris</p>
+        <p class="hero-desc">
+          20 ans, passionné par la technologie et l'innovation. Je développe des projets alliant
+          ingénierie logicielle, data et intelligence artificielle.
         </p>
-      </article>
-
-      <article class="card">
-        <h2>Compétences</h2>
-        <ul>
-          <li>Three.js / WebGL</li>
-          <li>React / Vue / Next.js</li>
-          <li>GSAP Animations</li>
-          <li>UI / UX Design</li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h2>Contact</h2>
-        <div class="contact-links">
-          <!-- Remplacer avec les coordonnées finales -->
-          <p>Email sur demande</p>
-          <p>Téléphone sur demande</p>
-          <p>LinkedIn sur demande</p>
+        <div class="hero-actions">
+          <button class="btn-primary" data-page="projects">Voir mes projets</button>
+          <button class="btn-secondary" data-page="contact">Me contacter</button>
         </div>
-      </article>
-    </section>
+      </section>
 
-    <footer class="footer">
-      <p>© <span id="year"></span> Jérémy Gonnet</p>
-    </footer>
+      <div class="grid-2 reveal">
+
+        <!-- Education -->
+        <div class="glass-card">
+          <div class="card-icon">🎓</div>
+          <h2 class="card-title">Éducation</h2>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <span class="timeline-date">2023 — 2028</span>
+                <h3>ECE Paris</h3>
+                <p class="muted">École d'ingénieur · Majeure Data &amp; Intelligence Artificielle</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <span class="timeline-date">Août — Déc. 2025</span>
+                <h3>Ajou University</h3>
+                <p class="muted">Programme d'échange international · Corée du Sud</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <span class="timeline-date">2023</span>
+                <h3>Lycée Pierre Termier</h3>
+                <p class="muted">Baccalauréat scientifique · Mention Bien</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Soft Skills -->
+        <div class="glass-card">
+          <div class="card-icon">💡</div>
+          <h2 class="card-title">Soft Skills</h2>
+          <div class="skills-grid">
+            <span class="skill-chip">Esprit d'équipe</span>
+            <span class="skill-chip">Communication</span>
+            <span class="skill-chip">Autonomie</span>
+            <span class="skill-chip">Gestion de projet</span>
+            <span class="skill-chip">Curiosité</span>
+            <span class="skill-chip">Esprit analytique</span>
+            <span class="skill-chip">Organisation</span>
+            <span class="skill-chip">Gestion du temps</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Hard Skills -->
+      <div class="glass-card reveal">
+        <div class="card-icon">⚙️</div>
+        <h2 class="card-title">Hard Skills</h2>
+        <div class="skills-section">
+          <div class="skills-category">
+            <h3 class="skills-cat-label">Langages</h3>
+            <div class="skills-grid">
+              <span class="skill-chip">C</span>
+              <span class="skill-chip">C++</span>
+              <span class="skill-chip">Python</span>
+              <span class="skill-chip">VHDL</span>
+              <span class="skill-chip">PHP</span>
+              <span class="skill-chip">Java</span>
+              <span class="skill-chip">HTML</span>
+              <span class="skill-chip">CSS</span>
+              <span class="skill-chip">JavaScript</span>
+              <span class="skill-chip">TypeScript</span>
+              <span class="skill-chip">jQuery</span>
+            </div>
+          </div>
+          <div class="skills-category">
+            <h3 class="skills-cat-label">Frameworks &amp; Librairies</h3>
+            <div class="skills-grid">
+              <span class="skill-chip">Tailwind CSS</span>
+              <span class="skill-chip">Vue.js</span>
+              <span class="skill-chip">Allegro 5</span>
+              <span class="skill-chip">Arduino</span>
+              <span class="skill-chip">GSAP</span>
+              <span class="skill-chip">Vite</span>
+              <span class="skill-chip">Three.js</span>
+            </div>
+          </div>
+          <div class="skills-category">
+            <h3 class="skills-cat-label">Bases de données</h3>
+            <div class="skills-grid">
+              <span class="skill-chip">MySQL</span>
+              <span class="skill-chip">SQL</span>
+              <span class="skill-chip">Supabase</span>
+            </div>
+          </div>
+          <div class="skills-category">
+            <h3 class="skills-cat-label">Outils &amp; Cloud</h3>
+            <div class="skills-grid">
+              <span class="skill-chip">Git</span>
+              <span class="skill-chip">GitHub</span>
+              <span class="skill-chip">Vercel</span>
+              <span class="skill-chip">VS Code</span>
+              <span class="skill-chip">CLion</span>
+              <span class="skill-chip">PhpStorm</span>
+              <span class="skill-chip">Quartus</span>
+              <span class="skill-chip">Arduino IDE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interests -->
+      <div class="glass-card reveal">
+        <div class="card-icon">🎯</div>
+        <h2 class="card-title">Centres d'intérêt</h2>
+        <div class="interests-grid">
+          <div class="interest-item"><span>🎹</span><p>Piano</p></div>
+          <div class="interest-item"><span>🏸</span><p>Badminton</p></div>
+          <div class="interest-item"><span>⛷️</span><p>Ski</p></div>
+          <div class="interest-item"><span>🎾</span><p>Tennis</p></div>
+          <div class="interest-item"><span>✈️</span><p>Voyage</p></div>
+          <div class="interest-item"><span>💻</span><p>Technologies</p></div>
+          <div class="interest-item"><span>🚀</span><p>Innovation</p></div>
+        </div>
+      </div>
+
+    </div>
   </main>
+
+  <!-- PAGE: EXPÉRIENCES -->
+  <main class="page" id="page-experience">
+    <div class="page-inner">
+
+      <div class="page-header reveal">
+        <h1>Expériences</h1>
+        <p class="muted">Certifications, bénévolat &amp; expérience professionnelle</p>
+      </div>
+
+      <!-- Pro experience -->
+      <div class="glass-card reveal">
+        <div class="card-icon">💼</div>
+        <h2 class="card-title">Expérience professionnelle</h2>
+        <div class="exp-item">
+          <div class="exp-header">
+            <div>
+              <h3>Stage ingénieur — Carrefour</h3>
+              <p class="muted">Stage 5 semaines · 2026</p>
+            </div>
+            <span class="exp-badge">2026</span>
+          </div>
+          <p class="exp-desc">Travail sur l'analyse des données de vente.</p>
+          <ul class="exp-list">
+            <li>Analyse de données commerciales</li>
+            <li>Mise en place de logiques d'optimisation</li>
+            <li>Gestion opérationnelle</li>
+            <li>Utilisation d'outils numériques pour l'analyse</li>
+            <li>Aide à la prise de décision basée sur les données</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Certifications -->
+      <div class="glass-card reveal">
+        <div class="card-icon">📜</div>
+        <h2 class="card-title">Certifications</h2>
+        <div class="certs-grid">
+          <div class="cert-card">
+            <div class="cert-year">2024</div>
+            <h3>Certification SQL</h3>
+            <p class="muted">Liora (ex DataScientest)</p>
+          </div>
+          <div class="cert-card">
+            <div class="cert-year">2026</div>
+            <h3>Certification Nanosciences</h3>
+            <p class="muted">Attestation de formation</p>
+          </div>
+          <div class="cert-card">
+            <div class="cert-year">2026</div>
+            <h3>MOOC Gestion de Projet</h3>
+            <p class="muted">Formation en ligne</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Volunteering -->
+      <div class="glass-card reveal">
+        <div class="card-icon">🤝</div>
+        <h2 class="card-title">Bénévolat</h2>
+        <div class="grid-2-sm">
+          <div class="vol-item">
+            <h3>Récup &amp; Gamelles</h3>
+            <p class="muted">Bénévole étudiant · Association de redistribution alimentaire</p>
+            <div class="skills-grid mt">
+              <span class="skill-chip small">Travail d'équipe</span>
+              <span class="skill-chip small">Engagement social</span>
+              <span class="skill-chip small">Organisation logistique</span>
+              <span class="skill-chip small">Responsabilités</span>
+            </div>
+          </div>
+          <div class="vol-item">
+            <h3>Scouts et Guides de France</h3>
+            <p class="muted">Engagement pendant 6 ans</p>
+            <div class="skills-grid mt">
+              <span class="skill-chip small">Leadership</span>
+              <span class="skill-chip small">Gestion de groupe</span>
+              <span class="skill-chip small">Autonomie</span>
+              <span class="skill-chip small">Esprit d'initiative</span>
+              <span class="skill-chip small">Adaptabilité</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- PAGE: PROJETS -->
+  <main class="page" id="page-projects">
+    <div class="page-inner">
+
+      <div class="page-header reveal">
+        <h1>Projets</h1>
+        <p class="muted">Mes réalisations techniques et académiques</p>
+      </div>
+
+      <div class="projects-grid">
+
+        <article class="project-card reveal">
+          <div class="project-top">
+            <div class="project-icon">🎮</div>
+            <a href="https://github.com/JeremyGnt" class="project-link" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+          <h3 class="project-title">Fruit Ninja — FPGA</h3>
+          <p class="project-desc">
+            Développement d'un jeu Fruit Ninja sur FPGA contrôlé par un capteur ultrason
+            permettant de détecter les mouvements du joueur.
+          </p>
+          <div class="tech-tags">
+            <span class="tech-tag">VHDL</span>
+            <span class="tech-tag">FPGA</span>
+            <span class="tech-tag">Capteurs</span>
+          </div>
+        </article>
+
+        <article class="project-card reveal">
+          <div class="project-top">
+            <div class="project-icon">🕹️</div>
+            <a href="https://github.com/JeremyGnt" class="project-link" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+          <h3 class="project-title">Manette de jeu vidéo</h3>
+          <p class="project-desc">
+            Développement d'une manette de jeu programmable avec microcontrôleur ATTiny,
+            écran OLED et programmation en C++.
+          </p>
+          <div class="tech-tags">
+            <span class="tech-tag">C++</span>
+            <span class="tech-tag">Microcontrôleur</span>
+            <span class="tech-tag">OLED</span>
+            <span class="tech-tag">ATTiny</span>
+          </div>
+        </article>
+
+        <article class="project-card reveal">
+          <div class="project-top">
+            <div class="project-icon">👨‍🍳</div>
+            <a href="https://github.com/JeremyGnt" class="project-link" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+          <h3 class="project-title">Jeu Overcooked multijoueur</h3>
+          <p class="project-desc">
+            Développement d'un jeu multijoueur inspiré d'Overcooked avec interface graphique
+            développée en Allegro 5.
+          </p>
+          <div class="tech-tags">
+            <span class="tech-tag">C</span>
+            <span class="tech-tag">Allegro 5</span>
+            <span class="tech-tag">Prog. système</span>
+          </div>
+        </article>
+
+        <article class="project-card reveal">
+          <div class="project-top">
+            <div class="project-icon">⏰</div>
+            <a href="https://github.com/JeremyGnt" class="project-link" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+          <h3 class="project-title">Réveil électronique</h3>
+          <p class="project-desc">
+            Création d'un réveil électronique programmable avec développement d'un programme
+            embarqué sur microcontrôleur.
+          </p>
+          <div class="tech-tags">
+            <span class="tech-tag">C++</span>
+            <span class="tech-tag">Microcontrôleur</span>
+            <span class="tech-tag">Embarqué</span>
+          </div>
+        </article>
+
+        <article class="project-card reveal">
+          <div class="project-top">
+            <div class="project-icon">🌿</div>
+            <a href="https://github.com/JeremyGnt" class="project-link" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+          <h3 class="project-title">Simulation réseaux trophiques</h3>
+          <p class="project-desc">
+            Application simulant la dynamique de réseaux trophiques pour étudier les interactions
+            entre espèces dans un écosystème.
+          </p>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Modélisation</span>
+            <span class="tech-tag">Simulation</span>
+          </div>
+        </article>
+
+        <article class="project-card reveal">
+          <div class="project-top">
+            <div class="project-icon">🏠</div>
+            <a href="https://github.com/JeremyGnt" class="project-link" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+          <h3 class="project-title">Airbnb for Students</h3>
+          <p class="project-desc">
+            Plateforme web inspirée d'Airbnb dédiée aux étudiants — recherche de logements,
+            favoris, avis utilisateurs et base de données complète.
+          </p>
+          <div class="tech-tags">
+            <span class="tech-tag">JavaScript</span>
+            <span class="tech-tag">PHP</span>
+            <span class="tech-tag">MySQL</span>
+            <span class="tech-tag">HTML</span>
+            <span class="tech-tag">CSS</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- PAGE: CONTACT -->
+  <main class="page" id="page-contact">
+    <div class="page-inner">
+
+      <div class="page-header reveal">
+        <h1>Contact</h1>
+        <p class="muted">N'hésitez pas à me contacter pour toute opportunité</p>
+      </div>
+
+      <div class="contact-grid">
+
+        <a class="contact-card reveal" href="mailto:jeremy.gonnet31@gmail.com">
+          <div class="contact-icon">📧</div>
+          <div class="contact-info">
+            <span class="contact-label">Email</span>
+            <span class="contact-value">jeremy.gonnet31@gmail.com</span>
+          </div>
+          <div class="contact-arrow">→</div>
+        </a>
+
+        <a class="contact-card reveal" href="https://linkedin.com/in/jeremygonnet" target="_blank" rel="noopener noreferrer">
+          <div class="contact-icon">💼</div>
+          <div class="contact-info">
+            <span class="contact-label">LinkedIn</span>
+            <span class="contact-value">linkedin.com/in/jeremygonnet</span>
+          </div>
+          <div class="contact-arrow">→</div>
+        </a>
+
+        <a class="contact-card reveal" href="https://github.com/JeremyGnt" target="_blank" rel="noopener noreferrer">
+          <div class="contact-icon">💻</div>
+          <div class="contact-info">
+            <span class="contact-label">GitHub</span>
+            <span class="contact-value">github.com/JeremyGnt</span>
+          </div>
+          <div class="contact-arrow">→</div>
+        </a>
+
+        <a class="contact-card reveal" href="tel:+33782846856">
+          <div class="contact-icon">📱</div>
+          <div class="contact-info">
+            <span class="contact-label">Téléphone</span>
+            <span class="contact-value">+33 7 82 84 68 56</span>
+          </div>
+          <div class="contact-arrow">→</div>
+        </a>
+
+      </div>
+
+      <div class="glass-card reveal contact-note">
+        <p>
+          Ouvert aux opportunités de stage, alternance et projets collaboratifs.
+          Basé à Paris — disponible pour des missions à distance ou en présentiel.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© <span id="year"></span> Jérémy Gonnet · Étudiant ingénieur ECE Paris</p>
+  </footer>
 
   <script type="module" src="/src/main.ts"></script>
 </body>
