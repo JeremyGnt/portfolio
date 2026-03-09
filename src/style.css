@@ -1119,4 +1119,4 @@ body {
   .timeline-date { text-align: left; }
   .skills-grid { grid-template-columns: 1fr; }
   .about-stats { grid-template-columns: 1fr 1fr; }
-}
+}.webgl-image-placeholder { width: 100%; height: 200px; margin-bottom: 2rem; border-radius: 8px; }

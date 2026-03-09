@@ -1,6 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
 import gsap from 'gsap'
+import { initGPGPUParticles } from './gpgpu/particles'
 
 // ============================================================
 // CURSOR
@@ -211,8 +212,9 @@ function startTransition() {
 function initPortfolio() {
   // Show nav
   const nav = document.getElementById('nav') as HTMLElement
-  setTimeout(() => nav.classList.add('visible'), 400)
-
+  setTimeout(() => nav.classList.add('visible'), 400)    
+    // Initialize GPGPU Particle Background
+    initGPGPUParticles()
   // Attach cursor hover effects to interactive elements
   document.querySelectorAll('a, button, .project-card, .stat-card, .interest-card').forEach(el => {
     el.addEventListener('mouseenter', () => {
