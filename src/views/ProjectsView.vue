@@ -101,7 +101,7 @@ onMounted(() => setTimeout(triggerReveal, 100))
               </div>
             </div>
             <h3>
-              <component :is="project.icon" style="width:20px;height:20px;margin-right:4px;display:inline-block;vertical-align:text-bottom;" />
+              <component :is="project.icon" :size="20" />
               {{ project.title }}
             </h3>
             <p class="project-desc">{{ project.description }}</p>
