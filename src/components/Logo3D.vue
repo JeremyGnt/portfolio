@@ -46,26 +46,11 @@ onMounted(() => {
   renderer.domElement.style.width = '100%'
   renderer.domElement.style.height = '100%'
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.2
+  renderer.toneMapping = THREE.NoToneMapping
+  renderer.toneMappingExposure = 1.0
   container.value.appendChild(renderer.domElement)
 
-  // -------------------------------------------------------
-  // LIGHTS
-  // -------------------------------------------------------
-  scene.add(new THREE.AmbientLight(0xffffff, 0.8))
-
-  const dirLight = new THREE.DirectionalLight(0xe0ffff, 3)
-  dirLight.position.set(5, 5, 5)
-  scene.add(dirLight)
-
-  const cyanPt = new THREE.PointLight(0x00ffff, 10, 40)
-  cyanPt.position.set(-4, 2, 4)
-  scene.add(cyanPt)
-
-  const magentaPt = new THREE.PointLight(0xff00ff, 8, 40)
-  magentaPt.position.set(4, -2, 3)
-  scene.add(magentaPt)
+  // No lights to ensure flat white look (MeshBasicMaterial is unlit anyway)
 
   // -------------------------------------------------------
   // GLASS MATERIAL
@@ -108,18 +93,14 @@ onMounted(() => {
 
   const fontLoader = new FontLoader()
   fontLoader.load(
-    'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
+    'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
     (font) => {
       const geo = new TextGeometry(props.text || 'JG', {
         font,
         size: 3.2,
-        depth: 0.4,       // Subtle depth
+        depth: 0.6,
         curveSegments: 14,
-        bevelEnabled: true,
-        bevelThickness: 0.08,
-        bevelSize: 0.05,
-        bevelOffset: 0,
-        bevelSegments: 5,
+        bevelEnabled: false,
       })
 
       geo.center()

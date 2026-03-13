@@ -96,8 +96,8 @@ const calculateAndSetLogoAnimations = () => {
   const dJ = getDeltas(rectJ, rectTargetJ)
   const dG = getDeltas(rectG, rectTargetG)
 
-  gsap.set(logoJ, { x: dJ.deltaX, y: dJ.deltaY, scale: dJ.scale, transformOrigin: '50% 50%' })
-  gsap.set(logoG, { x: dG.deltaX, y: dG.deltaY, scale: dG.scale, transformOrigin: '50% 50%' })
+  gsap.set(logoJ, { x: dJ.deltaX +23, y: dJ.deltaY, scale: dJ.scale, transformOrigin: '50% 50%' })
+  gsap.set(logoG, { x: dG.deltaX-24, y: dG.deltaY, scale: dG.scale, transformOrigin: '50% 50%' })
   gsap.set(logoBg, { opacity: 0 })
 
   stTimeline = gsap.timeline({
@@ -107,12 +107,12 @@ const calculateAndSetLogoAnimations = () => {
       // We multiply the scroll distance required by 2.5 to stretch the animation
       // over a much longer scroll, making the letters' movement smooth and gradual
       end: () => '+=' + (dJ.deltaY * 2.5),
-      scrub: true,
+      scrub: 2.5,
     }
   })
 
-  stTimeline.to(logoJ, { x: 0, y: 0, scale: 1, ease: 'none' }, 0)
-  stTimeline.to(logoG, { x: 0, y: 0, scale: 1, ease: 'none' }, 0)
+  stTimeline.to(logoJ, { x: 20, y: 0, scale: 1, ease: 'none' }, 0)
+  stTimeline.to(logoG, { x: -20, y: 0, scale: 1, ease: 'none' }, 0)
   stTimeline.to(logoBg, { opacity: 1, ease: 'power2.inOut' }, 0)
   stTimeline.to(fadeTexts, { opacity: 0, y: -40, stagger: 0.1, ease: 'power1.out' }, 0)
 }
@@ -273,18 +273,30 @@ onUnmounted(() => {
     <section class="page active">
       <div class="page-inner">
         <div id="hero-section" class="home-hero">
-          <p class="hero-kicker-top fade-text gradient-text">ÉTUDIANT INGÉNIEUR &bull; DATA &amp; IA</p>
-          <h1 class="home-hero-title">
-            <span class="home-hero-word">
-              <span id="target-j" class="target-letter">J</span><span class="fade-text">érémy</span>
-            </span>
-            <span class="home-hero-word">
-              <span id="target-g" class="target-letter">G</span><span class="fade-text">onnet</span>
-            </span>
-          </h1>
-          <p class="hero-subtitle-bottom fade-text">20 ans &bull; ECE Paris &bull; 3ème année</p>
+          <div class="hero-content-shift-up hero-content-up">
+            <div class="hero-kicker-top fade-text gradient-text kicker-grid">
+              <span class="kicker-left kicker-col-left">ÉTUDIANT INGÉNIEUR</span>
+              <span class="hero-dot subtitle-dot align-dot kicker-col-dot">&bull;</span>
+              <span class="kicker-right kicker-col-right">BIG DATA &amp; IA</span>
+            </div>
+            <h1 class="home-hero-title">
+              <span class="home-hero-word">
+                <span id="target-j" class="target-letter">J</span><span class="fade-text">érémy</span>
+              </span>
+              <span class="home-hero-word">
+                <span id="target-g" class="target-letter">G</span><span class="fade-text">onnet</span>
+              </span>
+            </h1>
+            <p class="hero-subtitle-bottom fade-text" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;">
+              <span>20 ans</span>
+              <span class="hero-dot-secondary subtitle-dot">&bull;</span>
+              <span>ECE Paris</span>
+              <span class="hero-dot-secondary subtitle-dot">&bull;</span>
+              <span>3ème année</span>
+            </p>
+          </div>
           
-          <div class="hero-scroll-indicator fade-text">
+          <div class="hero-scroll-indicator fade-text hero-arrow-up">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
           </div>
         </div>
@@ -395,7 +407,8 @@ onUnmounted(() => {
 
 <style scoped>
 .home-hero {
-  min-height: 40vh;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -403,6 +416,20 @@ onUnmounted(() => {
   padding: 8rem 0 3rem;
   z-index: 2;
   position: relative;
+}
+
+.hero-content-shift-up {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: translateY(-5.5rem);
+}
+
+.hero-content-up {
+  /* Décale tout le bloc vers le haut de 2rem supplémentaires */
+  transform: translateY(-5.5rem);
 }
 
 .home-hero-title {
@@ -429,20 +456,81 @@ onUnmounted(() => {
   margin-right: 0.16em;
 }
 
+.home-hero-title .fade-text {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 .fade-text {
   display: inline-block;
   will-change: transform, opacity;
 }
 
 .hero-kicker-top {
-  font-size: 0.85rem;
+  font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin: 0;
+  transform: translateY(-16px);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.kicker-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  max-width: 700px;
+}
+.kicker-col-left {
+  justify-self: end;
+  text-align: right;
+}
+.kicker-col-dot {
+  justify-self: center;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.7em;
+  color: #FFD600;
+  /* yellow, adjust if needed */
+  transform: translateY(-4px);
+}
+.kicker-col-right {
+  justify-self: start;
+  text-align: left;
+}
+
+
+
+.kicker-left {
+  text-align: center;
+}
+
+.kicker-right {
+  text-align: center;
+}
+
+.hero-dot.subtitle-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 1.7em;
+  margin: 0 1.2rem;
+}
+
+.align-dot {
+  transform: translateY(-1px);
 }
 
 .hero-subtitle-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+  flex-wrap: wrap;
   font-size: 1.25rem;
   color: #a0a0a0;
   margin: 0;
@@ -450,10 +538,19 @@ onUnmounted(() => {
   letter-spacing: 0.02em;
 }
 
+.subtitle-dot {
+  margin: 0 0.75rem;
+}
+
 .hero-scroll-indicator {
   margin-top: 3rem;
   color: #666;
   animation: bounce 2s infinite ease-in-out;
+}
+
+.hero-arrow-up {
+  margin-top: 0;
+  margin-bottom: 3.5rem;
 }
 
 @keyframes bounce {

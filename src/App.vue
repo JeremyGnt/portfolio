@@ -157,6 +157,14 @@ onUnmounted(() => {
   margin: 0 -14px;
 }
 
+#logo-j {
+  transform: translateX(20px);
+}
+
+#logo-g {
+  transform: translateX(-20px);
+}
+
 .header-menu {
   display: flex;
   flex: 1 1 auto;

@@ -12,7 +12,7 @@
   --text-muted: rgba(255, 255, 255, 0.5);
   /* For text-white/50 text-white/40 */
   --accent: #a9c2ff;
-  --accent-2: rgba(188, 167, 255, 0.42);
+  --accent-2: #eab308;
   --nav-height: 80px;
   --radius: 12px;
   --radius-sm: 8px;
@@ -241,6 +241,17 @@ p {
 
 .gradient-text {
   color: #fff;
+}
+
+.hero-dot {
+  color: #ebb207;
+  font-weight: 800;
+}
+
+.hero-dot-secondary {
+  color: rgba(235, 178, 7, 0.45);
+  font-weight: 800;
+  margin: 0 0.5rem;
 }
 
 /* ============================================================
@@ -518,13 +529,7 @@ p {
   flex: 1;
 }
 
-.hero-kicker {
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  margin-bottom: 1rem;
-}
+
 
 .hero-name {
   font-size: clamp(2.5rem, 6vw, 4rem);
@@ -573,7 +578,7 @@ h1 {
   /* (1) Background: Gradient + Glass effect */
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.052) 0%, rgba(255, 255, 255, 0.016) 38%, rgba(255, 255, 255, 0.012) 100%),
-    linear-gradient(135deg, rgba(18, 32, 68, 0.46) 0%, rgba(5, 10, 24, 0.74) 100%);
+    #0f1115;
 
   /* (2) Borders & Shape */
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -606,7 +611,7 @@ h1 {
 .glass:hover {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.056) 0%, rgba(255, 255, 255, 0.018) 38%, rgba(255, 255, 255, 0.014) 100%),
-    linear-gradient(135deg, rgba(20, 36, 76, 0.5) 0%, rgba(6, 12, 28, 0.78) 100%);
+    #14171c;
   border-color: rgba(255, 255, 255, 0.075);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -705,7 +710,7 @@ h1 {
 
 .section-icon {
   font-size: 1.1rem;
-  opacity: 0.8;
+  color: #eab308;
 }
 
 /* ============================================================
@@ -930,7 +935,7 @@ h1 {
 
 .cert-icon {
   font-size: 1.5rem;
-  opacity: 0.8;
+  color: #eab308;
   flex-shrink: 0;
 }
 
@@ -1060,7 +1065,7 @@ h1 {
 .contact-icon {
   font-size: 1.75rem;
   margin-bottom: 0.5rem;
-  opacity: 0.8;
+  color: #eab308;
 }
 
 .contact-card h3 {
