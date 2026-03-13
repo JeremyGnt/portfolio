@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { ChevronUp } from 'lucide-vue-next'
 import LiquidMenu from './components/LiquidMenu.vue'
 import AppFooter from './components/AppFooter.vue'
@@ -7,7 +8,20 @@ import Logo3D from './components/Logo3D.vue'
 
 const showScrollTop = ref(false)
 const isScrollTopClicked = ref(false)
+const route = useRoute()
 let scrollTopClickTimeout: number | null = null
+
+function setHeaderLogoVisibility(path: string) {
+  const logoJ = document.getElementById('logo-j')
+  const logoG = document.getElementById('logo-g')
+  const logoBg = document.getElementById('header-logo-bg')
+  if (!logoJ || !logoG || !logoBg) return
+
+  const opacity = path === '/' ? 0 : 1
+  logoJ.style.opacity = String(opacity)
+  logoG.style.opacity = String(opacity)
+  logoBg.style.opacity = String(opacity)
+}
 
 function updateScrollTopVisibility() {
   const scrollTop = window.scrollY || document.documentElement.scrollTop
@@ -34,9 +48,17 @@ function scrollToTop() {
 
 onMounted(() => {
   updateScrollTopVisibility()
+  setHeaderLogoVisibility(route.path)
   window.addEventListener('scroll', updateScrollTopVisibility, { passive: true })
   window.addEventListener('resize', updateScrollTopVisibility)
 })
+
+watch(
+  () => route.path,
+  (path) => {
+    setHeaderLogoVisibility(path)
+  },
+)
 
 onUnmounted(() => {
   if (scrollTopClickTimeout !== null) {
@@ -155,6 +177,7 @@ onUnmounted(() => {
   position: relative;
   z-index: 50;
   margin: 0 -14px;
+  opacity: 0;
 }
 
 #logo-j {

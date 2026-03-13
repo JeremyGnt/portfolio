@@ -1,6 +1,14 @@
 /* ============================================================
    Base & Reset
    ============================================================ */
+@font-face {
+  font-family: 'InterLocal';
+  src: url('/fonts/inter-latin-800-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+}
+
 :root {
   --bg-deep: #010204;
   --bg-mid: #050914;
@@ -33,7 +41,7 @@ html {
 
 body {
   position: relative;
-  font-family: system-ui, sans-serif;
+  font-family: 'InterLocal', system-ui, sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
   background:

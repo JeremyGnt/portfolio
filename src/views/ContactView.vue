@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import gsap from 'gsap'
 import { Mail, Linkedin, Github, Phone } from 'lucide-vue-next'
+import { useRevealAnimation } from '../composables/useRevealAnimation'
 
 interface ContactItem {
   href: string
@@ -18,15 +17,7 @@ const contacts: ContactItem[] = [
   { href: 'tel:+33782846856', icon: Phone, label: 'Téléphone', value: '+33 7 82 84 68 56' },
 ]
 
-function triggerReveal() {
-  const revealEls = document.querySelectorAll('.reveal')
-  revealEls.forEach((el, i) => {
-    gsap.set(el, { opacity: 0, y: 24 })
-    gsap.to(el, { opacity: 1, y: 0, duration: 0.65, delay: i * 0.08, ease: 'power2.out' })
-  })
-}
-
-onMounted(() => setTimeout(triggerReveal, 100))
+useRevealAnimation(100)
 </script>
 
 <template>
