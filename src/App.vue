@@ -1,15 +1,25 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ChevronUp } from 'lucide-vue-next'
 import LiquidMenu from './components/LiquidMenu.vue'
 import AppFooter from './components/AppFooter.vue'
 import Logo3D from './components/Logo3D.vue'
+import LoadingScreen from './components/LoadingScreen.vue'
 
 const showScrollTop = ref(false)
 const isScrollTopClicked = ref(false)
+const isAppReady = ref(false)
 const route = useRoute()
 let scrollTopClickTimeout: number | null = null
+
+async function handleLoaderComplete() {
+  isAppReady.value = true
+
+  await nextTick()
+  updateScrollTopVisibility()
+  setHeaderLogoVisibility(route.path)
+}
 
 function setHeaderLogoVisibility(path: string) {
   const logoJ = document.getElementById('logo-j')
@@ -51,7 +61,6 @@ function scrollToTop() {
 
 onMounted(() => {
   updateScrollTopVisibility()
-  setHeaderLogoVisibility(route.path)
   window.addEventListener('scroll', updateScrollTopVisibility, { passive: true })
   window.addEventListener('resize', updateScrollTopVisibility)
 })
@@ -63,10 +72,20 @@ watch(
   },
 )
 
+watch(
+  isAppReady,
+  (ready) => {
+    document.body.style.overflow = ready ? '' : 'hidden'
+  },
+  { immediate: true },
+)
+
 onUnmounted(() => {
   if (scrollTopClickTimeout !== null) {
     globalThis.clearTimeout(scrollTopClickTimeout)
   }
+
+  document.body.style.overflow = ''
 
   window.removeEventListener('scroll', updateScrollTopVisibility)
   window.removeEventListener('resize', updateScrollTopVisibility)
@@ -74,49 +93,67 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="mesh-bg"></div>
-  
-  <svg class="noise-overlay" viewBox="0 0 100% 100%" xmlns="http://www.w3.org/2000/svg">
-    <filter id="noiseFilter">
-      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
-    </filter>
-    <rect width="100%" height="100%" filter="url(#noiseFilter)" />
-  </svg>
+  <LoadingScreen v-if="!isAppReady" @complete="handleLoaderComplete" />
 
-  <header class="app-header">
-    <div class="header-logo">
-      <div class="header-logo-card">
-        <div id="header-logo-bg"></div>
-        <div id="logo-j" class="logo-wrapper opacity-0 bg-transparent pointer-events-none" style="visibility: hidden; opacity: 0; background-color: transparent; pointer-events: none;"><Logo3D text="J" /></div>
-        <div id="logo-g" class="logo-wrapper opacity-0 bg-transparent pointer-events-none" style="visibility: hidden; opacity: 0; background-color: transparent; pointer-events: none;"><Logo3D text="G" /></div>
+  <Transition name="page-fade" appear>
+    <div v-if="isAppReady" class="app-ready-shell">
+    <div class="mesh-bg"></div>
+
+    <svg class="noise-overlay" viewBox="0 0 100% 100%" xmlns="http://www.w3.org/2000/svg">
+      <filter id="noiseFilter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+      </filter>
+      <rect width="100%" height="100%" filter="url(#noiseFilter)" />
+    </svg>
+
+    <header class="app-header">
+      <div class="header-logo">
+        <div class="header-logo-card">
+          <div id="header-logo-bg"></div>
+          <div id="logo-j" class="logo-wrapper opacity-0 bg-transparent pointer-events-none" style="visibility: hidden; opacity: 0; background-color: transparent; pointer-events: none;"><Logo3D text="J" /></div>
+          <div id="logo-g" class="logo-wrapper opacity-0 bg-transparent pointer-events-none" style="visibility: hidden; opacity: 0; background-color: transparent; pointer-events: none;"><Logo3D text="G" /></div>
+        </div>
       </div>
+
+      <div class="header-menu">
+        <LiquidMenu />
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <RouterView />
+    </main>
+
+    <Transition name="scroll-top-fade">
+      <button
+        v-if="showScrollTop"
+        :class="['scroll-top-button', { 'is-clicked': isScrollTopClicked }]"
+        type="button"
+        aria-label="Remonter en haut de la page"
+        @click="scrollToTop"
+      >
+        <ChevronUp :size="24" />
+      </button>
+    </Transition>
+
+    <AppFooter />
     </div>
-
-    <div class="header-menu">
-      <LiquidMenu />
-    </div>
-  </header>
-
-  <main class="app-shell">
-    <RouterView />
-  </main>
-
-  <Transition name="scroll-top-fade">
-    <button
-      v-if="showScrollTop"
-      :class="['scroll-top-button', { 'is-clicked': isScrollTopClicked }]"
-      type="button"
-      aria-label="Remonter en haut de la page"
-      @click="scrollToTop"
-    >
-      <ChevronUp :size="24" />
-    </button>
   </Transition>
-
-  <AppFooter />
 </template>
 
 <style scoped>
+.page-fade-enter-active {
+  transition: opacity 0.9s ease;
+}
+
+.page-fade-enter-from {
+  opacity: 0;
+}
+
+.page-fade-enter-to {
+  opacity: 1;
+}
+
 .app-header {
   position: fixed;
   top: 1.5rem;

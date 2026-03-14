@@ -6,9 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jérémy Gonnet — Portfolio</title>
   <link rel="preload" href="/fonts/inter-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <style>
+    #boot-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 30000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #010204;
+      color: rgba(255, 255, 255, 0.95);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="boot-loader" aria-hidden="true">JG.</div>
   <div id="app"></div>
   <script type="module" src="/src/main.ts"></script>
 </body>
