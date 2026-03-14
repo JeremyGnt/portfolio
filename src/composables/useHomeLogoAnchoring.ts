@@ -8,6 +8,12 @@ export function useHomeLogoAnchoring() {
   let resizeTimer: number | null = null
   let stTimeline: gsap.core.Timeline | null = null
   let handleResize: (() => void) | null = null
+  let handleLogoReady: ((event: Event) => void) | null = null
+
+  const syncLogoVisibility = (logoEl: HTMLElement) => {
+    const isReady = logoEl.dataset.threeReady === 'true'
+    gsap.set(logoEl, { autoAlpha: isReady ? 1 : 0 })
+  }
 
   const calculateAndSetLogoAnimations = () => {
     const logoJ = document.getElementById('logo-j')
@@ -55,8 +61,9 @@ export function useHomeLogoAnchoring() {
     gsap.set(logoJ, { x: dJ.deltaX + 23, y: dJ.deltaY, scale: dJ.scale, transformOrigin: '50% 50%' })
     gsap.set(logoG, { x: dG.deltaX - 24, y: dG.deltaY, scale: dG.scale, transformOrigin: '50% 50%' })
 
-    gsap.set([logoJ, logoG], { opacity: 1 })
-    gsap.set([targetJ, targetG], { opacity: 0 })
+    syncLogoVisibility(logoJ)
+    syncLogoVisibility(logoG)
+    gsap.set([targetJ, targetG], { autoAlpha: 0 })
     gsap.set(logoBg, { opacity: 0 })
 
     stTimeline = gsap.timeline({
@@ -68,10 +75,36 @@ export function useHomeLogoAnchoring() {
       },
     })
 
-    stTimeline.to(logoJ, { x: 20, y: 0, scale: 1, ease: 'none' }, 0)
-    stTimeline.to(logoG, { x: -20, y: 0, scale: 1, ease: 'none' }, 0)
+    const dockingDuration = 0.5
+
+    stTimeline.to(logoJ, { x: 20, y: 0, scale: 1, ease: 'none', duration: dockingDuration }, 0)
+    stTimeline.to(logoG, { x: -20, y: 0, scale: 1, ease: 'none', duration: dockingDuration }, 0)
     stTimeline.to(logoBg, { opacity: 1, ease: 'power2.inOut' }, 0)
     stTimeline.to(fadeTexts, { opacity: 0, y: -40, stagger: 0.1, ease: 'power1.out' }, 0)
+
+    // Start bounce exactly when docking ends, not at timeline end.
+    const pillContainer = document.querySelector('.header-logo-card')
+    if (pillContainer) {
+      stTimeline.to(
+        pillContainer,
+        {
+          scale: 1.08,
+          duration: 0.15,
+          ease: 'power2.out',
+          transformOrigin: '50% 50%',
+        },
+        dockingDuration,
+      )
+      stTimeline.to(
+        pillContainer,
+        {
+          scale: 1,
+          duration: 0.4,
+          ease: 'back.out(3)',
+        },
+        dockingDuration + 0.15,
+      )
+    }
   }
 
   const onResizeGSAP = () => {
@@ -86,6 +119,20 @@ export function useHomeLogoAnchoring() {
 
   onMounted(async () => {
     await nextTick()
+
+    handleLogoReady = (event: Event) => {
+      const logoEl = event.currentTarget as HTMLElement | null
+      if (!logoEl) return
+      gsap.to(logoEl, { autoAlpha: 1, duration: 0.2, ease: 'power2.out', overwrite: 'auto' })
+    }
+
+    const logoJ = document.getElementById('logo-j')
+    const logoG = document.getElementById('logo-g')
+    if (logoJ && logoG && handleLogoReady) {
+      logoJ.addEventListener('logo3d-ready', handleLogoReady)
+      logoG.addEventListener('logo3d-ready', handleLogoReady)
+    }
+
     calculateAndSetLogoAnimations()
 
     handleResize = () => {
@@ -109,6 +156,14 @@ export function useHomeLogoAnchoring() {
 
     const logoJ = document.getElementById('logo-j')
     const logoG = document.getElementById('logo-g')
+    if (logoJ && handleLogoReady) {
+      logoJ.removeEventListener('logo3d-ready', handleLogoReady)
+    }
+    if (logoG && handleLogoReady) {
+      logoG.removeEventListener('logo3d-ready', handleLogoReady)
+    }
+    handleLogoReady = null
+
     if (logoJ && logoG) {
       gsap.set([logoJ, logoG], { clearProps: 'x,y,scale,transformOrigin' })
     }

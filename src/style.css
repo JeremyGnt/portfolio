@@ -39,6 +39,23 @@ html {
   scroll-behavior: smooth;
 }
 
+canvas {
+  background-color: transparent !important;
+  outline: none !important;
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.bg-transparent {
+  background-color: transparent !important;
+}
+
+.pointer-events-none {
+  pointer-events: none !important;
+}
+
 body {
   position: relative;
   font-family: 'InterLocal', system-ui, sans-serif;
@@ -115,8 +132,8 @@ body::after {
 .mesh-bg::after {
   opacity: 0.28;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.11) 1px, transparent 1px);
   background-size: 140px 140px;
   mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
   -webkit-mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
@@ -775,6 +792,7 @@ h1 {
   font-size: 0.9rem;
   color: var(--text-muted);
   margin-bottom: 0.25rem;
+  font-family: 'InterLocal', system-ui, sans-serif;
 }
 
 .timeline-date {

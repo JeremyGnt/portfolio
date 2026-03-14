@@ -18,8 +18,11 @@ function setHeaderLogoVisibility(path: string) {
   if (!logoJ || !logoG || !logoBg) return
 
   const opacity = path === '/' ? 0 : 1
+  const visibility = path === '/' ? 'hidden' : 'visible'
   logoJ.style.opacity = String(opacity)
   logoG.style.opacity = String(opacity)
+  logoJ.style.visibility = visibility
+  logoG.style.visibility = visibility
   logoBg.style.opacity = String(opacity)
 }
 
@@ -84,8 +87,8 @@ onUnmounted(() => {
     <div class="header-logo">
       <div class="header-logo-card">
         <div id="header-logo-bg"></div>
-        <div id="logo-j" class="logo-wrapper"><Logo3D text="J" /></div>
-        <div id="logo-g" class="logo-wrapper"><Logo3D text="G" /></div>
+        <div id="logo-j" class="logo-wrapper opacity-0 bg-transparent pointer-events-none" style="visibility: hidden; opacity: 0; background-color: transparent; pointer-events: none;"><Logo3D text="J" /></div>
+        <div id="logo-g" class="logo-wrapper opacity-0 bg-transparent pointer-events-none" style="visibility: hidden; opacity: 0; background-color: transparent; pointer-events: none;"><Logo3D text="G" /></div>
       </div>
     </div>
 

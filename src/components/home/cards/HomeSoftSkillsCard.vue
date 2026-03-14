@@ -1,19 +1,54 @@
+<style scoped>
+.skill-tags .tag {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%) !important;
+  color: rgba(255,255,255,0.7) !important;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: border-color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+</style>
 <script setup lang="ts">
 import { Lightbulb } from 'lucide-vue-next'
+
+const softSkills = [
+  "Esprit d'équipe",
+  "Communication",
+  'Travail en autonomie',
+  'Gestion de projet',
+  'Curiosite intellectuelle',
+  'Esprit analytique',
+  'Organisé',
+  'Gestion du temps'
+]
+
+const importantSoftSkills = [
+  "Esprit d'équipe",
+  "Communication",
+  'Gestion de projet',
+  'Organisé',
+  'Gestion du temps'
+]
 </script>
 
 <template>
-  <div class="card glass">
-    <h2 class="section-title">
+  <div class="card glass bento-hover-card">
+    <h2 class="section-title" style="margin-bottom: 1rem;">
       <span class="section-icon"><Lightbulb :size="20" /></span> Soft Skills
     </h2>
-    <ul class="bullet-list">
-      <li>Esprit d'équipe &amp; communication</li>
-      <li>Travail en autonomie</li>
-      <li>Gestion de projet</li>
-      <li>Curiosité intellectuelle</li>
-      <li>Esprit analytique</li>
-      <li>Organisation &amp; gestion du temps</li>
-    </ul>
+    <div
+      class="skill-tags"
+      style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; padding: 0.5rem 0;"
+    >
+      <span
+        v-for="skill in softSkills"
+        :key="skill"
+        class="tag"
+        :style="{
+          color: importantSoftSkills.includes(skill) ? '#ffffff !important' : '#8a8b8d'
+        }"
+      >
+        {{ skill }}
+      </span>
+    </div>
   </div>
 </template>

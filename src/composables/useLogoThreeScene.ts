@@ -24,6 +24,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
   let scene: THREE.Scene | null = null
   let glassMat: THREE.MeshBasicMaterial | null = null
   let rendererElement: HTMLCanvasElement | null = null
+  let hasDispatchedReady = false
 
   onMounted(() => {
     if (!container.value) return
@@ -37,11 +38,23 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     const camera = new THREE.PerspectiveCamera(35, W / H, 0.1, 200)
     camera.position.z = 7.5
 
-    const localRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' })
+    const renderCanvas = document.createElement('canvas')
+    renderCanvas.style.backgroundColor = 'transparent'
+    renderCanvas.style.display = 'block'
+
+    const localRenderer = new THREE.WebGLRenderer({
+      canvas: renderCanvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance',
+    })
     renderer = localRenderer
+    localRenderer.setClearColor(0x000000, 0)
     localRenderer.setSize(W * heroScaleFactor, H * heroScaleFactor, false)
     localRenderer.domElement.style.width = '100%'
     localRenderer.domElement.style.height = '100%'
+    localRenderer.domElement.style.backgroundColor = 'transparent'
+    localRenderer.domElement.style.display = 'block'
     localRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     localRenderer.toneMapping = THREE.NoToneMapping
     localRenderer.toneMappingExposure = 1
@@ -79,8 +92,19 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       currentRotationTargetY = getContinuousAngle(desiredAngle, currentRotationTargetY)
     }
 
+    const dispatchReady = () => {
+      if (hasDispatchedReady || !container.value) return
+
+      const wrapper = container.value.closest('.logo-wrapper')
+      if (!(wrapper instanceof HTMLElement)) return
+
+      wrapper.dataset.threeReady = 'true'
+      wrapper.dispatchEvent(new CustomEvent('logo3d-ready', { bubbles: true }))
+      hasDispatchedReady = true
+    }
+
     const fontLoader = new FontLoader()
-    fontLoader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (font) => {
+    fontLoader.load('/fonts/inter-800-jg.typeface.json', (font) => {
       textGeometry = new TextGeometry(text || 'JG', {
         font,
         size: 3.2,
@@ -97,6 +121,10 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       logoGroup.rotation.x = baseRotationX
       logoGroup.rotation.y = baseRotationY
       currentRotationTargetY = baseRotationY
+
+      // Force one deterministic frame with loaded geometry before revealing wrappers.
+      localRenderer.render(localScene, camera)
+      dispatchReady()
     })
 
     const updateScrollRotation = () => {

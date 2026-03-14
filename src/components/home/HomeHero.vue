@@ -171,11 +171,13 @@
   width: 100%;
   text-align: center;
   flex-wrap: wrap;
-  font-size: 1.25rem;
+  font-size: 0.85rem;
   color: #a0a0a0;
   margin: 0;
-  font-weight: 400;
-  letter-spacing: 0.02em;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .subtitle-dot {

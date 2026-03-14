@@ -190,12 +190,12 @@ onBeforeUnmount(() => {
   position: relative;
   padding: 10px 24px;
   cursor: pointer;
-  color: #909090;
+  font-family: system-ui, sans-serif;
   font-size: 16px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  transition: color 0.3s ease;
+  font-weight: 400;
+  color: #909090;
   user-select: none;
+  transition: color 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -213,7 +213,7 @@ onBeforeUnmount(() => {
   transform: scale(1.05); /* Slight pop effect like the dock */
 }
 
-.item-content {
+.menu-item .item-content {
   position: relative;
   transition: all 0.2s ease-in-out; 
   display: flex;

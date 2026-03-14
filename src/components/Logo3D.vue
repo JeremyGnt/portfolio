@@ -11,7 +11,7 @@ useLogoThreeScene(container, props.text)
 </script>
 
 <template>
-  <div ref="container" class="logo-3d"></div>
+  <div ref="container" class="logo-3d bg-transparent pointer-events-none"></div>
 </template>
 
 <style scoped>

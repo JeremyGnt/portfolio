@@ -13,22 +13,60 @@ defineProps<{
   <div class="bento-grid">
     <div class="bento-span-7 bento-stack">
       <div class="reveal">
-        <HomeSkillsCard :skills="skills" />
+        <HomeSoftSkillsCard />
       </div>
 
       <div class="reveal">
-        <HomeSoftSkillsCard />
+        <HomeSkillsCard :skills="skills" />
       </div>
     </div>
 
-    <div class="bento-span-5 bento-stack">
+    <div class="bento-span-5 bento-stack bento-stack-stretch">
       <div class="reveal">
         <HomeEducationCard />
       </div>
 
-      <div class="reveal">
-        <HomeInterestsCard />
+      <div class="reveal reveal-grow">
+        <HomeInterestsCard class="flex-1 h-full" />
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.bento-stack-stretch {
+  height: 100%;
+}
+/* Effet de grossissement subtil et fluide sur les cards bento */
+.bento-hover-card {
+  transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bento-hover-card:hover {
+  transform: scale(1.035);
+}
+
+:deep(.bento-hover-card.glass:hover) {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.052) 0%, rgba(255, 255, 255, 0.016) 38%, rgba(255, 255, 255, 0.012) 100%),
+    #0f1115;
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02),
+    0 24px 48px rgba(0, 0, 0, 0.56);
+}
+
+.reveal-grow {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.h-full {
+  height: 100%;
+}
+</style>
