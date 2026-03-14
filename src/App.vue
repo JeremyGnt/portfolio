@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ChevronUp } from 'lucide-vue-next'
 import LiquidMenu from './components/LiquidMenu.vue'
 import AppFooter from './components/AppFooter.vue'
@@ -10,8 +10,18 @@ import LoadingScreen from './components/LoadingScreen.vue'
 const showScrollTop = ref(false)
 const isScrollTopClicked = ref(false)
 const isAppReady = ref(false)
+const scrollProgress = ref(0)
+const isMiniScrollbarVisible = ref(false)
 const route = useRoute()
+const router = useRouter()
 let scrollTopClickTimeout: number | null = null
+let miniScrollbarTimeout: number | null = null
+
+function goToHomeFromHeaderLogo() {
+  if (route.path !== '/') {
+    router.push('/')
+  }
+}
 
 async function handleLoaderComplete() {
   isAppReady.value = true
@@ -40,9 +50,29 @@ function updateScrollTopVisibility() {
   const scrollTop = window.scrollY || document.documentElement.scrollTop
   const viewportHeight = window.innerHeight
   const documentHeight = document.documentElement.scrollHeight
+  const maxScrollable = Math.max(documentHeight - viewportHeight, 0)
   const remainingDistance = documentHeight - (scrollTop + viewportHeight)
 
   showScrollTop.value = scrollTop > 240 && remainingDistance <= Math.max(320, viewportHeight * 0.35)
+  scrollProgress.value = maxScrollable > 0 ? Math.min(Math.max(scrollTop / maxScrollable, 0), 1) : 0
+}
+
+function showMiniScrollbarWhileScrolling() {
+  isMiniScrollbarVisible.value = true
+
+  if (miniScrollbarTimeout !== null) {
+    globalThis.clearTimeout(miniScrollbarTimeout)
+  }
+
+  miniScrollbarTimeout = globalThis.setTimeout(() => {
+    isMiniScrollbarVisible.value = false
+    miniScrollbarTimeout = null
+  }, 650)
+}
+
+function handleWindowScroll() {
+  updateScrollTopVisibility()
+  showMiniScrollbarWhileScrolling()
 }
 
 function scrollToTop() {
@@ -61,7 +91,7 @@ function scrollToTop() {
 
 onMounted(() => {
   updateScrollTopVisibility()
-  window.addEventListener('scroll', updateScrollTopVisibility, { passive: true })
+  window.addEventListener('scroll', handleWindowScroll, { passive: true })
   window.addEventListener('resize', updateScrollTopVisibility)
 })
 
@@ -85,9 +115,13 @@ onUnmounted(() => {
     globalThis.clearTimeout(scrollTopClickTimeout)
   }
 
+  if (miniScrollbarTimeout !== null) {
+    globalThis.clearTimeout(miniScrollbarTimeout)
+  }
+
   document.body.style.overflow = ''
 
-  window.removeEventListener('scroll', updateScrollTopVisibility)
+  window.removeEventListener('scroll', handleWindowScroll)
   window.removeEventListener('resize', updateScrollTopVisibility)
 })
 </script>
@@ -108,11 +142,16 @@ onUnmounted(() => {
 
     <header class="app-header">
       <div class="header-logo">
-        <div class="header-logo-card">
+        <button
+          class="header-logo-card"
+          type="button"
+          aria-label="Retourner a la page d'accueil"
+          @click="goToHomeFromHeaderLogo"
+        >
           <div id="header-logo-bg"></div>
           <div id="logo-j" class="logo-wrapper opacity-0 bg-transparent pointer-events-none" style="visibility: hidden; opacity: 0; background-color: transparent; pointer-events: none;"><Logo3D text="J" /></div>
           <div id="logo-g" class="logo-wrapper opacity-0 bg-transparent pointer-events-none" style="visibility: hidden; opacity: 0; background-color: transparent; pointer-events: none;"><Logo3D text="G" /></div>
-        </div>
+        </button>
       </div>
 
       <div class="header-menu">
@@ -123,6 +162,10 @@ onUnmounted(() => {
     <main class="app-shell">
       <RouterView />
     </main>
+
+    <div class="mini-scrollbar" :class="{ 'is-visible': isMiniScrollbarVisible }" aria-hidden="true">
+      <div class="mini-scrollbar__thumb" :style="{ transform: `translateY(${scrollProgress * 120}px)` }" />
+    </div>
 
     <Transition name="scroll-top-fade">
       <button
@@ -190,6 +233,10 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation !important;
 }
 
 #header-logo-bg {
@@ -239,6 +286,37 @@ onUnmounted(() => {
   position: relative;
   z-index: 1;
   padding-top: 0;
+}
+
+.mini-scrollbar {
+  position: fixed;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 160px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 9050;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mini-scrollbar.is-visible {
+  opacity: 1;
+}
+
+.mini-scrollbar__thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.18);
+  will-change: transform;
 }
 
 .scroll-top-button {
@@ -380,6 +458,10 @@ onUnmounted(() => {
     bottom: 1rem;
     width: 52px;
     height: 52px;
+  }
+
+  .mini-scrollbar {
+    display: none;
   }
 }
 </style>
