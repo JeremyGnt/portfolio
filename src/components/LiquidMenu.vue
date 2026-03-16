@@ -14,6 +14,7 @@ type CompactMenuEvent = CustomEvent<{ compact?: boolean }>
 const route = useRoute()
 const router = useRouter()
 const compactSize = 58
+const menuShellExpandDurationMs = 520
 
 const items: MenuItem[] = [
   { text: 'À propos', path: '/', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>' },
@@ -39,6 +40,7 @@ const growDuration = ref(0.46)
 const bubbleStyle = ref({ width: '0px', height: '0px', left: '0px', top: '0px' })
 const isBubbleTransitionSuppressed = ref(true)
 const isCompactMode = ref(false)
+const isMenuContentVisible = ref(true)
 const expandedWidth = ref(0)
 
 const bubbleInlineStyle = computed(() => ({
@@ -55,6 +57,7 @@ const menuShellStyle = computed(() => ({
 let moveTimeout: ReturnType<typeof setTimeout> | null = null
 let growTimeout: ReturnType<typeof setTimeout> | null = null
 let compactSyncTimeout: ReturnType<typeof setTimeout> | null = null
+let menuContentRevealTimeout: ReturnType<typeof setTimeout> | null = null
 let bubbleTransitionRestoreFrame: number | null = null
 let bubbleTransitionRestoreNestedFrame: number | null = null
 
@@ -91,6 +94,23 @@ const cancelBubbleTransitionRestore = () => {
 const restoreBubbleTransitions = () => {
   cancelBubbleTransitionRestore()
   isBubbleTransitionSuppressed.value = false
+}
+
+const clearMenuContentRevealTimeout = () => {
+  if (menuContentRevealTimeout) {
+    clearTimeout(menuContentRevealTimeout)
+    menuContentRevealTimeout = null
+  }
+}
+
+const revealMenuContentAfterExpand = () => {
+  clearMenuContentRevealTimeout()
+  menuContentRevealTimeout = setTimeout(() => {
+    if (!isCompactMode.value) {
+      isMenuContentVisible.value = true
+    }
+    menuContentRevealTimeout = null
+  }, menuShellExpandDurationMs + 40)
 }
 
 const setBubble = ({ immediate = false }: { immediate?: boolean } = {}) => {
@@ -211,12 +231,32 @@ const selectItem = (index: number) => {
 
 const handleCompactModeChange = (event: Event) => {
   const compact = Boolean((event as CompactMenuEvent).detail?.compact)
+  const wasCompact = isCompactMode.value
+
+  clearMenuContentRevealTimeout()
+
+  if (compact) {
+    isMenuContentVisible.value = false
+  }
+  else if (!wasCompact) {
+    isMenuContentVisible.value = true
+  }
+
   isCompactMode.value = compact
+
+  if (!compact && wasCompact) {
+    revealMenuContentAfterExpand()
+  }
+
   scheduleMenuLayoutSync()
 }
 
 const handleMenuShellTransitionEnd = (event: TransitionEvent) => {
   if (event.propertyName === 'width') {
+    if (!isCompactMode.value) {
+      clearMenuContentRevealTimeout()
+      isMenuContentVisible.value = true
+    }
     syncMenuLayout(true)
   }
 }
@@ -248,6 +288,7 @@ onMounted(() => {
   scheduleMenuLayoutSync()
 
   isCompactMode.value = document.querySelector('.app-header')?.classList.contains('app-header--menu-compact') ?? false
+  isMenuContentVisible.value = !isCompactMode.value
 
   window.addEventListener('resize', handleWindowResize)
   window.addEventListener('experience-menu-compact-change', handleCompactModeChange as EventListener)
@@ -271,6 +312,8 @@ onBeforeUnmount(() => {
     clearTimeout(compactSyncTimeout)
   }
 
+  clearMenuContentRevealTimeout()
+
   cancelBubbleTransitionRestore()
 })
 </script>
@@ -281,6 +324,7 @@ onBeforeUnmount(() => {
     class="liquid-menu"
     :style="menuShellStyle"
     :class="{
+      'is-content-visible': isMenuContentVisible,
       'is-compact': isCompactMode,
     }"
   >
@@ -292,7 +336,7 @@ onBeforeUnmount(() => {
       <div class="menu-shell-viewport">
         <div class="menu-bg"></div>
         <div ref="menuTrackRef" class="menu-shell-track">
-          <ul class="menu-list" :aria-hidden="isCompactMode">
+          <ul class="menu-list" :aria-hidden="isCompactMode || !isMenuContentVisible">
             <li
               v-for="(item, index) in items"
               :key="item.path"
@@ -372,6 +416,7 @@ onBeforeUnmount(() => {
   overflow: visible;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --compact-size: var(--header-pill-height, 58px);
+  --menu-shell-expand-duration: 0.52s;
   --menu-shell-width: 0px;
 }
 
@@ -387,7 +432,7 @@ onBeforeUnmount(() => {
   border-radius: 999px;
   transform-origin: right center;
   transition:
-    width 0.52s linear,
+    width var(--menu-shell-expand-duration) linear,
     transform 0.3s ease-out,
     box-shadow 0.28s ease;
 }
@@ -467,7 +512,7 @@ onBeforeUnmount(() => {
   padding: 6px;
   transition:
     opacity 0.2s ease,
-    transform 0.52s linear;
+    transform var(--menu-shell-expand-duration) linear;
 }
 
 .menu-shell.has-compact-toggle .menu-list {
@@ -550,6 +595,16 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 
+.liquid-menu:not(.is-content-visible) .menu-list {
+  opacity: 0;
+  pointer-events: none;
+  transform: none;
+}
+
+.liquid-menu:not(.is-content-visible) .active-bubble {
+  opacity: 0;
+}
+
 .liquid-menu.is-compact .menu-list {
   transform: translateX(14px);
 }
@@ -597,6 +652,12 @@ onBeforeUnmount(() => {
 
   .liquid-menu.is-compact .menu-list,
   .liquid-menu.is-compact .active-bubble {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .liquid-menu:not(.is-content-visible) .menu-list {
     opacity: 1;
     pointer-events: auto;
     transform: none;

@@ -81,7 +81,7 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 
             <div class="experience-card__cert-copy">
               <h3 class="experience-card__meta-title">{{ item.title }}</h3>
-              <p class="timeline-role">{{ item.subtitle }}</p>
+              <p class="timeline-role experience-card__cert-subtitle">{{ item.subtitle }}</p>
             </div>
 
             <span class="timeline-date">{{ item.date }}</span>
@@ -93,10 +93,6 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
             <h3 class="experience-card__meta-title">{{ item.title }}</h3>
             <p class="timeline-role">{{ item.role }}</p>
             <p class="experience-card__description">{{ item.description }}</p>
-
-            <div class="skill-tags experience-card__tags">
-              <span v-for="tag in item.tags" :key="tag" class="tag">{{ tag }}</span>
-            </div>
           </section>
         </div>
       </div>
@@ -112,6 +108,17 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.experience-card:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.052) 0%, rgba(255, 255, 255, 0.016) 38%, rgba(255, 255, 255, 0.012) 100%),
+    #0f1115;
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02),
+    0 24px 48px rgba(0, 0, 0, 0.56);
 }
 
 .experience-card__number {
@@ -151,11 +158,8 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 .experience-card__body {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  padding-right: 0.15rem;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
-  overscroll-behavior: contain;
+  overflow-y: visible;
+  padding-right: 0;
 }
 
 .experience-card__body::-webkit-scrollbar {
@@ -265,8 +269,8 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   min-width: 0;
 }
 
-.experience-card__tags {
-  gap: 0.5rem;
+.experience-card__cert-subtitle {
+  font-family: system-ui, sans-serif;
 }
 
 @media (max-width: 1120px) {
@@ -283,6 +287,14 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   .experience-card__description,
   .experience-card__bullet-list :deep(li) {
     font-size: 0.9rem;
+  }
+
+  .experience-card__body {
+    overflow-y: auto;
+    padding-right: 0.15rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+    overscroll-behavior: contain;
   }
 }
 </style>

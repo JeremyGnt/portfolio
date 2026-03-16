@@ -3,6 +3,8 @@
 - [completed] Analyser le flash initial affiché avant la loading page au refresh.
 - [completed] Aligner le `boot-loader` HTML sur la même police et le même positionnement que `LoadingScreen.vue`.
 - [completed] Vérifier le correctif avec un build.
+- [completed] Corriger le léger clipping du `s` final de `Certifications` sur la page `/experience`.
+- [completed] Vérifier le correctif avec un build.
 - [completed] Faire passer l'overshoot visuel de la bulle au-dessus de la capsule liquid sans casser le clipping du menu.
 - [completed] Déplacer le rôle de clipping vers un viewport interne pour libérer la bulle.
 - [completed] Vérifier le correctif avec un build.
@@ -36,6 +38,32 @@
 - [completed] Refaire l'animation du menu compact de `/experience` pour qu'il se rétracte depuis la gauche et finisse en cercle aligné à droite du header.
 - [completed] Choisir une icône d'ouverture/fermeture plus cohérente avec une extension latérale du menu.
 - [completed] Vérifier le rendu et le build après ajustement du header et du menu.
+- [completed] Analyser pourquoi le texte du menu compact de `/experience` apparaît avant la fin du déploiement de la capsule liquid.
+- [completed] Retarder l'affichage du contenu du menu jusqu'à la fin de l'expansion de la capsule, sans ralentir la fermeture.
+- [completed] Vérifier le correctif avec un build.
+- [completed] Supprimer l'over-extend visuel de la capsule liquid pendant le dépli du menu compact.
+- [completed] Afficher le texte directement à sa position finale lors de son reveal.
+- [completed] Vérifier le nouvel ajustement avec un build.
+- [completed] Analyser pourquoi la molette sur une card de `/experience` bloque la montée de la card suivante.
+- [completed] Rediriger la molette des cards vers le scroll principal de la scène `/experience`.
+- [completed] Vérifier le correctif avec un build.
+- [completed] Étendre la capture de la molette à toute la surface des cards de `/experience`.
+- [completed] Vérifier l'ajustement global du scroll des cards avec un build.
+- [completed] Réduire la lenteur du scroll redirigé sur les cards de `/experience`.
+- [completed] Normaliser et amplifier le delta de molette pour retrouver une vitesse de défilement cohérente.
+- [completed] Vérifier ce recalibrage avec un build.
+- [completed] Retirer la redirection JS de molette sur desktop pour retrouver le comportement natif du trackpad au-dessus des cards.
+- [completed] Réserver le scroll interne des cards aux petits écrans où il reste utile.
+- [completed] Vérifier ce retour au scroll natif avec un build.
+- [completed] Ralentir légèrement l'arrivée des cards de `/experience` en demandant un peu plus de scroll.
+- [completed] Vérifier cet ajustement de rythme avec un build.
+- [completed] Déclencher la rotation complète du logo 3D du header un peu avant que les 3 cards de `/experience` soient presque entièrement affichées.
+- [completed] Relier le seuil de progression de la scène `/experience` à l'animation du logo sans déclenchements répétés parasites.
+- [completed] Vérifier l'ajustement avec un build.
+- [completed] Reprendre sur `/experience` la police de `Algorithmique Avancée, IA & Machine Learning` pour les sous-titres de la card `Certifications`.
+- [completed] Vérifier avec un build ce changement ciblé de typographie.
+- [completed] Supprimer l'effet de survol des cards 1, 2 et 3 sur la page `/experience`.
+- [completed] Vérifier le diff ciblé pour confirmer qu'aucune autre card n'est impactée.
 
 # Review
 
@@ -50,6 +78,13 @@
 - Le menu du header se compacte maintenant en bouton rond pendant le scroll de `/experience` et peut se déployer proprement au clic.
 - Le menu du header sur `/experience` se replie maintenant depuis la gauche dans une seule capsule ancrée à droite, jusqu'à former un vrai cercle ouvrable, avec des icônes `PanelRightOpen` et `PanelRightClose`.
 - Le build `npm run build` passe après la refonte.
+- Le texte du menu compact sur `/experience` reste désormais masqué pendant l'expansion de la capsule liquid et n'est révélé qu'une fois l'ouverture terminée, avec une fermeture toujours immédiate.
+- Pendant ce reveal, la bulle active reste maintenant masquée pour éviter tout dépassement visuel hors de la capsule, et le texte n'effectue plus de translation avant apparition.
+- La molette au-dessus d'une card de `/experience` pilote maintenant le scroll principal de la scène au lieu de bloquer dans la zone interne de la card.
+- La redirection de molette couvre désormais toute la card, y compris son header et ses marges internes, plus seulement le body scrollable.
+- Le delta de molette redirigé est maintenant normalisé selon le `deltaMode` et amplifié pour éviter une montée trop lente des cards dans la scène pinned.
+- Sur desktop, les cards de `/experience` ne capturent plus le scroll du trackpad : le comportement redevient natif comme sur le background, et le scroll interne n'est conservé qu'en mobile.
+- La timeline scrollée de `/experience` demande maintenant un peu plus de distance avant l'arrivée complète des cards, pour un rythme légèrement moins rapide.
 - L'arrivée sur `/experience` force maintenant un scroll top instantané, sans hériter du `scroll-behavior: smooth` global.
 - Le retour sur `/` recale les lettres du logo depuis leur position de départ et nettoie les transforms GSAP résiduelles sur le logo du header.
 - Le build `npm run build` passe après ce correctif de navigation.
@@ -59,6 +94,15 @@
 - Le build `npm run build` passe après ce correctif ciblé sur la transition `/experience` -> `/`.
 - La bulle du menu conserve maintenant sa durée de déplacement calculée pendant le clic, et les recalages de layout liés à la navigation ou au resize sont différés puis appliqués sans transition pour éviter une accélération perçue entre `/` et `/experience`.
 - Le build `npm run build` passe après ce correctif de synchronisation du header.
+- Le mot mis en avant `Certifications` sur `/experience` reçoit maintenant un léger padding inline-end pour éviter que le `s` final soit rogné pendant le hero centré.
+- Le build `npm run build` passe après ce correctif ciblé de clipping sur `/experience`.
+- La scène `/experience` émet maintenant un signal dédié quand les trois cards approchent de leur état quasi final, avec hystérésis pour éviter les déclenchements parasites au voisinage du seuil.
+- Les lettres 3D du header consomment ce signal sur `/experience` pour effectuer une rotation complète anticipée, puis se recalent proprement sur la rotation pilotée par le scroll une fois le tour terminé.
+- Le build `npm run build` passe après cet ajustement de synchronisation entre cards et logo.
+- Les sous-titres `Liora (ex DataScientest)`, `Domaine de spécialité` et `MOOC validé` de la card `Certifications` sur `/experience` utilisent maintenant la même police `system-ui, sans-serif` que `Algorithmique Avancée, IA & Machine Learning` sur la home.
+- Le build `npm run build` passe après ce changement ciblé de typographie.
+- Les trois cards de `/experience` ignorent maintenant le `hover` global de `.glass` et conservent leur état visuel de base au survol.
+- Le contrôle a été limité au composant `ExperienceSceneCard` pour ne pas modifier les autres cards du site.
 - Le dégonflement de la bulle du menu est maintenant plus progressif sur les trajets courts grâce à une durée de `scale` dédiée et un relâchement plus tardif de l'état `growing`, sans changer la durée de translation horizontale.
 - Le build `npm run build` passe après cet ajustement du timing de la bulle.
 - La translation de la bulle pour un déplacement d'un seul index utilise maintenant un timing dédié plus lent, partagé entre le clic et le watcher de route pour garder un comportement symétrique entre `0 -> 1` et `1 -> 0`.

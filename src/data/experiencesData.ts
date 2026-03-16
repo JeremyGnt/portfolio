@@ -112,7 +112,7 @@ export const experiencesPageData: ExperiencesPageData = {
           id: 'project-management',
           icon: 'clipboard-list',
           title: 'Gestion de projet',
-          subtitle: 'MOOC validé',
+          subtitle: 'MOOC',
           date: '2026',
           tone: 'orange',
         },

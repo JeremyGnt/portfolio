@@ -5,6 +5,9 @@ import { scrollWindowToTopInstantly } from '../utils/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
+const logoSpinTriggerThreshold = 0.82
+const logoSpinResetThreshold = 0.68
+
 export function useExperienceSceneAnimation() {
   const scrollTrackRef = ref<HTMLElement | null>(null)
   const mainTitleRef = ref<HTMLElement | null>(null)
@@ -14,6 +17,11 @@ export function useExperienceSceneAnimation() {
   let context: gsap.Context | null = null
   let resizeTimeout: ReturnType<typeof setTimeout> | null = null
   let isHeaderCompacted = false
+  let isLogoSpinReady = false
+
+  const dispatchLogoSpinCue = (ready: boolean) => {
+    window.dispatchEvent(new CustomEvent('experience-logo-spin-cue', { detail: { ready } }))
+  }
 
   const setCardRef = (element: Element | null, index: number) => {
     if (!element) {
@@ -37,7 +45,9 @@ export function useExperienceSceneAnimation() {
     }
 
     isHeaderCompacted = false
+    isLogoSpinReady = false
     window.dispatchEvent(new CustomEvent('experience-menu-compact-change', { detail: { compact: false } }))
+    dispatchLogoSpinCue(false)
   }
 
   const buildScene = () => {
@@ -65,7 +75,7 @@ export function useExperienceSceneAnimation() {
         scrollTrigger: {
           trigger: track,
           start: 'top top',
-          end: `+=${Math.max(cards.length * 80, 220)}%`,
+          end: `+=${Math.max(cards.length * 90, 250)}%`,
           scrub: 0.9,
           pin: true,
           anticipatePin: 1,
@@ -92,6 +102,14 @@ export function useExperienceSceneAnimation() {
                   }),
                 )
               }
+            }
+
+            if (!isLogoSpinReady && progress >= logoSpinTriggerThreshold) {
+              isLogoSpinReady = true
+              dispatchLogoSpinCue(true)
+            } else if (isLogoSpinReady && progress <= logoSpinResetThreshold) {
+              isLogoSpinReady = false
+              dispatchLogoSpinCue(false)
             }
           },
         },

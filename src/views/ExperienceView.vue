@@ -130,6 +130,8 @@ onUnmounted(() => {
 }
 
 .scene-hero h1 span {
+  display: inline-block;
+  padding-inline-end: 0.06em;
   color: transparent;
   background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.36) 100%);
   -webkit-background-clip: text;
