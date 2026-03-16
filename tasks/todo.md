@@ -1,5 +1,12 @@
 # Todo
 
+## Projects Hover Reveal Redesign
+
+- [completed] Installer Tailwind sans preflight et l'intégrer proprement à l'app pour pouvoir composer la nouvelle vue avec des utilities sans casser le style existant.
+- [completed] Extraire les données projets dans `src/data/projectsData.ts` avec les champs nécessaires à la liste et à la floating card.
+- [completed] Refaire `src/views/ProjectsView.vue` en hover reveal list avec tracking GSAP `quickTo`, état `activeProject` réactif et preview mobile cohérente.
+- [completed] Vérifier la refonte avec un build et une revue ciblée du responsive desktop/mobile.
+
 - [completed] Analyser le flash initial affiché avant la loading page au refresh.
 - [completed] Aligner le `boot-loader` HTML sur la même police et le même positionnement que `LoadingScreen.vue`.
 - [completed] Vérifier le correctif avec un build.
@@ -82,6 +89,13 @@
 - [completed] Vérifier le diff ciblé pour confirmer qu'aucune autre card n'est impactée.
 
 # Review
+
+- La page `/projects` a ete refondue en hover reveal list minimaliste, avec une liste editoriale plein format a la place de la grille de cards.
+- Les donnees projets sont maintenant centralisees dans `src/data/projectsData.ts` et alimentees reactively dans une preview card dediee.
+- La floating card suit le curseur via GSAP `quickTo`, s'ouvre et se referme en `autoAlpha`/`scale`, et reste bornee dans le viewport.
+- Un fallback mobile affiche la meme preview card inline sous la liste pour conserver une experience propre sans dependance au hover.
+- Tailwind a ete ajoute sans preflight pour utiliser des utilities sur cette refonte sans perturber le CSS existant du site.
+- Le build `npm run build` passe apres la refonte.
 
 - La page `/experience` est maintenant découpée en un composable d'animation, une vue légère et un composant dédié pour les cards.
 - Le reveal séquencé au scroll est conservé via GSAP/ScrollTrigger avec pinning et apparition progressive des cards.
