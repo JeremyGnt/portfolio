@@ -40,7 +40,7 @@ html {
   -ms-overflow-style: none;
   scrollbar-width: none;
   overflow-x: hidden;
-  background-color: #010204;
+  background-color: #000;
 }
 
 ::-webkit-scrollbar {
@@ -71,10 +71,7 @@ body {
   font-size: 15px;
   text-rendering: optimizeLegibility;
   background:
-     radial-gradient(circle at 14% 14%, rgba(6, 18, 46, 0.08), transparent 20%),
-     radial-gradient(circle at 84% 10%, rgba(8, 30, 68, 0.07), transparent 18%),
-     radial-gradient(circle at 50% 76%, rgba(3, 8, 22, 0.1), transparent 20%),
-    linear-gradient(180deg, #000000 0%, #01030a 46%, #02050d 100%);
+    linear-gradient(180deg, #000 0%, #111 100%);
   color: var(--text);
   line-height: 1.6;
   min-height: 100dvh;
@@ -97,7 +94,7 @@ body::before {
   left: -10vw;
   width: 32vw;
   height: 32vw;
-  background: rgba(4, 14, 40, 0.07);
+  background: rgba(0,0,0,0.12);
 }
 
 body::after {
@@ -105,7 +102,7 @@ body::after {
   bottom: 14vh;
   width: 28vw;
   height: 28vw;
-  background: rgba(5, 20, 52, 0.07);
+  background: rgba(0,0,0,0.12);
 }
 
 /* Apple Mesh Gradient and Noise Effect */
@@ -115,10 +112,10 @@ body::after {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: -2;
+  z-index: 0;
   background:
-    linear-gradient(135deg, rgba(4, 14, 38, 0.06), transparent 24%),
-    linear-gradient(315deg, rgba(8, 28, 72, 0.04), transparent 30%);
+    linear-gradient(135deg, rgba(0,0,0,0.12), transparent 24%),
+    linear-gradient(315deg, rgba(0,0,0,0.12), transparent 30%);
   overflow: hidden;
 }
 
@@ -132,9 +129,9 @@ body::after {
 
 .mesh-bg::before {
   background:
-    radial-gradient(circle at 20% 20%, rgba(4, 18, 56, 0.07), transparent 18%),
-    radial-gradient(circle at 78% 14%, rgba(8, 34, 84, 0.06), transparent 16%),
-    radial-gradient(circle at 58% 68%, rgba(2, 8, 24, 0.1), transparent 20%);
+    radial-gradient(circle at 20% 20%, rgba(0,0,0,0.12), transparent 18%),
+    radial-gradient(circle at 78% 14%, rgba(0,0,0,0.12), transparent 16%),
+    radial-gradient(circle at 58% 68%, rgba(0,0,0,0.18), transparent 20%);
 }
 
 .mesh-bg::after {
@@ -163,7 +160,7 @@ body::after {
   width: 80vw;
   height: 80vh;
   /* Dark Slate: rgba(30, 41, 59, 0.25) */
-  background: radial-gradient(circle, rgba(30, 41, 59, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0,0,0,0.25) 0%, transparent 70%);
   top: -20vh;
   left: -20vw;
   animation-name: mesh-float-1;
@@ -173,7 +170,7 @@ body::after {
   width: 90vw;
   height: 90vh;
   /* Indigo: rgba(49, 46, 129, 0.25) */
-  background: radial-gradient(circle, rgba(49, 46, 129, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0,0,0,0.25) 0%, transparent 70%);
   bottom: -30vh;
   right: -20vw;
   animation-name: mesh-float-2;
@@ -184,7 +181,7 @@ body::after {
   width: 70vw;
   height: 70vh;
   /* Slate/Greyish-blue: rgba(71, 85, 105, 0.25) */
-  background: radial-gradient(circle, rgba(71, 85, 105, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0,0,0,0.25) 0%, transparent 70%);
   top: 40vh;
   left: 15vw;
   animation-name: mesh-float-3;
@@ -247,7 +244,7 @@ body::after {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: -1;
+  z-index: 1;
   opacity: 0.03;
   mix-blend-mode: overlay;
   pointer-events: none;

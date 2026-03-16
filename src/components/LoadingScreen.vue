@@ -83,7 +83,8 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #010204;
+  background-color: transparent;
+  backdrop-filter: blur(2px);
   overflow: hidden;
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }

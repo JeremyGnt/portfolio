@@ -1,4 +1,5 @@
 export type ExperienceSectionIcon = 'briefcase' | 'award' | 'heart-handshake'
+export type CertificationIcon = 'database' | 'atom' | 'clipboard-list'
 
 export type ExperienceTheme = {
   titleClass: string
@@ -12,27 +13,33 @@ export type ExperienceCard = {
   id: string
   type: ExperienceCardType
   icon: ExperienceSectionIcon
+  number: string
   sectionTitle: string
   theme: ExperienceTheme
   experience?: {
     role: string
-    subtitle: string
+    company: string
     badge: string
+    date: string
+    duration: string
     points: string[]
   }
   certifications?: {
     items: Array<{
       id: string
-      icon: string
+      icon: CertificationIcon
       title: string
       subtitle: string
+      date: string
+      iconClass: string
+      boxClass: string
     }>
   }
   volunteering?: {
     items: Array<{
       id: string
       title: string
-      subtitle: string
+      role: string
       description: string
       tags: string[]
     }>
@@ -50,31 +57,34 @@ export type ExperiencesPageData = {
 
 export const experiencesPageData: ExperiencesPageData = {
   hero: {
-    kicker: 'Parcours',
-    title: 'Expériences',
-    highlight: '& Certifications',
+    kicker: 'Mon Parcours',
+    title: 'Expériences &',
+    highlight: 'Certifications',
   },
   cards: [
     {
       id: 'experience',
       type: 'experience',
       icon: 'briefcase',
-      sectionTitle: 'Expérience professionnelle',
+      number: '01.',
+      sectionTitle: 'EXPÉRIENCE',
       theme: {
         titleClass: 'theme-experience-title',
         iconClass: 'theme-experience-icon',
         cardClass: 'theme-experience-card',
       },
       experience: {
-        role: 'Stage Ingénieur — Carrefour',
-        subtitle: 'Stage 5 semaines · 2026',
+        role: 'Stage Ingénieur',
+        company: 'Carrefour',
         badge: 'Stage',
+        date: '2026',
+        duration: '5 semaines',
         points: [
           'Analyse de données commerciales',
           'Mise en place de logiques d\'optimisation',
           'Gestion opérationnelle',
-          'Utilisation d\'outils numériques pour l\'analyse',
-          'Aide à la prise de décision basée sur les données',
+          'Outils numériques pour l\'analyse',
+          'Aide à la décision basée sur la data',
         ],
       },
     },
@@ -82,31 +92,41 @@ export const experiencesPageData: ExperiencesPageData = {
       id: 'certifications',
       type: 'certifications',
       icon: 'award',
-      sectionTitle: 'Certifications',
+      number: '02.',
+      sectionTitle: 'CERTIFICATIONS',
       theme: {
         titleClass: 'theme-certifications-title',
-        iconClass: 'theme-certifications-icon',
+        iconClass: 'theme-certifications-icon text-white',
         cardClass: 'theme-certifications-card',
       },
       certifications: {
         items: [
           {
             id: 'sql',
-            icon: '🗄️',
+            icon: 'database',
             title: 'Certification SQL',
-            subtitle: 'Liora (ex DataScientest) · 2024',
+            subtitle: 'Liora (ex DataScientest)',
+            date: '2024',
+            iconClass: 'cert-icon-purple',
+            boxClass: 'cert-box-purple',
           },
           {
             id: 'nano',
-            icon: '⚛️',
-            title: 'Certification Nanosciences',
-            subtitle: '2026',
+            icon: 'atom',
+            title: 'Nanosciences',
+            subtitle: 'Domaine de spécialité',
+            date: '2026',
+            iconClass: 'cert-icon-blue',
+            boxClass: 'cert-box-blue',
           },
           {
-            id: 'mooc',
-            icon: '📋',
-            title: 'MOOC Gestion de Projet',
-            subtitle: '2026',
+            id: 'project-management',
+            icon: 'clipboard-list',
+            title: 'Gestion de projet',
+            subtitle: 'MOOC validé',
+            date: '2026',
+            iconClass: 'cert-icon-orange',
+            boxClass: 'cert-box-orange',
           },
         ],
       },
@@ -115,7 +135,8 @@ export const experiencesPageData: ExperiencesPageData = {
       id: 'volunteering',
       type: 'volunteering',
       icon: 'heart-handshake',
-      sectionTitle: 'Volontariat',
+      number: '03.',
+      sectionTitle: 'VOLONTARIAT',
       theme: {
         titleClass: 'theme-volunteering-title',
         iconClass: 'theme-volunteering-icon',
@@ -126,18 +147,18 @@ export const experiencesPageData: ExperiencesPageData = {
           {
             id: 'recup-gamelles',
             title: 'Récup & Gamelles',
-            subtitle: 'Bénévole étudiant',
+            role: 'Bénévole étudiant',
             description:
-              'Association de redistribution alimentaire. Animations et sensibilisations sur le gaspillage alimentaire, collecte d\'invendus, préparation de repas à coût réduit.',
-            tags: ['Travail d\'équipe', 'Engagement social', 'Organisation', 'Responsabilité'],
+              'Association de redistribution alimentaire. Animations et sensibilisations sur le gaspillage.',
+            tags: ['Équipe', 'Social', 'Orga'],
           },
           {
-            id: 'scouts',
-            title: 'Scouts et Guides de France',
-            subtitle: 'Engagement 6 ans',
+            id: 'scouts-guides',
+            title: 'Scouts & Guides',
+            role: 'Engagement 6 ans',
             description:
-              'Six années d\'engagement au sein des Scouts et Guides de France, développant leadership, gestion de groupe et sens de l\'initiative.',
-            tags: ['Leadership', 'Gestion de groupe', 'Autonomie', 'Initiative'],
+              'Six années d\'engagement développant le leadership, la gestion de groupe et l\'initiative.',
+            tags: ['Leadership', 'Autonomie', 'Initiative'],
           },
         ],
       },

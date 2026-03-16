@@ -127,10 +127,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <LoadingScreen v-if="!isAppReady" @complete="handleLoaderComplete" />
-
-  <Transition name="page-fade" appear>
-    <div v-if="isAppReady" class="app-ready-shell">
+  <div class="app-background" aria-hidden="true">
     <div class="mesh-bg"></div>
 
     <svg class="noise-overlay" viewBox="0 0 100% 100%" xmlns="http://www.w3.org/2000/svg">
@@ -139,7 +136,12 @@ onUnmounted(() => {
       </filter>
       <rect width="100%" height="100%" filter="url(#noiseFilter)" />
     </svg>
+  </div>
 
+  <LoadingScreen v-if="!isAppReady" @complete="handleLoaderComplete" />
+
+  <Transition name="page-fade" appear>
+    <div v-if="isAppReady" class="app-ready-shell">
     <header class="app-header">
       <div class="header-logo">
         <button
@@ -185,6 +187,13 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.app-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .page-fade-enter-active {
   transition: opacity 0.9s ease;
 }
@@ -195,6 +204,11 @@ onUnmounted(() => {
 
 .page-fade-enter-to {
   opacity: 1;
+}
+
+.app-ready-shell {
+  position: relative;
+  z-index: 2;
 }
 
 .app-header {
