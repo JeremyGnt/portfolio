@@ -144,6 +144,34 @@ body::after {
   -webkit-mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
 }
 
+body.route-experience {
+  background: #030404;
+}
+
+body.route-experience::before,
+body.route-experience::after {
+  display: none;
+}
+
+body.route-experience .mesh-bg {
+  background: #030404;
+}
+
+body.route-experience .mesh-bg::before {
+  display: none;
+}
+
+body.route-experience .mesh-bg::after {
+  opacity: 0.32;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+body.route-experience .footer {
+  background: transparent;
+  border-top-color: transparent;
+}
+
 .mesh-orb {
   position: absolute;
   border-radius: 50%;
@@ -1121,7 +1149,6 @@ h1 {
   padding: 2rem;
   font-size: 0.85rem;
   color: var(--text-muted);
-  border-top: 1px solid var(--glass-border);
 }
 
 /* ============================================================

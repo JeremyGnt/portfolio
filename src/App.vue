@@ -6,6 +6,7 @@ import LiquidMenu from './components/LiquidMenu.vue'
 import AppFooter from './components/AppFooter.vue'
 import Logo3D from './components/Logo3D.vue'
 import LoadingScreen from './components/LoadingScreen.vue'
+import { scrollWindowToTopInstantly, waitForNextAnimationFrame } from './utils/scroll'
 
 const showScrollTop = ref(false)
 const isScrollTopClicked = ref(false)
@@ -16,6 +17,7 @@ const route = useRoute()
 const router = useRouter()
 let scrollTopClickTimeout: number | null = null
 let miniScrollbarTimeout: number | null = null
+let homeScrollResetToken = 0
 
 function goToHomeFromHeaderLogo() {
   if (route.path !== '/') {
@@ -97,8 +99,25 @@ onMounted(() => {
 
 watch(
   () => route.path,
-  (path) => {
+  async (path) => {
     setHeaderLogoVisibility(path)
+
+    if (path !== '/') {
+      return
+    }
+
+    const currentToken = ++homeScrollResetToken
+
+    await nextTick()
+    await waitForNextAnimationFrame()
+    await waitForNextAnimationFrame()
+
+    if (currentToken !== homeScrollResetToken || route.path !== '/') {
+      return
+    }
+
+    scrollWindowToTopInstantly()
+    updateScrollTopVisibility()
   },
 )
 
@@ -212,6 +231,8 @@ onUnmounted(() => {
 }
 
 .app-header {
+  --header-pill-height: 58px;
+  --header-logo-content-height: clamp(42px, 4.2vw, 52px);
   position: fixed;
   top: 1.5rem;
   left: 0;
@@ -223,6 +244,9 @@ onUnmounted(() => {
   padding: 0 2rem;
   z-index: 9999;
   pointer-events: none;
+  transition:
+    gap 0.3s ease,
+    padding 0.3s ease;
 }
 
 .header-logo,
@@ -233,7 +257,7 @@ onUnmounted(() => {
 .header-logo {
   flex: 0 0 auto;
   width: clamp(108px, 11vw, 148px);
-  height: clamp(42px, 4.2vw, 52px);
+  height: var(--header-pill-height);
   margin-right: 3rem;
 }
 
@@ -270,7 +294,7 @@ onUnmounted(() => {
 
 .logo-wrapper {
   flex: 1;
-  height: 100%;
+  height: min(100%, var(--header-logo-content-height));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -446,6 +470,7 @@ onUnmounted(() => {
 
 @media (max-width: 900px) {
   .app-header {
+    --header-pill-height: 46px;
     top: 1rem;
     flex-direction: column;
     align-items: stretch;

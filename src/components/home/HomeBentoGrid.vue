@@ -37,12 +37,15 @@ defineProps<{
 .bento-stack-stretch {
   height: 100%;
 }
-/* Effet de grossissement subtil et fluide sur les cards bento */
+
 .bento-hover-card {
-  transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
+  will-change: transform;
+  transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .bento-hover-card:hover {
-  transform: scale(1.035);
+  transform: translateY(-8px) scale(1.012);
 }
 
 :deep(.bento-hover-card.glass:hover) {

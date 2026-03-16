@@ -6,11 +6,17 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 
 const baseRotationX = 0
 const baseRotationY = 0
-const rotationLerpFactor = 0.08
+const routeRotationDamping = 7
 const fullRotation = Math.PI * 2
 const topNavigationThreshold = 24
 const routeOrder = ['/', '/experience', '/projects', '/contact']
-const heroScaleFactor = 6
+const heroScaleFactor = 4
+const maxPixelRatio = 1.5
+const rotationSettleThreshold = 0.001
+const momentumSettleThreshold = 0.01
+const scrollStopDelayMs = 70
+const scrollMomentumDuration = 0.42
+const maxMomentumAngle = Math.PI * 0.4
 
 export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: string) {
   const route = useRoute()
@@ -25,6 +31,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
   let glassMat: THREE.MeshBasicMaterial | null = null
   let rendererElement: HTMLCanvasElement | null = null
   let hasDispatchedReady = false
+  let scrollStopTimer: number | null = null
 
   onMounted(() => {
     if (!container.value) return
@@ -55,7 +62,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     localRenderer.domElement.style.height = '100%'
     localRenderer.domElement.style.backgroundColor = 'transparent'
     localRenderer.domElement.style.display = 'block'
-    localRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    localRenderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio))
     localRenderer.toneMapping = THREE.NoToneMapping
     localRenderer.toneMappingExposure = 1
     rendererElement = localRenderer.domElement
@@ -74,6 +81,14 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     let lastKnownScrollTop = 0
     let previousRoutePath = route.path
     let currentRotationTargetY = baseRotationY
+    let scrollRotationTargetY = baseRotationY
+    let needsRender = true
+    let lastFrameTime = 0
+    let lastScrollSampleTime = performance.now()
+    let lastScrollSampleTop = 0
+    let currentScrollVelocity = 0
+    let shouldReturnFromMomentum = false
+    let rotationSyncMode: 'scroll' | 'scrollMomentum' | 'animated' = route.path === '/' ? 'scroll' : 'animated'
 
     const getRouteIndex = (path: string) => {
       const index = routeOrder.indexOf(path)
@@ -89,7 +104,47 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0)
       const progress = maxScroll === 0 ? 1 : Math.min(Math.max(lastKnownScrollTop / maxScroll, 0), 1)
       const desiredAngle = baseRotationY + progress * fullRotation
-      currentRotationTargetY = getContinuousAngle(desiredAngle, currentRotationTargetY)
+      const rotationReference = textMesh ? logoGroup.rotation.y : currentRotationTargetY
+      scrollRotationTargetY = getContinuousAngle(desiredAngle, rotationReference)
+    }
+
+    const startScrollMomentum = () => {
+      if (route.path !== '/' || !textMesh) return
+
+      const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0)
+      if (maxScroll <= 0 || Math.abs(currentScrollVelocity) < 10) {
+        rotationSyncMode = 'scroll'
+        currentRotationTargetY = scrollRotationTargetY
+        requestRender()
+        return
+      }
+
+      const anglePerPixel = fullRotation / maxScroll
+      const extraAngle = THREE.MathUtils.clamp(
+        currentScrollVelocity * scrollMomentumDuration * anglePerPixel,
+        -maxMomentumAngle,
+        maxMomentumAngle,
+      )
+
+      if (Math.abs(extraAngle) < rotationSettleThreshold) {
+        rotationSyncMode = 'scroll'
+        currentRotationTargetY = scrollRotationTargetY
+        requestRender()
+        return
+      }
+
+      rotationSyncMode = 'scrollMomentum'
+      shouldReturnFromMomentum = true
+      currentRotationTargetY = getContinuousAngle(scrollRotationTargetY + extraAngle, logoGroup.rotation.y)
+      requestRender()
+    }
+
+    const requestRender = () => {
+      needsRender = true
+      if (reqId !== null) return
+
+      lastFrameTime = performance.now()
+      reqId = requestAnimationFrame(animate)
     }
 
     const dispatchReady = () => {
@@ -124,12 +179,29 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
 
       // Force one deterministic frame with loaded geometry before revealing wrappers.
       localRenderer.render(localScene, camera)
+      needsRender = false
       dispatchReady()
     })
 
     const updateScrollRotation = () => {
+      const now = performance.now()
+      const nextScrollTop = window.scrollY || document.documentElement.scrollTop
+      const deltaTime = Math.max((now - lastScrollSampleTime) / 1000, 0.001)
+      const deltaScroll = nextScrollTop - lastScrollSampleTop
+
+      currentScrollVelocity = deltaScroll / deltaTime
+      lastScrollSampleTime = now
+      lastScrollSampleTop = nextScrollTop
       lastKnownScrollTop = window.scrollY || document.documentElement.scrollTop
       setRotationTargetFromScroll()
+      rotationSyncMode = 'scroll'
+      shouldReturnFromMomentum = false
+      currentRotationTargetY = scrollRotationTargetY
+
+      if (textMesh) {
+        logoGroup.rotation.x = baseRotationX
+        logoGroup.rotation.y = currentRotationTargetY
+      }
     }
 
     handleResize = () => {
@@ -141,12 +213,21 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       localRenderer.setSize(newW * heroScaleFactor, newH * heroScaleFactor, false)
       localRenderer.domElement.style.width = '100%'
       localRenderer.domElement.style.height = '100%'
-      localRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      localRenderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio))
       updateScrollRotation()
+      requestRender()
     }
 
     handleScroll = () => {
       updateScrollRotation()
+      if (scrollStopTimer !== null) {
+        globalThis.clearTimeout(scrollStopTimer)
+      }
+      scrollStopTimer = globalThis.setTimeout(() => {
+        scrollStopTimer = null
+        startScrollMomentum()
+      }, scrollStopDelayMs)
+      requestRender()
     }
 
     window.addEventListener('resize', handleResize)
@@ -165,14 +246,18 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
         await nextTick()
 
         if (toPath === '/') {
+          rotationSyncMode = 'scroll'
           currentRotationTargetY = baseRotationY
+          scrollRotationTargetY = baseRotationY
           logoGroup.rotation.x = baseRotationX
           logoGroup.rotation.y = baseRotationY
+          requestRender()
           previousRoutePath = toPath
           return
         }
 
         if (wasNearTop && fromIndex !== toIndex) {
+          rotationSyncMode = 'animated'
           const direction = toIndex > fromIndex ? 1 : -1
           const desiredTopAngle = getContinuousAngle(baseRotationY, currentRotationTargetY)
           currentRotationTargetY = desiredTopAngle + direction * fullRotation
@@ -180,22 +265,77 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
           updateScrollRotation()
         }
 
+        requestRender()
         previousRoutePath = toPath
       },
     )
 
-    const animate = () => {
-      reqId = requestAnimationFrame(animate)
+    function animate(now: number) {
+      reqId = null
 
-      if (textMesh) {
-        logoGroup.rotation.x = THREE.MathUtils.lerp(logoGroup.rotation.x, baseRotationX, rotationLerpFactor)
-        logoGroup.rotation.y = THREE.MathUtils.lerp(logoGroup.rotation.y, currentRotationTargetY, rotationLerpFactor)
+      const deltaSeconds = Math.min((now - lastFrameTime) / 1000, 0.08)
+      lastFrameTime = now
+      let isAnimating = false
+
+      if (textMesh && rotationSyncMode === 'animated') {
+        const nextRotationX = THREE.MathUtils.damp(
+          logoGroup.rotation.x,
+          baseRotationX,
+          routeRotationDamping,
+          deltaSeconds,
+        )
+        const nextRotationY = THREE.MathUtils.damp(
+          logoGroup.rotation.y,
+          currentRotationTargetY,
+          routeRotationDamping,
+          deltaSeconds,
+        )
+
+        isAnimating =
+          Math.abs(nextRotationX - baseRotationX) > rotationSettleThreshold ||
+          Math.abs(currentRotationTargetY - nextRotationY) > rotationSettleThreshold
+
+        logoGroup.rotation.x = nextRotationX
+        logoGroup.rotation.y = nextRotationY
       }
 
-      localRenderer.render(localScene, camera)
+      if (textMesh && rotationSyncMode === 'scrollMomentum') {
+        const nextRotationY = THREE.MathUtils.damp(
+          logoGroup.rotation.y,
+          currentRotationTargetY,
+          routeRotationDamping,
+          deltaSeconds,
+        )
+
+        logoGroup.rotation.x = baseRotationX
+        logoGroup.rotation.y = nextRotationY
+
+        const distanceToTarget = Math.abs(currentRotationTargetY - nextRotationY)
+
+        if (shouldReturnFromMomentum && distanceToTarget <= momentumSettleThreshold) {
+          shouldReturnFromMomentum = false
+          currentRotationTargetY = scrollRotationTargetY
+          isAnimating = true
+        } else {
+          isAnimating = distanceToTarget > rotationSettleThreshold
+          if (!shouldReturnFromMomentum && !isAnimating) {
+            rotationSyncMode = 'scroll'
+            logoGroup.rotation.y = scrollRotationTargetY
+          }
+        }
+      }
+
+      if (needsRender || isAnimating) {
+        localRenderer.render(localScene, camera)
+        needsRender = false
+      }
+
+      if (needsRender || isAnimating) {
+        reqId = requestAnimationFrame(animate)
+      }
     }
 
-    animate()
+    requestRender()
   })
 
   onUnmounted(() => {
@@ -212,6 +352,11 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     if (handleScroll) {
       window.removeEventListener('scroll', handleScroll)
       handleScroll = null
+    }
+
+    if (scrollStopTimer !== null) {
+      globalThis.clearTimeout(scrollStopTimer)
+      scrollStopTimer = null
     }
 
     if (reqId !== null) {

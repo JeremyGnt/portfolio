@@ -12,7 +12,7 @@ useHomeLogoAnchoring()
 <template>
   <div class="pages-wrapper">
     <section class="page active">
-      <div class="page-inner">
+      <div class="page-inner home-page-inner">
         <HomeHero />
 
         <HomeBentoGrid :skills="HOME_SKILLS" />
@@ -20,3 +20,15 @@ useHomeLogoAnchoring()
     </section>
   </div>
 </template>
+
+<style scoped>
+.home-page-inner {
+  padding-bottom: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .home-page-inner {
+    padding-bottom: 2rem;
+  }
+}
+</style>

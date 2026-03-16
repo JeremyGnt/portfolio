@@ -1,8 +1,12 @@
 import { nextTick, onMounted, onUnmounted } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { scrollWindowToTopInstantly, waitForNextAnimationFrame } from '../utils/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const anchorScrollDistanceFactor = 3.4
+const anchorScrub = 0.95
 
 export function useHomeLogoAnchoring() {
   let resizeTimer: number | null = null
@@ -70,8 +74,9 @@ export function useHomeLogoAnchoring() {
       scrollTrigger: {
         trigger: document.body,
         start: 'top top',
-        end: () => '+=' + dJ.deltaY * 2.5,
-        scrub: 2.5,
+        end: () => '+=' + dJ.deltaY * anchorScrollDistanceFactor,
+        scrub: anchorScrub,
+        invalidateOnRefresh: true,
       },
     })
 
@@ -118,7 +123,9 @@ export function useHomeLogoAnchoring() {
   }
 
   onMounted(async () => {
+    scrollWindowToTopInstantly()
     await nextTick()
+    await waitForNextAnimationFrame()
 
     handleLogoReady = (event: Event) => {
       const logoEl = event.currentTarget as HTMLElement | null
@@ -165,7 +172,14 @@ export function useHomeLogoAnchoring() {
     handleLogoReady = null
 
     if (logoJ && logoG) {
+      gsap.killTweensOf([logoJ, logoG])
       gsap.set([logoJ, logoG], { clearProps: 'x,y,scale,transformOrigin' })
+    }
+
+    const pillContainer = document.querySelector('.header-logo-card')
+    if (pillContainer instanceof HTMLElement) {
+      gsap.killTweensOf(pillContainer)
+      gsap.set(pillContainer, { clearProps: 'scale,transformOrigin' })
     }
   })
 }

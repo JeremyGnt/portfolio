@@ -3,6 +3,9 @@
   background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%) !important;
   color: rgba(255,255,255,0.7) !important;
   border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   transition: border-color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
