@@ -62,6 +62,22 @@
 - [completed] Vérifier l'ajustement avec un build.
 - [completed] Reprendre sur `/experience` la police de `Algorithmique Avancée, IA & Machine Learning` pour les sous-titres de la card `Certifications`.
 - [completed] Vérifier avec un build ce changement ciblé de typographie.
+- [completed] Reprendre sur `/experience` la même police pour les descriptions de la card `Volontariat`.
+- [completed] Vérifier avec un build ce second changement ciblé de typographie.
+- [completed] Passer en blanc les années de la card `Certifications` sur `/experience`.
+- [completed] Vérifier avec un build ce changement ciblé de couleur.
+- [completed] Supprimer proprement le badge `Stage` de la card `Expérience` sur `/experience`.
+- [completed] Vérifier avec un build cette suppression ciblée.
+- [completed] Reprendre la police des sous-titres de `Certifications` pour la liste de points de la card `Expérience`.
+- [completed] Vérifier avec un build ce changement ciblé de typographie sur la liste.
+- [completed] Intégrer le logo Carrefour en haut à droite de la card `Expérience` sur `/experience`.
+- [completed] Vérifier avec un build cette intégration du logo.
+- [completed] Réduire le logo Carrefour et passer son cartouche sur fond foncé dans la card `Expérience`.
+- [completed] Vérifier avec un build cet ajustement visuel du logo.
+- [completed] Passer sur fond transparent le cartouche du logo Carrefour dans la card `Expérience`.
+- [completed] Vérifier avec un build cet ajustement de fond.
+- [completed] Déplacer le fichier du logo Carrefour vers un emplacement statique adapté au projet.
+- [completed] Vérifier avec un build que la référence du logo reste valide.
 - [completed] Supprimer l'effet de survol des cards 1, 2 et 3 sur la page `/experience`.
 - [completed] Vérifier le diff ciblé pour confirmer qu'aucune autre card n'est impactée.
 
@@ -101,6 +117,22 @@
 - Le build `npm run build` passe après cet ajustement de synchronisation entre cards et logo.
 - Les sous-titres `Liora (ex DataScientest)`, `Domaine de spécialité` et `MOOC validé` de la card `Certifications` sur `/experience` utilisent maintenant la même police `system-ui, sans-serif` que `Algorithmique Avancée, IA & Machine Learning` sur la home.
 - Le build `npm run build` passe après ce changement ciblé de typographie.
+- Les deux descriptions de la card `Volontariat` sur `/experience` utilisent maintenant elles aussi la même police `system-ui, sans-serif` que le texte de référence sur la home.
+- Le build `npm run build` passe après ce second ajustement typographique ciblé.
+- Les années affichées dans la card `Certifications` sur `/experience` sont maintenant forcées en blanc sans impacter les autres dates de la page.
+- Le build `npm run build` passe après ce changement ciblé de couleur.
+- Le badge `Stage` de la card `Expérience` sur `/experience` a été retiré du rendu et du modèle de données associé, sans conserver de structure inutile.
+- Le build `npm run build` passe après cette suppression ciblée.
+- Les points `Analyse de données commerciales` à `Aide à la décision basée sur la data` dans la card `Expérience` sur `/experience` utilisent maintenant la même police `system-ui, sans-serif` que `Liora (ex DataScientest)`.
+- Le build `npm run build` passe après ce changement ciblé de typographie sur la liste.
+- Le logo Carrefour est maintenant affiché en haut à droite de la card `Expérience` sur `/experience`, dans un conteneur discret dimensionné pour rester propre sur desktop et mobile.
+- Le build `npm run build` passe après cette intégration du logo.
+- Le logo Carrefour de la card `Expérience` a été réduit et son cartouche utilise maintenant un fond foncé cohérent avec la card.
+- Le build `npm run build` passe après cet ajustement visuel du logo.
+- Le cartouche du logo Carrefour dans la card `Expérience` est maintenant sur fond transparent, sans bordure ni ombre résiduelle.
+- Le build `npm run build` passe après cet ajustement de fond.
+- Le fichier du logo Carrefour n'est plus stocké à la racine du projet et est désormais rangé dans `public/brands/carrefour-logo.png`, emplacement cohérent pour un asset statique servi tel quel.
+- Le build `npm run build` passe après ce rangement du fichier logo.
 - Les trois cards de `/experience` ignorent maintenant le `hover` global de `.glass` et conservent leur état visuel de base au survol.
 - Le contrôle a été limité au composant `ExperienceSceneCard` pour ne pas modifier les autres cards du site.
 - Le dégonflement de la bulle du menu est maintenant plus progressif sur les trajets courts grâce à une durée de `scale` dédiée et un relâchement plus tardif de l'état `growing`, sans changer la durée de translation horizontale.

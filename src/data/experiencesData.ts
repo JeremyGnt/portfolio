@@ -14,7 +14,6 @@ export type ExperienceTimelineCard = ExperienceCardBase & {
   type: 'experience'
   role: string
   company: string
-  badge: string
   date: string
   duration: string
   points: string[]
@@ -74,7 +73,6 @@ export const experiencesPageData: ExperiencesPageData = {
       title: 'Expérience',
       role: 'Stage Ingénieur',
       company: 'Carrefour',
-      badge: 'Stage',
       date: '2026',
       duration: '5 semaines',
       points: [
@@ -138,7 +136,7 @@ export const experiencesPageData: ExperiencesPageData = {
           title: 'Scouts & Guides',
           role: 'Engagement 6 ans',
           description:
-            "Six années d'engagement développant le leadership, la gestion de groupe et l'initiative.",
+            "Développement du leadership, de la gestion de groupe, du sens de l'initiative et de l'autonomie.",
           tags: ['Leadership', 'Autonomie', 'Initiative'],
         },
       ],

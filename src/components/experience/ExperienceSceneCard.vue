@@ -51,11 +51,18 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
       <div class="experience-card__body">
         <section v-if="card.type === 'experience'" class="experience-card__panel experience-card__panel--stack">
           <div class="experience-card__job-header">
-            <div>
+            <div class="experience-card__job-copy">
               <h3 class="experience-card__meta-title">{{ card.role }}</h3>
               <p class="timeline-role">{{ card.company }}</p>
             </div>
-            <span class="tag experience-card__status-tag">{{ card.badge }}</span>
+
+            <div v-if="card.company === 'Carrefour'" class="experience-card__company-logo-box">
+              <img
+                src="/brands/carrefour-logo.png"
+                alt="Logo Carrefour"
+                class="experience-card__company-logo"
+              />
+            </div>
           </div>
 
           <p class="timeline-date experience-card__date-line">
@@ -84,7 +91,7 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
               <p class="timeline-role experience-card__cert-subtitle">{{ item.subtitle }}</p>
             </div>
 
-            <span class="timeline-date">{{ item.date }}</span>
+            <span class="timeline-date experience-card__cert-date">{{ item.date }}</span>
           </section>
         </div>
 
@@ -204,6 +211,11 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   justify-content: space-between;
 }
 
+.experience-card__job-copy {
+  flex: 1;
+  min-width: 0;
+}
+
 .experience-card__meta-title {
   margin: 0;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -214,9 +226,6 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   color: #ffffff;
 }
 
-.experience-card__status-tag {
-  flex-shrink: 0;
-}
 
 .experience-card__date-line {
   display: flex;
@@ -235,6 +244,7 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 }
 
 .experience-card__bullet-list :deep(li) {
+  font-family: system-ui, sans-serif;
   color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.5;
@@ -246,6 +256,7 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 
 .experience-card__description {
   margin: 0;
+  font-family: system-ui, sans-serif;
   color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.65;
@@ -264,6 +275,26 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.experience-card__company-logo-box {
+  width: clamp(3.4rem, 6vw, 4.2rem);
+  min-width: clamp(3.4rem, 6vw, 4.2rem);
+  padding: 0.32rem 0.38rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.8rem;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.experience-card__company-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
 .experience-card__cert-copy {
   flex: 1;
   min-width: 0;
@@ -271,6 +302,10 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 
 .experience-card__cert-subtitle {
   font-family: system-ui, sans-serif;
+}
+
+.experience-card__cert-date {
+  color: #ffffff;
 }
 
 @media (max-width: 1120px) {
@@ -282,6 +317,12 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 @media (max-width: 720px) {
   .experience-card__meta-title {
     font-size: 0.8rem;
+  }
+
+  .experience-card__company-logo-box {
+    width: 3.4rem;
+    min-width: 3.4rem;
+    padding: 0.28rem 0.34rem;
   }
 
   .experience-card__description,
