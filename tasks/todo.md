@@ -1,5 +1,20 @@
 # Todo
 
+- [completed] Analyser le flash initial affiché avant la loading page au refresh.
+- [completed] Aligner le `boot-loader` HTML sur la même police et le même positionnement que `LoadingScreen.vue`.
+- [completed] Vérifier le correctif avec un build.
+- [completed] Faire passer l'overshoot visuel de la bulle au-dessus de la capsule liquid sans casser le clipping du menu.
+- [completed] Déplacer le rôle de clipping vers un viewport interne pour libérer la bulle.
+- [completed] Vérifier le correctif avec un build.
+- [completed] Ralentir la translation de la bulle du menu pour les trajets d'un seul index.
+- [completed] Unifier ce nouveau timing entre le clic utilisateur et la synchronisation sur changement de route.
+- [completed] Vérifier le correctif avec un build.
+- [completed] Ralentir le dégonflement de la bulle du menu sur les trajets courts entre les index voisins.
+- [completed] Ajuster la temporisation et la durée du `scale` sans changer la durée de déplacement latéral.
+- [completed] Vérifier le correctif avec un build.
+- [completed] Analyser pourquoi la bulle du menu paraît plus rapide entre `/` et `/experience` dans un sens que dans l'autre.
+- [completed] Corriger la synchronisation de la bulle pour éviter qu'une mise à jour de layout relance l'animation en cours.
+- [completed] Vérifier le correctif avec un build et une revue ciblée du flux `/` <-> `/experience`.
 - [completed] Garantir qu'une navigation vers `/` repositionne toujours la fenêtre en haut de page.
 - [completed] Appliquer le correctif au niveau de la navigation globale sans perturber les autres routes.
 - [completed] Vérifier le comportement avec un build.
@@ -42,3 +57,12 @@
 - Le build `npm run build` passe après ce renforcement du comportement de retour sur `/`.
 - Le retour de `/experience` vers `/` décale maintenant le reset de scroll après le changement de vue et deux frames, pour éviter qu'un cleanup GSAP/ScrollTrigger ne réapplique l'ancienne position.
 - Le build `npm run build` passe après ce correctif ciblé sur la transition `/experience` -> `/`.
+- La bulle du menu conserve maintenant sa durée de déplacement calculée pendant le clic, et les recalages de layout liés à la navigation ou au resize sont différés puis appliqués sans transition pour éviter une accélération perçue entre `/` et `/experience`.
+- Le build `npm run build` passe après ce correctif de synchronisation du header.
+- Le dégonflement de la bulle du menu est maintenant plus progressif sur les trajets courts grâce à une durée de `scale` dédiée et un relâchement plus tardif de l'état `growing`, sans changer la durée de translation horizontale.
+- Le build `npm run build` passe après cet ajustement du timing de la bulle.
+- La translation de la bulle pour un déplacement d'un seul index utilise maintenant un timing dédié plus lent, partagé entre le clic et le watcher de route pour garder un comportement symétrique entre `0 -> 1` et `1 -> 0`.
+- Le build `npm run build` passe après cet ajustement de la translation du menu.
+- Le clipping du menu est maintenant porté par un viewport interne, ce qui laisse l'overshoot de la bulle dépasser visuellement au-dessus de la capsule liquid tout en conservant le fond et la liste correctement masqués.
+- Le build `npm run build` passe après ce correctif d'overshoot du menu.
+- Le placeholder `#boot-loader` dans `index.html` reprend maintenant la même structure visuelle que `LoadingScreen.vue`, avec la même police et le même centrage optique du `JG.` au refresh.

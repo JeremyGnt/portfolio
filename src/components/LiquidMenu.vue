@@ -35,9 +35,17 @@ const activeIndex = ref(getActiveIndexFromRoute())
 const isMoving = ref(false)
 const isGrowing = ref(false)
 const moveDuration = ref(0.8)
+const growDuration = ref(0.46)
 const bubbleStyle = ref({ width: '0px', height: '0px', left: '0px', top: '0px' })
+const isBubbleTransitionSuppressed = ref(true)
 const isCompactMode = ref(false)
 const expandedWidth = ref(0)
+
+const bubbleInlineStyle = computed(() => ({
+  ...bubbleStyle.value,
+  '--move-duration': isBubbleTransitionSuppressed.value ? '0s' : `${moveDuration.value}s`,
+  '--grow-duration': `${growDuration.value}s`,
+}))
 
 const menuShellStyle = computed(() => ({
   '--compact-size': `${compactSize}px`,
@@ -47,6 +55,20 @@ const menuShellStyle = computed(() => ({
 let moveTimeout: ReturnType<typeof setTimeout> | null = null
 let growTimeout: ReturnType<typeof setTimeout> | null = null
 let compactSyncTimeout: ReturnType<typeof setTimeout> | null = null
+let bubbleTransitionRestoreFrame: number | null = null
+let bubbleTransitionRestoreNestedFrame: number | null = null
+
+const getMoveDurationForDistance = (distance: number) => {
+  if (distance <= 0) {
+    return 0.2
+  }
+
+  if (distance === 1) {
+    return 0.52
+  }
+
+  return 0.2 + distance * 0.2
+}
 
 const setItemRef = (element: Element | null, index: number) => {
   if (element) {
@@ -54,12 +76,37 @@ const setItemRef = (element: Element | null, index: number) => {
   }
 }
 
-const setBubble = () => {
+const cancelBubbleTransitionRestore = () => {
+  if (bubbleTransitionRestoreFrame !== null) {
+    cancelAnimationFrame(bubbleTransitionRestoreFrame)
+    bubbleTransitionRestoreFrame = null
+  }
+
+  if (bubbleTransitionRestoreNestedFrame !== null) {
+    cancelAnimationFrame(bubbleTransitionRestoreNestedFrame)
+    bubbleTransitionRestoreNestedFrame = null
+  }
+}
+
+const restoreBubbleTransitions = () => {
+  cancelBubbleTransitionRestore()
+  isBubbleTransitionSuppressed.value = false
+}
+
+const setBubble = ({ immediate = false }: { immediate?: boolean } = {}) => {
   const activeItem = itemRefs.value[activeIndex.value]
   const parent = menuTrackRef.value
 
   if (!activeItem || !parent) {
     return
+  }
+
+  if (immediate) {
+    cancelBubbleTransitionRestore()
+    isBubbleTransitionSuppressed.value = true
+  }
+  else {
+    restoreBubbleTransitions()
   }
 
   const parentRect = parent.getBoundingClientRect()
@@ -70,6 +117,16 @@ const setBubble = () => {
     height: `${itemRect.height}px`,
     left: `${itemRect.left - parentRect.left}px`,
     top: `${itemRect.top - parentRect.top}px`,
+  }
+
+  if (immediate) {
+    bubbleTransitionRestoreFrame = requestAnimationFrame(() => {
+      bubbleTransitionRestoreFrame = null
+      bubbleTransitionRestoreNestedFrame = requestAnimationFrame(() => {
+        bubbleTransitionRestoreNestedFrame = null
+        isBubbleTransitionSuppressed.value = false
+      })
+    })
   }
 }
 
@@ -82,17 +139,30 @@ const updateLayoutMetrics = () => {
   expandedWidth.value = Math.ceil(track.scrollWidth)
 }
 
-const syncMenuLayout = () => {
+const syncMenuLayout = (immediate = false) => {
   updateLayoutMetrics()
-  setBubble()
+  setBubble({ immediate })
 }
 
 const scheduleMenuLayoutSync = () => {
+  if (isMoving.value) {
+    if (compactSyncTimeout) {
+      clearTimeout(compactSyncTimeout)
+    }
+
+    compactSyncTimeout = setTimeout(() => {
+      syncMenuLayout(true)
+      compactSyncTimeout = null
+    }, moveDuration.value * 1000)
+
+    return
+  }
+
   nextTick(() => {
-    syncMenuLayout()
+    syncMenuLayout(true)
 
     requestAnimationFrame(() => {
-      syncMenuLayout()
+      syncMenuLayout(true)
     })
   })
 
@@ -101,7 +171,7 @@ const scheduleMenuLayoutSync = () => {
   }
 
   compactSyncTimeout = setTimeout(() => {
-    syncMenuLayout()
+    syncMenuLayout(true)
     compactSyncTimeout = null
   }, 560)
 }
@@ -109,9 +179,12 @@ const scheduleMenuLayoutSync = () => {
 const selectItem = (index: number) => {
   if (activeIndex.value !== index) {
     const distance = Math.abs(index - activeIndex.value)
-    const calculatedDuration = 0.2 + distance * 0.2
+    const calculatedDuration = getMoveDurationForDistance(distance)
+    const calculatedGrowDuration = Math.max(0.44, calculatedDuration * 1.1)
+    const growReleaseDelay = Math.max(0.28, calculatedDuration * 0.72)
 
     moveDuration.value = calculatedDuration
+    growDuration.value = calculatedGrowDuration
     activeIndex.value = index
     isMoving.value = true
     isGrowing.value = true
@@ -122,13 +195,14 @@ const selectItem = (index: number) => {
     }
     growTimeout = setTimeout(() => {
       isGrowing.value = false
-    }, (calculatedDuration * 1000) / 2)
+    }, growReleaseDelay * 1000)
 
     if (moveTimeout) {
       clearTimeout(moveTimeout)
     }
     moveTimeout = setTimeout(() => {
       isMoving.value = false
+      syncMenuLayout(true)
     }, calculatedDuration * 1000)
   }
 
@@ -143,14 +217,25 @@ const handleCompactModeChange = (event: Event) => {
 
 const handleMenuShellTransitionEnd = (event: TransitionEvent) => {
   if (event.propertyName === 'width') {
-    syncMenuLayout()
+    syncMenuLayout(true)
   }
+}
+
+const handleWindowResize = () => {
+  syncMenuLayout(true)
 }
 
 watch(
   () => route.path,
   () => {
-    activeIndex.value = getActiveIndexFromRoute()
+    const nextIndex = getActiveIndexFromRoute()
+
+    if (activeIndex.value !== nextIndex) {
+      const distance = Math.abs(nextIndex - activeIndex.value)
+      moveDuration.value = getMoveDurationForDistance(distance)
+      activeIndex.value = nextIndex
+    }
+
     scheduleMenuLayoutSync()
   },
 )
@@ -164,13 +249,13 @@ onMounted(() => {
 
   isCompactMode.value = document.querySelector('.app-header')?.classList.contains('app-header--menu-compact') ?? false
 
-  window.addEventListener('resize', syncMenuLayout)
+  window.addEventListener('resize', handleWindowResize)
   window.addEventListener('experience-menu-compact-change', handleCompactModeChange as EventListener)
   menuShellRef.value?.addEventListener('transitionend', handleMenuShellTransitionEnd)
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', syncMenuLayout)
+  window.removeEventListener('resize', handleWindowResize)
   window.removeEventListener('experience-menu-compact-change', handleCompactModeChange as EventListener)
   menuShellRef.value?.removeEventListener('transitionend', handleMenuShellTransitionEnd)
 
@@ -185,6 +270,8 @@ onBeforeUnmount(() => {
   if (compactSyncTimeout) {
     clearTimeout(compactSyncTimeout)
   }
+
+  cancelBubbleTransitionRestore()
 })
 </script>
 
@@ -202,43 +289,41 @@ onBeforeUnmount(() => {
       class="menu-shell"
       :class="{ 'has-compact-toggle': isCompactMode }"
     >
-      <div class="menu-bg"></div>
-      <div ref="menuTrackRef" class="menu-shell-track">
-        <div
-          class="active-bubble"
-          :class="{ moving: isMoving, growing: isGrowing }"
-          :style="{
-            ...bubbleStyle,
-            '--move-duration': `${moveDuration}s`,
-          }"
-        />
+      <div class="menu-shell-viewport">
+        <div class="menu-bg"></div>
+        <div ref="menuTrackRef" class="menu-shell-track">
+          <ul class="menu-list" :aria-hidden="isCompactMode">
+            <li
+              v-for="(item, index) in items"
+              :key="item.path"
+              :ref="(el) => setItemRef(el, index)"
+              class="menu-item"
+              :class="{ active: activeIndex === index }"
+              @click="selectItem(index)"
+            >
+              <div class="item-content">
+                <span class="item-icon" v-html="item.icon" />
+                <span class="item-text">{{ item.text }}</span>
+              </div>
+            </li>
+          </ul>
 
-        <ul class="menu-list" :aria-hidden="isCompactMode">
-          <li
-            v-for="(item, index) in items"
-            :key="item.path"
-            :ref="(el) => setItemRef(el, index)"
-            class="menu-item"
-            :class="{ active: activeIndex === index }"
-            @click="selectItem(index)"
+          <button
+            v-if="isCompactMode"
+            class="compact-trigger"
+            type="button"
+            aria-hidden="true"
+            tabindex="-1"
           >
-            <div class="item-content">
-              <span class="item-icon" v-html="item.icon" />
-              <span class="item-text">{{ item.text }}</span>
-            </div>
-          </li>
-        </ul>
-
-        <button
-          v-if="isCompactMode"
-          class="compact-trigger"
-          type="button"
-          aria-hidden="true"
-          tabindex="-1"
-        >
-          <Ellipsis :size="18" />
-        </button>
+            <Ellipsis :size="18" />
+          </button>
+        </div>
       </div>
+      <div
+        class="active-bubble"
+        :class="{ moving: isMoving, growing: isGrowing }"
+        :style="bubbleInlineStyle"
+      />
     </div>
 
     <svg style="display:none;">
@@ -298,13 +383,24 @@ onBeforeUnmount(() => {
   width: var(--menu-shell-width);
   max-width: 100%;
   min-height: var(--compact-size);
-  overflow: hidden;
+  overflow: visible;
   border-radius: 999px;
   transform-origin: right center;
   transition:
     width 0.52s linear,
     transform 0.3s ease-out,
     box-shadow 0.28s ease;
+}
+
+.menu-shell-viewport {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: inherit;
+  overflow: hidden;
+  border-radius: inherit;
 }
 
 .menu-shell-track {
@@ -384,6 +480,8 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: calc(var(--compact-size) - 12px);
+  box-sizing: border-box;
   padding: 10px 24px;
   color: #909090;
   font-family: system-ui, sans-serif;
@@ -437,7 +535,7 @@ onBeforeUnmount(() => {
     backdrop-filter 0.3s ease,
     background-color 0.3s ease,
     box-shadow 0.3s ease,
-    transform 0.4s ease-out;
+    transform var(--grow-duration, 0.46s) cubic-bezier(0.22, 1, 0.36, 1);
   backdrop-filter: blur(20px) saturate(1.1);
   background-color: rgba(255, 255, 255, 0.18);
   box-shadow:
