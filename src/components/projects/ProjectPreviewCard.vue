@@ -51,7 +51,6 @@ defineProps<{
           :alt="project.imageAlt ?? project.title"
           class="project-preview-card__image"
           loading="lazy"
-          decoding="async"
         >
         <div v-else class="project-preview-card__media-fallback">
           <span>Visuel projet</span>
