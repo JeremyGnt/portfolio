@@ -63,7 +63,7 @@ export function useHomeLogoAnchoring() {
     const dG = getDeltas(rectG, rectTargetG)
 
     gsap.set(logoJ, { x: dJ.deltaX + 23, y: dJ.deltaY, scale: dJ.scale, transformOrigin: '50% 50%' })
-    gsap.set(logoG, { x: dG.deltaX - 24, y: dG.deltaY, scale: dG.scale, transformOrigin: '50% 50%' })
+    gsap.set(logoG, { x: dG.deltaX - 21, y: dG.deltaY, scale: dG.scale, transformOrigin: '50% 50%' })
 
     syncLogoVisibility(logoJ)
     syncLogoVisibility(logoG)

@@ -1,5 +1,17 @@
 # Todo
 
+## Header Logo Route Spin Reliability
+
+- [completed] Inspecter le watcher de route du logo 3D pour comprendre pourquoi la rotation de transition saute parfois en quittant `/`.
+- [completed] Forcer l'animation de changement de page pour les navigations qui partent de la landing, meme apres scroll sur `/`.
+- [completed] Verifier le correctif avec `npm run build` et une revue ciblee du flux `/` -> pages internes.
+
+### Outcome
+
+- La rotation de transition du logo 3D n'est plus reservee aux departs depuis le haut de page: une navigation qui part de `/` declenche maintenant aussi l'animation apres scroll sur la landing.
+- Les autres routes conservent la garde existante `near top`, ce qui evite d'introduire des spins de changement de page en plein milieu d'une page interne.
+- Le build `npm run build` passe apres ce correctif cible.
+
 ## Image Optimization
 
 - [completed] Auditer les images servies par le site et identifier les assets vraiment lourds.

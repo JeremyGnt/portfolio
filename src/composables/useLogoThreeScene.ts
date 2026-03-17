@@ -325,6 +325,8 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
         const wasNearTop = lastKnownScrollTop <= topNavigationThreshold
         const fromIndex = getRouteIndex(fromPath)
         const toIndex = getRouteIndex(toPath)
+        const shouldAnimateRouteTransition =
+          fromIndex !== toIndex && (wasNearTop || fromPath === '/')
 
         await nextTick()
 
@@ -346,7 +348,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
           isExperienceSpinArmed = true
         }
 
-        if (wasNearTop && fromIndex !== toIndex) {
+        if (shouldAnimateRouteTransition) {
           rotationSyncMode = 'animated'
           const direction = toIndex > fromIndex ? 1 : -1
           const desiredTopAngle = getContinuousAngle(baseRotationY, currentRotationTargetY)
