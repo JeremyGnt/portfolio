@@ -34,21 +34,28 @@ defineProps<{
         {{ project.description }}
       </p>
 
-      <div class="project-preview-card__grid">
-        <section class="project-preview-card__panel">
-          <p class="project-preview-card__panel-label">
-            Stack
-          </p>
-          <div class="project-preview-card__badge-list">
-            <span
-              v-for="badge in project.badges"
-              :key="badge"
-              class="project-preview-card__badge"
-            >
-              {{ badge }}
-            </span>
-          </div>
-        </section>
+      <div class="project-preview-card__badge-list project-preview-card__badge-list--media">
+        <span
+          v-for="badge in project.badges"
+          :key="badge"
+          class="project-preview-card__badge"
+        >
+          {{ badge }}
+        </span>
+      </div>
+
+      <div class="project-preview-card__media">
+        <img
+          v-if="project.imageSrc"
+          :src="project.imageSrc"
+          :alt="project.imageAlt ?? project.title"
+          class="project-preview-card__image"
+          loading="lazy"
+          decoding="async"
+        >
+        <div v-else class="project-preview-card__media-fallback">
+          <span>Visuel projet</span>
+        </div>
       </div>
     </div>
   </article>
@@ -56,16 +63,20 @@ defineProps<{
 
 <style scoped>
 .project-preview-card {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  padding: 1.75rem;
-  border-radius: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
+  --project-card-padding: 1.75rem;
+  --project-card-media-inset: 0.55rem;
+  --project-card-surface-top: #1b1d21;
+  --project-card-surface:
     linear-gradient(180deg, rgba(255, 255, 255, 0.052) 0%, rgba(255, 255, 255, 0.016) 38%, rgba(255, 255, 255, 0.012) 100%),
     #0f1115;
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  padding: var(--project-card-padding);
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--project-card-surface);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 0 -1px 0 rgba(255, 255, 255, 0.02),
@@ -91,7 +102,7 @@ defineProps<{
   z-index: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
   gap: 1.25rem;
 }
 
@@ -106,8 +117,7 @@ defineProps<{
   min-width: 0;
 }
 
-.project-preview-card__eyebrow,
-.project-preview-card__panel-label {
+.project-preview-card__eyebrow {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -130,43 +140,89 @@ defineProps<{
 }
 
 .project-preview-card__description {
-  max-width: 38ch;
+  width: 100%;
+  max-width: none;
   font-family: system-ui, sans-serif;
   color: rgba(255, 255, 255, 0.62);
   font-size: 0.96rem;
   line-height: 1.75;
 }
 
-.project-preview-card__grid {
-  display: grid;
-  gap: 0.75rem;
-  grid-template-columns: minmax(0, 1fr);
+.project-preview-card__media {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  min-height: 11rem;
+  margin-inline: calc(var(--project-card-media-inset) - var(--project-card-padding));
+  margin-bottom: calc(var(--project-card-media-inset) - var(--project-card-padding));
+  border-radius: 1.35rem;
+  background: transparent;
 }
 
-.project-preview-card__panel {
-  padding: 1rem;
-  border-radius: 1.4rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.012) 100%);
+.project-preview-card__media::before,
+.project-preview-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.project-preview-card__panel-label {
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.42);
+.project-preview-card__media::before {
+  z-index: 1;
+  background: none;
 }
 
-.project-preview-card__panel-copy {
-  margin-top: 0.75rem;
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 0.95rem;
-  line-height: 1.6;
+.project-preview-card__media::after {
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(15, 17, 21, 0) 0%, rgba(15, 17, 21, 0) 64%, rgba(15, 17, 21, 0.16) 100%);
+}
+
+.project-preview-card__image {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.18) 32%, rgba(0, 0, 0, 0.48) 44%, rgba(0, 0, 0, 0.82) 56%, #000 68%, #000 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.18) 32%, rgba(0, 0, 0, 0.48) 44%, rgba(0, 0, 0, 0.82) 56%, #000 68%, #000 100%);
+}
+
+.project-preview-card__media-fallback {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.34);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.18) 32%, rgba(0, 0, 0, 0.48) 44%, rgba(0, 0, 0, 0.82) 56%, #000 68%, #000 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.18) 32%, rgba(0, 0, 0, 0.48) 44%, rgba(0, 0, 0, 0.82) 56%, #000 68%, #000 100%);
 }
 
 .project-preview-card__badge-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.75rem;
+}
+
+.project-preview-card__badge-list--media {
+  position: absolute;
+  top: 50%;
+  left: var(--project-card-media-inset);
+  z-index: 2;
+  width: calc(100% - (var(--project-card-media-inset) * 2));
+  padding: 0 1rem;
+  transform: translateY(-28%);
 }
 
 .project-preview-card__badge {
@@ -175,20 +231,25 @@ defineProps<{
   justify-content: center;
   padding: 0.45rem 0.8rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.72);
+  border: 0;
+  background: rgba(15, 15, 15, 0.1);
+  border-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: brightness(1.2) blur(1px) url(#menuDisplacementFilter);
+  -webkit-backdrop-filter: brightness(1.2) blur(1px);
+  color: rgba(255, 255, 255, 0.92);
   font-size: 0.76rem;
   font-weight: 500;
+  box-shadow:
+    inset 1px 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset -1px -1px 2px 0 rgba(0, 0, 0, 0.1),
+    inset 0 0 8px 1px rgba(255, 255, 255, 0.15),
+    0 10px 40px rgba(0, 0, 0, 0.8);
 }
 
 @media (max-width: 640px) {
   .project-preview-card {
-    padding: 1.5rem;
-  }
-
-  .project-preview-card__grid {
-    grid-template-columns: minmax(0, 1fr);
+    --project-card-padding: 1.5rem;
+    --project-card-media-inset: 0.5rem;
   }
 }
 </style>

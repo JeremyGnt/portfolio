@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "font:generate": "node scripts/generate-typeface-json.mjs",
+    "images:optimize": "node scripts/optimize-images.mjs",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
@@ -15,6 +16,7 @@
     "autoprefixer": "^10.4.27",
     "opentype.js": "^1.3.4",
     "postcss": "^8.5.8",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.19",
     "typescript": "~5.9.3",
     "vite": "^8.0.0-beta.13"

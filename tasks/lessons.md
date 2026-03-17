@@ -13,3 +13,9 @@
 - Eviter de placer un trigger `ScrollTrigger` avec `pin` dans un parent `display: flex`, sinon le spacer peut mal reserver l'espace de scroll et la section tombe trop vite sur le footer.
 - Si les cards doivent etre opaques, retirer la transparence et le blur du fond au lieu de conserver un effet glass trop leger qui laisse voir le background.
 - Si un `hover` CSS doit appliquer un `scale`, ne pas laisser GSAP poser un `transform` inline via `force3D` sur le meme element, sinon l'effet visuel disparait.
+- Apres une demande de repositionnement d'un bloc dans une card, verifier le template final pour s'assurer que l'ancien bloc a bien ete supprime et qu'il ne reste pas en doublon.
+- Quand un visuel doit se fondre dans le fond d'une card, retirer aussi les bordures, ombres et highlights du conteneur media; un simple gradient de masque ne suffit pas.
+- Si le haut d'un visuel doit etre confondu avec le fond de la card, le masque doit reveler le vrai background parent; ne pas laisser un fond propre au conteneur media creer une teinte differente.
+- Si un fondu doit matcher la surface d'une card, ne pas utiliser seulement la couleur de base; reprendre la teinte composee visible une fois le gradient de surface applique.
+- Si une surcouche de fondu cree encore un bandeau visible, la supprimer plutot que tenter de la recolorier: le parent doit rester visible directement dans la zone masquee.
+- Si l'utilisateur demande les memes parametres qu'un composant existant, reprendre les valeurs exactes depuis la source au lieu d'un style approche.

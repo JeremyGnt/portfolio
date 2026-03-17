@@ -16,6 +16,10 @@ let hoverMediaListener: ((event: MediaQueryListEvent) => void) | null = null
 let setCardX: ((value: number) => void) | null = null
 let setCardY: ((value: number) => void) | null = null
 
+const CURSOR_CARD_X_PERCENT = -50
+const CURSOR_CARD_DEFAULT_Y_PERCENT = -50
+const CURSOR_CARD_BADGE_OFFSET = 10
+
 useRevealAnimation(100, '.projects-reveal')
 
 function syncHoverCapability() {
@@ -33,6 +37,40 @@ function moveCursorCard(clientX: number, clientY: number) {
 
   setCardX(clientX)
   setCardY(clientY)
+}
+
+function syncCursorCardAnchor() {
+  if (!cursorCardRef.value) {
+    return
+  }
+
+  const cardElement = cursorCardRef.value.querySelector<HTMLElement>('.project-preview-card')
+  const badgeListElement = cursorCardRef.value.querySelector<HTMLElement>('.project-preview-card__badge-list--media')
+
+  if (!cardElement || !badgeListElement) {
+    gsap.set(cursorCardRef.value, {
+      xPercent: CURSOR_CARD_X_PERCENT,
+      yPercent: CURSOR_CARD_DEFAULT_Y_PERCENT,
+    })
+    return
+  }
+
+  const cardRect = cardElement.getBoundingClientRect()
+  const badgeListRect = badgeListElement.getBoundingClientRect()
+
+  if (cardRect.height <= 0) {
+    return
+  }
+
+  const anchorY = Math.min(
+    cardRect.height - 24,
+    Math.max(0, badgeListRect.bottom - cardRect.top + CURSOR_CARD_BADGE_OFFSET),
+  )
+
+  gsap.set(cursorCardRef.value, {
+    xPercent: CURSOR_CARD_X_PERCENT,
+    yPercent: -(anchorY / cardRect.height) * 100,
+  })
 }
 
 function showCursorCard(project: ProjectData, event: MouseEvent) {
@@ -84,6 +122,10 @@ function handleWindowMouseMove(event: MouseEvent) {
   moveCursorCard(event.clientX, event.clientY)
 }
 
+function handleWindowResize() {
+  syncCursorCardAnchor()
+}
+
 function handleProjectFocus(project: ProjectData) {
   activeProject.value = project
 }
@@ -100,6 +142,7 @@ watch(
   activeProject,
   async () => {
     await nextTick()
+    syncCursorCardAnchor()
 
     if (!canUseCursorCard.value || !cursorCardInnerRef.value) {
       return
@@ -140,19 +183,21 @@ onMounted(async () => {
     gsap.set(cursorCardRef.value, {
       x: window.innerWidth * 0.5,
       y: window.innerHeight * 0.5,
-      xPercent: -50,
-      yPercent: -50,
+      xPercent: CURSOR_CARD_X_PERCENT,
+      yPercent: CURSOR_CARD_DEFAULT_Y_PERCENT,
       autoAlpha: 0,
       scale: 0.5,
       transformOrigin: '50% 50%',
       willChange: 'transform, opacity',
     })
 
+    syncCursorCardAnchor()
     setCardX = gsap.quickSetter(cursorCardRef.value, 'x', 'px')
     setCardY = gsap.quickSetter(cursorCardRef.value, 'y', 'px')
   }
 
   window.addEventListener('mousemove', handleWindowMouseMove, { passive: true })
+  window.addEventListener('resize', handleWindowResize, { passive: true })
   window.addEventListener('blur', hideCursorCard)
 })
 
@@ -166,6 +211,7 @@ onUnmounted(() => {
   }
 
   window.removeEventListener('mousemove', handleWindowMouseMove)
+  window.removeEventListener('resize', handleWindowResize)
   window.removeEventListener('blur', hideCursorCard)
   setCardX = null
   setCardY = null
@@ -398,7 +444,8 @@ onUnmounted(() => {
   top: 0;
   left: 0;
   width: 420px;
-  height: 500px;
+  max-width: min(420px, calc(100vw - 2rem));
+  height: auto;
   pointer-events: none;
   z-index: 1300;
   opacity: 0;
@@ -408,7 +455,7 @@ onUnmounted(() => {
 
 .project-cursor-card__inner {
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 
 @media (max-width: 1024px) {

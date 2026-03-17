@@ -58,9 +58,11 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 
             <div v-if="card.company === 'Carrefour'" class="experience-card__company-logo-box">
               <img
-                src="/brands/carrefour-logo.png"
+                src="/brands/carrefour-logo.webp"
                 alt="Logo Carrefour"
                 class="experience-card__company-logo"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </div>

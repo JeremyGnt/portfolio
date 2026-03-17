@@ -1,5 +1,55 @@
 # Todo
 
+## Image Optimization
+
+- [completed] Auditer les images servies par le site et identifier les assets vraiment lourds.
+- [completed] Generer des versions optimisées pour le web et mettre a jour les references du site.
+- [completed] Verifier le changement avec `npm run build` et relever les gains de poids.
+
+### Outcome
+
+- Un script reproductible `npm run images:optimize` optimise maintenant les assets raster utiles du site vers des versions WebP adaptees a leur taille d'affichage.
+- Les images projet lourdes et le logo Carrefour referencent maintenant leurs versions optimisees, avec `loading=\"lazy\"` et `decoding=\"async\"` sur les rendus concernes.
+- Les cinq assets convertis et utilises passent de 3.06 MB a 282.7 KB, soit 2.78 MB economises et 91.0% de reduction.
+- `projet_snoopy.png` a ete conserve en PNG, car sa version WebP etait legerement plus lourde.
+
+## Projects Card Dynamic Height
+
+- [completed] Inspecter les contraintes de hauteur et d'ordre des blocs dans la mini card `/projects`.
+- [completed] Deplacer l'image en bas de la card et retirer les limites qui tronquent le texte.
+- [completed] Verifier le changement avec `npm run build`.
+
+### Outcome
+
+- La mini card de `/projects` affiche maintenant le texte et les hardskills avant le visuel, avec l'image placee en bas de la card.
+- La description n'est plus tronquee par un `line-clamp`, et la floating card n'a plus de hauteur fixe, ce qui laisse la card grandir selon son contenu.
+- Le build `npm run build` passe apres cet ajustement de layout.
+
+## Projects Card Images
+
+- [completed] Inspecter les images ajoutees dans `public/projects` et les faire correspondre aux projets existants.
+- [completed] Integrer les visuels dans la mini card `/projects` avec un cadrage propre et un fallback propre pour les projets sans image.
+- [completed] Verifier le changement avec `npm run build`.
+
+### Outcome
+
+- Les mini cards de `/projects` supportent maintenant un visuel projet directement depuis `public/projects`, avec mapping declare dans `src/data/projectsData.ts`.
+- Les images disponibles sont integrees dans un bloc media a ratio stable avec `object-fit: cover`, pour un cadrage propre dans la card sans deformation.
+- Les projets sans image conservent un fallback discret afin de ne pas casser la mise en page.
+- Le build `npm run build` passe apres cette integration.
+
+## Projects Card Description Width
+
+- [completed] Inspecter la preview card de `/projects` et identifier pourquoi la description n'utilise pas la largeur disponible.
+- [completed] Ajuster les styles de la description pour qu'elle occupe la largeur de la card en conservant des marges internes propres.
+- [completed] Verifier le changement avec `npm run build`.
+
+### Outcome
+
+- La description de la preview card sur `/projects` n'est plus limitée a `38ch` et peut maintenant utiliser toute la largeur interne disponible de la card.
+- Les marges visuelles restent conservees via le `padding` deja present sur la card, sans coller le texte aux bords.
+- Le build `npm run build` passe apres ce changement cible.
+
 ## Global 3D Scroll Animation Parity
 
 - [completed] Auditer la logique du logo 3D sur `/` et confirmer pourquoi l'animation de fin de scroll ne s'applique pas aux autres pages.

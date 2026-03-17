@@ -6,6 +6,8 @@ export interface ProjectData {
   listTags: string[]
   description: string
   badges: string[]
+  imageSrc?: string
+  imageAlt?: string
 }
 
 export const projectsData: ProjectData[] = [
@@ -17,6 +19,8 @@ export const projectsData: ProjectData[] = [
     listTags: ['ESP32', 'PID'],
     description: 'Robot mobile autonome dessinant des formes géométriques à l’aide d’un contrôle PID, d’encodeurs moteurs, d’une IMU et d’un magnétomètre.',
     badges: ['ESP32', 'PID', 'IMU', 'Magnetometre'],
+    imageSrc: '/projects/projet_drawbots.webp',
+    imageAlt: 'Photo du robot Drawbot autonome',
   },
   {
     id: 'airbnb-for-students',
@@ -25,7 +29,7 @@ export const projectsData: ProjectData[] = [
     category: 'Plateforme web',
     listTags: ['JavaScript', 'PHP'],
     description: 'Plateforme web inspirée d’Airbnb pour étudiants avec recherche de logements, favoris, avis utilisateurs et base de données relationnelle.',
-    badges: ['HTML', 'CSS', 'JavaScript', 'PHP', 'MySQL'],
+    badges: ['HTML', 'CSS', 'JavaScript', 'PHP', 'SQL'],
   },
   {
     id: 'fruit-ninja-fpga',
@@ -44,6 +48,8 @@ export const projectsData: ProjectData[] = [
     listTags: ['C++', 'ATTiny'],
     description: 'Développement d’une manette de jeu basée sur microcontrôleur ATTiny avec écran OLED et interface de contrôle personnalisée.',
     badges: ['C++', 'ATTiny', 'OLED', 'UI embarquee'],
+    imageSrc: '/projects/projet_manette.webp',
+    imageAlt: 'Photo de la manette programmable avec son interface embarquee',
   },
   {
     id: 'overcooked-multiplayer',
@@ -53,6 +59,8 @@ export const projectsData: ProjectData[] = [
     listTags: ['C', 'Allegro 5'],
     description: 'Jeu multijoueur inspiré d’Overcooked avec interface graphique Allegro 5 et programmation système avancée.',
     badges: ['C', 'Allegro 5', 'Gameplay', 'Systeme'],
+    imageSrc: '/projects/projet_snoopy.png',
+    imageAlt: 'Capture du jeu cooperatif Overcooked multijoueur',
   },
   {
     id: 'alarm-clock',
@@ -61,7 +69,9 @@ export const projectsData: ProjectData[] = [
     category: 'Objet embarque',
     listTags: ['C++', 'Microcontroleur'],
     description: 'Création d’un réveil électronique programmable avec logique d’alarme, gestion du temps et programme embarqué sur microcontrôleur.',
-    badges: ['C++', 'Microcontroleur', 'Temps reel', 'Programmation embarquee'],
+    badges: ['C++', 'Microcontroleur', 'Temps reel'],
+    imageSrc: '/projects/projet_reveil.webp',
+    imageAlt: 'Photo du reveil electronique programme',
   },
   {
     id: 'food-web-simulation',
@@ -70,6 +80,8 @@ export const projectsData: ProjectData[] = [
     category: 'Simulation scientifique',
     listTags: ['Python', 'Modelisation'],
     description: 'Application de simulation de réseaux trophiques pour étudier les interactions entre espèces et la dynamique d’un écosystème.',
-    badges: ['Python', 'Simulation', 'Modelisation', 'Ecosystemes'],
+    badges: ['Python', 'Simulation', 'Modelisation'],
+    imageSrc: '/projects/projet_simulation.webp',
+    imageAlt: 'Capture de la simulation scientifique de reseaux trophiques',
   },
 ]
