@@ -134,7 +134,7 @@
   display: flex;
   align-items: center;
   font-size: 1.7em;
-  color: #FFD600;
+  color: #ebb207;
   transform: translateY(-4px);
 }
 

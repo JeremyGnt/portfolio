@@ -1,5 +1,12 @@
 # Todo
 
+## Contact Horizontal Scroll Redesign
+
+- [completed] Auditer la vue Contact existante, les styles globaux et les patterns GSAP/ScrollTrigger déjà utilisés dans le projet.
+- [completed] Refaire `src/views/ContactView.vue` avec un layout premium: texte sticky à gauche, rail horizontal de cartes sociales et animation `ScrollTrigger` fluide avec cleanup complet.
+- [completed] Ajuster les styles responsive et les garde-fous de performance pour conserver un rendu propre sur desktop et mobile.
+- [completed] Vérifier la refonte avec `npm run build` et une revue ciblée de l'animation, du fallback responsive et du nettoyage GSAP.
+
 ## Projects Hover Reveal Redesign
 
 - [completed] Installer Tailwind sans preflight et l'intégrer proprement à l'app pour pouvoir composer la nouvelle vue avec des utilities sans casser le style existant.
@@ -87,6 +94,12 @@
 - [completed] Vérifier avec un build que la référence du logo reste valide.
 - [completed] Supprimer l'effet de survol des cards 1, 2 et 3 sur la page `/experience`.
 - [completed] Vérifier le diff ciblé pour confirmer qu'aucune autre card n'est impactée.
+- [completed] Reprendre sur `/projects` la même police que la description `Association de redistribution alimentaire...` pour le texte descriptif des cards projet.
+- [completed] Vérifier avec un build ce changement ciblé de typographie sur `/projects`.
+- [completed] Retirer proprement les badges à côté du nom du projet dans la preview card de `/projects`, déjà couverts par la section `Stack`.
+- [completed] Vérifier avec un build ce nettoyage ciblé de la card projet.
+- [completed] Reprendre sur `/projects` la même police que `ÉTUDIANT INGÉNIEUR` pour l'année, le numéro et les deux skills de chaque ligne projet.
+- [completed] Vérifier avec un build ce changement ciblé de typographie sur la liste `/projects`.
 
 # Review
 
@@ -156,3 +169,10 @@
 - Le clipping du menu est maintenant porté par un viewport interne, ce qui laisse l'overshoot de la bulle dépasser visuellement au-dessus de la capsule liquid tout en conservant le fond et la liste correctement masqués.
 - Le build `npm run build` passe après ce correctif d'overshoot du menu.
 - Le placeholder `#boot-loader` dans `index.html` reprend maintenant la même structure visuelle que `LoadingScreen.vue`, avec la même police et le même centrage optique du `JG.` au refresh.
+- La description des cards de `/projects` utilise maintenant la même police `system-ui, sans-serif` que `Association de redistribution alimentaire. Animations et sensibilisations sur le gaspillage.` sur `/experience`.
+- La preview card de `/projects` n'affiche plus de badges à côté du nom du projet ; le détail de techno reste uniquement dans la section `Stack`, sans doublon visuel.
+- La liste de `/projects` utilise maintenant la même police `Helvetica Neue, Helvetica, Arial, sans-serif` que `ÉTUDIANT INGÉNIEUR` pour l'année, le numéro d'ordre et les deux skills affichés sur chaque ligne, sans changer leurs tailles.
+- La page `/contact` est maintenant une scène premium pilotée par `GSAP ScrollTrigger`, avec une intro ancrée à gauche et un rail horizontal de cartes qui traverse l'écran pendant le scroll vertical.
+- Le desktop utilise un `pin` avec translation GPU du track et barre de progression, tandis que le mobile et `prefers-reduced-motion` basculent proprement vers une pile verticale sans pinning.
+- Le build `npm run build` passe après cette refonte de `/contact`.
+- Après retour utilisateur, la version finale de `/contact` a ete simplifiee: plus de grand panneau ni de texte long, juste le background existant, un bloc intro minimal et des cards `glass` sobres alignees sur la landing.

@@ -28,20 +28,6 @@ defineProps<{
           </h2>
         </div>
 
-        <div class="project-preview-card__meta">
-          <span class="project-preview-card__year">
-            {{ project.year }}
-          </span>
-          <div class="project-preview-card__tag-list">
-            <span
-              v-for="tag in project.listTags"
-              :key="tag"
-              class="project-preview-card__tag"
-            >
-              {{ tag }}
-            </span>
-          </div>
-        </div>
       </header>
 
       <p class="project-preview-card__description">
@@ -121,9 +107,7 @@ defineProps<{
 }
 
 .project-preview-card__eyebrow,
-.project-preview-card__panel-label,
-.project-preview-card__year,
-.project-preview-card__tag {
+.project-preview-card__panel-label {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -145,42 +129,9 @@ defineProps<{
   letter-spacing: -0.06em;
 }
 
-.project-preview-card__meta {
-  display: flex;
-  flex-shrink: 0;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.55rem;
-  text-align: right;
-}
-
-.project-preview-card__year {
-  font-size: 0.72rem;
-  color: #ffd600;
-}
-
-.project-preview-card__tag-list {
-  display: flex;
-  max-width: 11rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
-.project-preview-card__tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.35rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.012) 100%);
-  color: rgba(255, 255, 255, 0.62);
-  font-size: 0.64rem;
-}
-
 .project-preview-card__description {
   max-width: 38ch;
+  font-family: system-ui, sans-serif;
   color: rgba(255, 255, 255, 0.62);
   font-size: 0.96rem;
   line-height: 1.75;

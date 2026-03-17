@@ -49,7 +49,8 @@ onUnmounted(() => {
                 <h1>
                   {{ hero.title }}
                   <br />
-                  <span>{{ hero.highlight }}</span>
+                  <span class="scene-hero__highlight">{{ hero.highlight }}</span
+                  ><span class="scene-hero__dot" aria-hidden="true">.</span>
                 </h1>
               </div>
 
@@ -129,13 +130,18 @@ onUnmounted(() => {
   text-shadow: 0 16px 40px rgba(0, 0, 0, 0.42);
 }
 
-.scene-hero h1 span {
+.scene-hero__highlight {
   display: inline-block;
   padding-inline-end: 0.06em;
   color: transparent;
   background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.36) 100%);
   -webkit-background-clip: text;
   background-clip: text;
+}
+
+.scene-hero__dot {
+  display: inline-block;
+  color: #ebb207;
 }
 
 .cards-layer {

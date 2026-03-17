@@ -15,7 +15,7 @@ export const projectsData: ProjectData[] = [
     title: 'Drawbot autonome',
     category: 'Robotique mobile',
     listTags: ['ESP32', 'PID'],
-    description: 'Robot mobile autonome dessinant des formes geometriques a l aide d un controle PID, d encodeurs moteurs, d une IMU et d un magnetometre.',
+    description: 'Robot mobile autonome dessinant des formes géométriques à l’aide d’un contrôle PID, d’encodeurs moteurs, d’une IMU et d’un magnétomètre.',
     badges: ['ESP32', 'PID', 'IMU', 'Magnetometre'],
   },
   {
@@ -24,7 +24,7 @@ export const projectsData: ProjectData[] = [
     title: 'Airbnb for Students',
     category: 'Plateforme web',
     listTags: ['JavaScript', 'PHP'],
-    description: 'Plateforme web inspiree d Airbnb pour etudiants avec recherche de logements, favoris, avis utilisateurs et base de donnees relationnelle.',
+    description: 'Plateforme web inspirée d’Airbnb pour étudiants avec recherche de logements, favoris, avis utilisateurs et base de données relationnelle.',
     badges: ['HTML', 'CSS', 'JavaScript', 'PHP', 'MySQL'],
   },
   {
@@ -33,7 +33,7 @@ export const projectsData: ProjectData[] = [
     title: 'Fruit Ninja FPGA',
     category: 'Systeme embarque interactif',
     listTags: ['VHDL', 'FPGA'],
-    description: 'Jeu Fruit Ninja sur FPGA pilote par capteur ultrason avec detection de mouvement, calcul de trajectoire, collision en temps reel et systeme de score.',
+    description: 'Jeu Fruit Ninja sur FPGA piloté par capteur ultrason avec détection de mouvement, calcul de trajectoire, collision en temps réel et système de score.',
     badges: ['FPGA', 'VHDL', 'Capteur ultrason', 'Temps reel'],
   },
   {
@@ -42,7 +42,7 @@ export const projectsData: ProjectData[] = [
     title: 'Manette programmable',
     category: 'Interface hardware',
     listTags: ['C++', 'ATTiny'],
-    description: 'Developpement d une manette de jeu basee sur microcontroleur ATTiny avec ecran OLED et interface de controle personnalisee.',
+    description: 'Développement d’une manette de jeu basée sur microcontrôleur ATTiny avec écran OLED et interface de contrôle personnalisée.',
     badges: ['C++', 'ATTiny', 'OLED', 'UI embarquee'],
   },
   {
@@ -51,7 +51,7 @@ export const projectsData: ProjectData[] = [
     title: 'Overcooked multijoueur',
     category: 'Jeu cooperatif',
     listTags: ['C', 'Allegro 5'],
-    description: 'Jeu multijoueur inspire d Overcooked avec interface graphique Allegro 5 et programmation systeme avancee.',
+    description: 'Jeu multijoueur inspiré d’Overcooked avec interface graphique Allegro 5 et programmation système avancée.',
     badges: ['C', 'Allegro 5', 'Gameplay', 'Systeme'],
   },
   {
@@ -60,7 +60,7 @@ export const projectsData: ProjectData[] = [
     title: 'Reveil electronique',
     category: 'Objet embarque',
     listTags: ['C++', 'Microcontroleur'],
-    description: 'Creation d un reveil electronique programmable avec logique d alarme, gestion du temps et programme embarque sur microcontroleur.',
+    description: 'Création d’un réveil électronique programmable avec logique d’alarme, gestion du temps et programme embarqué sur microcontrôleur.',
     badges: ['C++', 'Microcontroleur', 'Temps reel', 'Programmation embarquee'],
   },
   {
@@ -69,7 +69,7 @@ export const projectsData: ProjectData[] = [
     title: 'Simulation trophique',
     category: 'Simulation scientifique',
     listTags: ['Python', 'Modelisation'],
-    description: 'Application de simulation de reseaux trophiques pour etudier les interactions entre especes et la dynamique d un ecosysteme.',
+    description: 'Application de simulation de réseaux trophiques pour étudier les interactions entre espèces et la dynamique d’un écosystème.',
     badges: ['Python', 'Simulation', 'Modelisation', 'Ecosystemes'],
   },
 ]

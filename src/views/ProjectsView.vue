@@ -196,11 +196,9 @@ onUnmounted(() => {
 
                 <div class="project-row__content">
                   <div class="min-w-0">
-                    <span class="font-display text-[0.64rem] uppercase tracking-[0.28em] text-white/22">
-                      {{ String(index + 1).padStart(2, '0') }}
-                    </span>
                     <h2 class="project-row__title">
-                      {{ project.title }}
+                      <span>{{ project.title }}</span>
+                      <span class="project-row__dot" aria-hidden="true"></span>
                     </h2>
                   </div>
 
@@ -247,7 +245,25 @@ onUnmounted(() => {
 }
 
 .projects-list {
-  border-top: 0;
+  position: relative;
+  margin-top: 1.95rem;
+}
+
+.projects-list::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.04) 14%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.04) 86%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 .projects-list.is-hovering .project-row {
@@ -278,6 +294,23 @@ onUnmounted(() => {
     transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.project-row::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.035) 14%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.035) 86%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
 .project-row:focus-visible {
   outline: none;
 }
@@ -291,7 +324,18 @@ onUnmounted(() => {
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.project-row__year,
+.project-row__tags span {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
 .project-row__title {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.08em;
   margin: 0.65rem 0 0;
   font-size: clamp(2.2rem, 5.8vw, 5.25rem);
   font-weight: 600;
@@ -302,6 +346,16 @@ onUnmounted(() => {
     color 0.4s ease,
     text-shadow 0.4s ease,
     -webkit-text-stroke-color 0.4s ease;
+}
+
+.project-row__dot {
+  display: inline-block;
+  width: 0.18em;
+  height: 0.18em;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #ebb207;
+  transform: translateY(0.01em);
 }
 
 .project-row__tags {
@@ -327,6 +381,11 @@ onUnmounted(() => {
 .project-row:focus-visible .project-row__title {
   color: transparent;
   -webkit-text-stroke: 1px #ffffff;
+}
+
+.project-row.is-active .project-row__year,
+.project-row:focus-visible .project-row__year {
+  color: #ffd600;
 }
 
 .project-row.is-active .project-row__tags span,
