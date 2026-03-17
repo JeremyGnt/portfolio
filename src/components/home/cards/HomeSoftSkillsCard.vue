@@ -12,6 +12,7 @@
 </style>
 <script setup lang="ts">
 import { Lightbulb } from 'lucide-vue-next'
+import { useSkillTagRepulsion } from '../../../composables/useSkillTagRepulsion'
 
 const softSkills = [
   "Esprit d'équipe",
@@ -31,6 +32,14 @@ const importantSoftSkills = [
   'Organisé',
   'Gestion du temps'
 ]
+
+const {
+  skillContainer,
+  setSkillTagRef,
+  scheduleSkillMetricsRefresh,
+  handleSkillMouseMove,
+  handleSkillMouseLeave,
+} = useSkillTagRepulsion()
 </script>
 
 <template>
@@ -39,12 +48,17 @@ const importantSoftSkills = [
       <span class="section-icon"><Lightbulb :size="20" /></span> Soft Skills
     </h2>
     <div
+      ref="skillContainer"
       class="skill-tags"
       style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; padding: 0.5rem 0;"
+      @mouseenter="scheduleSkillMetricsRefresh"
+      @mousemove="handleSkillMouseMove"
+      @mouseleave="handleSkillMouseLeave"
     >
       <span
-        v-for="skill in softSkills"
+        v-for="(skill, index) in softSkills"
         :key="skill"
+        :ref="(el) => setSkillTagRef(el, index)"
         class="tag"
         :style="{
           color: importantSoftSkills.includes(skill) ? '#ffffff !important' : '#8a8b8d'

@@ -270,7 +270,7 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   justify-content: center;
   flex-shrink: 0;
   border-radius: 0.9rem;
-  color: var(--accent-2);
+  color: rgba(255, 255, 255, 0.82);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.012) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -305,7 +305,7 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 }
 
 .experience-card__cert-date {
-  color: #ffffff;
+  color: #ebb207;
 }
 
 @media (max-width: 1120px) {

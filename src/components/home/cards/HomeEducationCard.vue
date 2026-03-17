@@ -49,4 +49,14 @@ import { GraduationCap } from 'lucide-vue-next'
   text-transform: uppercase;
   color: #fff;
 }
+
+.timeline::before {
+  top: 2.1rem;
+  bottom: 1.9rem;
+}
+
+.timeline-dot {
+  margin-top: 2.1rem;
+  box-shadow: none;
+}
 </style>

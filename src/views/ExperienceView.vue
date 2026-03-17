@@ -142,6 +142,7 @@ onUnmounted(() => {
 .scene-hero__dot {
   display: inline-block;
   color: #ebb207;
+  transform: translateX(-0.1em);
 }
 
 .cards-layer {

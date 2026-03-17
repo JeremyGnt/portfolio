@@ -76,6 +76,7 @@ function getTrackMetrics() {
   if (!viewport || !track) {
     return {
       startX: 0,
+      endX: 0,
       overflow: 0,
       distance: 0,
     }
@@ -83,11 +84,14 @@ function getTrackMetrics() {
 
   const startX = Math.min(viewport.clientWidth * 0.18, 180)
   const overflow = Math.max(track.scrollWidth - viewport.clientWidth, 0)
+  const endInset = Math.min(viewport.clientWidth * 0.08, 88)
+  const endX = -(overflow + endInset)
 
   return {
     startX,
+    endX,
     overflow,
-    distance: startX + overflow,
+    distance: startX + overflow + endInset,
   }
 }
 
@@ -150,7 +154,7 @@ onMounted(() => {
       timeline.to(
         track,
         {
-          x: () => -getTrackMetrics().overflow,
+          x: () => getTrackMetrics().endX,
         },
         0,
       )
@@ -226,19 +230,21 @@ onUnmounted(() => {
                     class="card glass contact-card"
                     :aria-label="`${contact.label} : ${contact.value}`"
                   >
-                    <div class="contact-card-head">
-                      <span class="contact-card-index">{{ String(index + 1).padStart(2, '0') }}</span>
-                      <component :is="contact.icon" :size="20" />
-                    </div>
+                    <span class="contact-card-corner" aria-hidden="true">
+                      <ArrowUpRight :size="16" />
+                    </span>
 
                     <div class="contact-card-body">
                       <p class="contact-card-label">{{ contact.label }}</p>
-                      <h2>{{ contact.value }}</h2>
+                      <div class="contact-card-value">
+                        <h2>{{ contact.value }}</h2>
+                        <span class="contact-card-value-dot" aria-hidden="true" />
+                      </div>
                     </div>
 
                     <span class="contact-card-link">
-                      Ouvrir
-                      <ArrowUpRight :size="16" />
+                      <span class="contact-card-index">{{ String(index + 1).padStart(2, '0') }}</span>
+                      <component :is="contact.icon" :size="18" />
                     </span>
                   </a>
                 </div>
@@ -357,6 +363,17 @@ onUnmounted(() => {
   transition: transform 0.46s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.contact-card-corner {
+  position: absolute;
+  top: 1.35rem;
+  right: 1.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.24s ease;
+}
+
 .contact-card.glass:hover {
   z-index: 2;
   transform: scale(1.024) translateZ(0);
@@ -370,12 +387,8 @@ onUnmounted(() => {
     0 16px 28px rgba(0, 0, 0, 0.24);
 }
 
-.contact-card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  color: rgba(255, 255, 255, 0.58);
+.contact-card.glass:hover .contact-card-corner {
+  color: #ebb207;
 }
 
 .contact-card-index {
@@ -385,7 +398,11 @@ onUnmounted(() => {
 .contact-card-body {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  text-align: center;
 }
 
 .contact-card-label {
@@ -393,9 +410,30 @@ onUnmounted(() => {
   color: rgba(255, 255, 255, 0.42);
 }
 
+.contact-card-value {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.28rem;
+}
+
+.contact-card-value-dot {
+  width: 0.3rem;
+  height: 0.3rem;
+  aspect-ratio: 1 / 1;
+  display: inline-block;
+  flex-shrink: 0;
+  margin-left: -0.15rem;
+  border-radius: 999px;
+  background: #ebb207;
+  transform: translateY(0.01rem);
+}
+
 .contact-card-body h2 {
   margin: 0;
-  font-size: clamp(1.25rem, 1.8vw, 1.7rem);
+  max-width: 100%;
+  font-family: system-ui, sans-serif;
+  font-size: clamp(1.06rem, 1.45vw, 1.42rem);
   line-height: 1.15;
   letter-spacing: -0.05em;
   word-break: break-word;
@@ -407,7 +445,11 @@ onUnmounted(() => {
   gap: 0.45rem;
   width: fit-content;
   font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.contact-card-link :deep(svg) {
+  color: #ebb207;
 }
 
 @media (max-width: 980px) {

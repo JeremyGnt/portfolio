@@ -102,6 +102,7 @@
   border-radius: 999px;
   background: #ebb207;
   pointer-events: none;
+  transform: translateX(-0.1em);
 }
 
 .target-letter {
