@@ -19,3 +19,5 @@
 - Si un fondu doit matcher la surface d'une card, ne pas utiliser seulement la couleur de base; reprendre la teinte composee visible une fois le gradient de surface applique.
 - Si une surcouche de fondu cree encore un bandeau visible, la supprimer plutot que tenter de la recolorier: le parent doit rester visible directement dans la zone masquee.
 - Si l'utilisateur demande les memes parametres qu'un composant existant, reprendre les valeurs exactes depuis la source au lieu d'un style approche.
+- Pour reproduire une typo existante dans un SVG ou une favicon, verifier quelle fonte du stack CSS est reellement disponible et resolue sur la machine; ne pas supposer que le premier nom de la pile est celui qui s'affiche.
+- Si l'utilisateur cite un texte precis comme reference visuelle, repartir de ce composant exact et remonter toute sa chaine d'heritage CSS avant de modifier le rendu; ne pas basculer vers une autre reference typo proche.
