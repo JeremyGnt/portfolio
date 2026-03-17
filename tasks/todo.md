@@ -1,5 +1,18 @@
 # Todo
 
+## Repository Cleanup
+
+- [completed] Auditer la structure du depot pour distinguer les artefacts generes, les dependances orphelines et les fichiers source non references.
+- [completed] Supprimer les elements clairement inutiles du depot sans casser le flux de build.
+- [completed] Verifier le nettoyage avec `npm run build` et un controle git final.
+
+### Outcome
+
+- `src/typescript.svg`, reliquat du starter Vite non reference nulle part dans l'application, a ete supprime.
+- Les dependances `@fontsource/inter` et `opentype.js` ont ete retirees de `package.json` et `package-lock.json`: elles n'etaient plus utilisees dans le code actuel.
+- Le script `font:generate` a ete retire de `package.json` car il pointait vers `scripts/generate-typeface-json.mjs`, fichier absent du depot.
+- `npm run build` passe apres ce nettoyage; `dist` a ensuite ete retire pour laisser le depot sans artefacts generes.
+
 ## Header Logo Route Spin Reliability
 
 - [completed] Inspecter le watcher de route du logo 3D pour comprendre pourquoi la rotation de transition saute parfois en quittant `/`.
