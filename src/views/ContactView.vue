@@ -3,6 +3,7 @@ import { onBeforeUpdate, onMounted, onUnmounted, ref, type Component } from 'vue
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ArrowUpRight, Github, Linkedin, Mail, Phone } from 'lucide-vue-next'
+import { scrollWindowToTopInstantly } from '../utils/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -93,6 +94,8 @@ function getTrackMetrics() {
 onBeforeUpdate(resetCardRefs)
 
 onMounted(() => {
+  scrollWindowToTopInstantly()
+
   animationContext = gsap.context(() => {
     const introElements = gsap.utils.toArray<HTMLElement>('[data-contact-intro]')
 

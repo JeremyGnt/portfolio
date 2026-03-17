@@ -1,5 +1,23 @@
 # Todo
 
+## Global 3D Scroll Animation Parity
+
+- [completed] Auditer la logique du logo 3D sur `/` et confirmer pourquoi l'animation de fin de scroll ne s'applique pas aux autres pages.
+- [completed] Étendre proprement le mode scroll + inertie du logo 3D aux autres pages sans casser le cue spécifique de `/experience`.
+- [completed] Vérifier le changement avec `npm run build` et une revue ciblée du flux de scroll sur `/experience`, `/projects` et `/contact`.
+
+## Bottom Overscroll 3D Impulse
+
+- [completed] Auditer pourquoi l'effet 3D cesse quand l'utilisateur continue de scroller alors que la page est deja en bas.
+- [completed] Ajouter un declenchement par molette/trackpad en fin de page pour relancer l'inertie 3D sans mouvement reel du document.
+- [completed] Verifier le changement avec `npm run build` et une revue ciblee du comportement d'overscroll sur les pages du site.
+
+### Outcome
+
+- Le logo 3D du header partage maintenant le meme mode de rotation liee au scroll et la meme inertie de fin de geste sur `/experience`, `/projects` et `/contact`, au lieu de reserver cet effet a `/`.
+- Le cue de rotation complete propre a `/experience` reste prioritaire et bloque temporairement l'inertie pour eviter un conflit visuel.
+- Une poursuite de scroll vers le bas alors que la page est deja au maximum declenche maintenant aussi une impulsion de rotation 3D via la molette ou le trackpad.
+
 ## Contact Horizontal Scroll Redesign
 
 - [completed] Auditer la vue Contact existante, les styles globaux et les patterns GSAP/ScrollTrigger déjà utilisés dans le projet.

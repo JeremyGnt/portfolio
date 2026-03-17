@@ -8,10 +8,10 @@
       </div>
       <h1 class="home-hero-title">
         <span class="home-hero-word">
-          <span id="target-j" class="target-letter">J</span><span class="fade-text">érémy</span>
+          <span id="target-j" class="target-letter" aria-hidden="true">J</span><span class="fade-text">érémy</span>
         </span>
         <span class="home-hero-word">
-          <span id="target-g" class="target-letter">G</span><span class="fade-text">onnet</span>
+          <span id="target-g" class="target-letter" aria-hidden="true">G</span><span class="fade-text home-hero-last-name">onnet</span>
         </span>
       </h1>
       <p
@@ -85,12 +85,31 @@
 .home-hero-word {
   display: flex;
   align-items: center;
+  position: relative;
+}
+
+.home-hero-last-name {
+  position: relative;
+}
+
+.home-hero-last-name::after {
+  content: '';
+  position: absolute;
+  left: calc(100% + 0.14em);
+  bottom: 0.14em;
+  width: 0.14em;
+  height: 0.14em;
+  border-radius: 999px;
+  background: #ebb207;
+  pointer-events: none;
 }
 
 .target-letter {
-  opacity: 1;
-  color: #FFD600;
   display: inline-block;
+  opacity: 0;
+  color: transparent;
+  pointer-events: none;
+  user-select: none;
   line-height: 1;
   transform-origin: center center;
   margin-right: 0.16em;
@@ -134,7 +153,7 @@
   display: flex;
   align-items: center;
   font-size: 1.7em;
-  color: #ebb207;
+  color: #ffffff;
   transform: translateY(-4px);
 }
 
@@ -182,6 +201,10 @@
 
 .subtitle-dot {
   margin: 0 0.75rem;
+}
+
+.hero-dot-secondary {
+  color: inherit;
 }
 
 .hero-scroll-indicator {

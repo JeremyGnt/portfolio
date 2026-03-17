@@ -17,6 +17,10 @@ const momentumSettleThreshold = 0.01
 const scrollStopDelayMs = 70
 const scrollMomentumDuration = 0.42
 const maxMomentumAngle = Math.PI * 0.4
+const scrollDrivenRoutes = new Set(routeOrder)
+const bottomScrollTolerance = 2
+const overscrollVelocityFactor = 7
+const lineScrollPixels = 16
 
 export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: string) {
   const route = useRoute()
@@ -25,6 +29,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
   let handleExperienceLogoSpinCue: ((event: Event) => void) | null = null
   let handleResize: (() => void) | null = null
   let handleScroll: (() => void) | null = null
+  let handleWheel: ((event: WheelEvent) => void) | null = null
   let stopRouteWatch: (() => void) | null = null
   let textGeometry: TextGeometry | null = null
   let renderer: THREE.WebGLRenderer | null = null
@@ -91,16 +96,31 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     let shouldReturnFromMomentum = false
     let isExperienceSpinActive = false
     let isExperienceSpinArmed = true
-    let rotationSyncMode: 'scroll' | 'scrollMomentum' | 'animated' = route.path === '/' ? 'scroll' : 'animated'
+    let rotationSyncMode: 'scroll' | 'scrollMomentum' | 'animated' =
+      scrollDrivenRoutes.has(route.path) ? 'scroll' : 'animated'
 
     const getRouteIndex = (path: string) => {
       const index = routeOrder.indexOf(path)
       return index === -1 ? 0 : index
     }
 
+    const isScrollDrivenRoute = (path: string) => scrollDrivenRoutes.has(path)
+
     const getContinuousAngle = (desiredAngle: number, referenceAngle: number) => {
       const turns = Math.round((referenceAngle - desiredAngle) / fullRotation)
       return desiredAngle + turns * fullRotation
+    }
+
+    const normalizeWheelDelta = (event: WheelEvent) => {
+      if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) {
+        return event.deltaY * lineScrollPixels
+      }
+
+      if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
+        return event.deltaY * window.innerHeight
+      }
+
+      return event.deltaY
     }
 
     const setRotationTargetFromScroll = () => {
@@ -120,11 +140,13 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       currentRotationTargetY = getContinuousAngle(targetAngle, referenceAngle)
     }
 
-    const startScrollMomentum = () => {
-      if (route.path !== '/' || !textMesh) return
+    const startScrollMomentum = (velocityOverride?: number) => {
+      if (!isScrollDrivenRoute(route.path) || !textMesh || isExperienceSpinActive) return
 
       const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0)
-      if (maxScroll <= 0 || Math.abs(currentScrollVelocity) < 10) {
+      const effectiveVelocity = velocityOverride ?? currentScrollVelocity
+
+      if (maxScroll <= 0 || Math.abs(effectiveVelocity) < 10) {
         rotationSyncMode = 'scroll'
         currentRotationTargetY = scrollRotationTargetY
         requestRender()
@@ -133,7 +155,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
 
       const anglePerPixel = fullRotation / maxScroll
       const extraAngle = THREE.MathUtils.clamp(
-        currentScrollVelocity * scrollMomentumDuration * anglePerPixel,
+        effectiveVelocity * scrollMomentumDuration * anglePerPixel,
         -maxMomentumAngle,
         maxMomentumAngle,
       )
@@ -248,6 +270,26 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       requestRender()
     }
 
+    handleWheel = (event: WheelEvent) => {
+      if (!isScrollDrivenRoute(route.path) || isExperienceSpinActive) {
+        return
+      }
+
+      const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0)
+      const scrollTop = window.scrollY || document.documentElement.scrollTop
+      const isAtBottom = maxScroll > 0 && scrollTop >= maxScroll - bottomScrollTolerance
+      const deltaPixels = normalizeWheelDelta(event)
+
+      if (!isAtBottom || deltaPixels <= 0) {
+        return
+      }
+
+      currentScrollVelocity = deltaPixels * overscrollVelocityFactor
+      lastKnownScrollTop = scrollTop
+      setRotationTargetFromScroll()
+      startScrollMomentum(currentScrollVelocity)
+    }
+
     handleExperienceLogoSpinCue = (event: Event) => {
       const { detail } = event as CustomEvent<{ ready?: boolean }>
       const ready = detail?.ready === true
@@ -271,6 +313,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
 
     window.addEventListener('resize', handleResize)
     window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('wheel', handleWheel, { passive: true })
     window.addEventListener('experience-logo-spin-cue', handleExperienceLogoSpinCue as EventListener)
     updateScrollRotation()
 
@@ -407,6 +450,11 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     if (handleScroll) {
       window.removeEventListener('scroll', handleScroll)
       handleScroll = null
+    }
+
+    if (handleWheel) {
+      window.removeEventListener('wheel', handleWheel)
+      handleWheel = null
     }
 
     if (handleExperienceLogoSpinCue) {
