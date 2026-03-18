@@ -37,13 +37,20 @@
     }
 
     .boot-loader__logo {
+      display: flex;
+      align-items: flex-end;
       color: rgba(255, 255, 255, 0.95);
       font-family: 'InterLocal', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 2rem;
       font-weight: 800;
       letter-spacing: 0.1em;
+      line-height: 1;
       margin-bottom: 24px;
       text-transform: uppercase;
+    }
+
+    .boot-loader__dot {
+      color: #ebb207;
     }
 
     .boot-loader__track {
@@ -58,15 +65,15 @@
       position: absolute;
       inset: 0 auto 0 0;
       width: 0;
-      background-color: #ffd600;
-      box-shadow: 0 0 8px rgba(255, 214, 0, 0.4);
+      background-color: #ebb207;
+      box-shadow: 0 0 8px rgba(235, 178, 7, 0.4);
     }
   </style>
 </head>
 
 <body>
   <div id="boot-loader" aria-hidden="true">
-    <div class="boot-loader__logo">JG.</div>
+    <div class="boot-loader__logo">JG<span class="boot-loader__dot">.</span></div>
     <div class="boot-loader__track">
       <div class="boot-loader__fill"></div>
     </div>

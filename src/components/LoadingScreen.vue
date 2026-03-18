@@ -63,7 +63,7 @@ onUnmounted(() => {
     aria-live="polite"
     aria-label="Chargement du portfolio"
   >
-    <div class="logo">JG.</div>
+    <div class="logo">JG<span class="logo-dot">.</span></div>
 
     <div :class="['progress-track', { hide: isBarHidden }]" aria-hidden="true">
       <div class="progress-fill" :style="{ width: `${progress}%` }"></div>
@@ -96,14 +96,21 @@ onUnmounted(() => {
 }
 
 .logo {
+  display: flex;
+  align-items: flex-end;
   font-family: 'InterLocal', 'Inter', system-ui, sans-serif;
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: 0.1em;
+  line-height: 1;
   color: rgba(255, 255, 255, 0.95);
   margin-bottom: 24px;
   text-transform: uppercase;
   animation: fadeIn 1s ease-out;
+}
+
+.logo-dot {
+  color: #ebb207;
 }
 
 .progress-track {
@@ -126,8 +133,8 @@ onUnmounted(() => {
   left: 0;
   height: 100%;
   width: 0%;
-  background-color: #ffd600;
-  box-shadow: 0 0 8px rgba(255, 214, 0, 0.4);
+  background-color: #ebb207;
+  box-shadow: 0 0 8px rgba(235, 178, 7, 0.4);
   transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
