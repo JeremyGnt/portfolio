@@ -117,6 +117,7 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  touch-action: pan-y;
 }
 
 .experience-card:hover {
@@ -333,11 +334,10 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   }
 
   .experience-card__body {
-    overflow-y: auto;
-    padding-right: 0.15rem;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
-    overscroll-behavior: contain;
+    overflow-y: visible;
+    padding-right: 0;
+    scrollbar-width: none;
+    overscroll-behavior: auto;
   }
 }
 </style>

@@ -26,3 +26,5 @@
 - Quand l'utilisateur demande une evolution d'un composant de navigation existant, partir d'abord du menu de base et limiter les changements au comportement et au layout demandes avant d'introduire une variante separee.
 - Si l'utilisateur veut conserver "la meme bulle" pendant un drag, reutiliser les etats visuels deja presents du composant et les lier a l'etat de drag, plutot que d'afficher une bulle statique de simple position finale.
 - Si un menu mobile doit distinguer tap simple et drag, ne pas basculer en mode drag au `pointerdown`; attendre un vrai seuil de mouvement pour laisser les clics rejouer l'animation normale du menu.
+- Si un flash visuel persiste en mobile autour d'elements glassmorphism, verifier d'abord les `backdrop-filter` et filtres SVG partages entre composants fixes avant d'incriminer seulement le montage `v-if`.
+- Si un composant de navigation reutilise une logique `compact` desktop en mobile, verifier que les etats derives comme `isMenuContentVisible` ne masquent pas encore la bulle active pendant les transitions de page ou de scroll.

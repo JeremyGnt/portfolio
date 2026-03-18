@@ -8,7 +8,8 @@ const hero = experiencesPageData.hero
 const cards = experiencesPageData.cards
 const cardSlots = ['left', 'center', 'right'] as const
 
-const { scrollTrackRef, mainTitleRef, scrollHintRef, setCardRef } = useExperienceSceneAnimation()
+const { scrollTrackRef, cardsStageRef, mainTitleRef, scrollHintRef, setCardRef } =
+  useExperienceSceneAnimation()
 
 onMounted(() => {
   document.body.classList.add('route-experience')
@@ -55,7 +56,7 @@ onUnmounted(() => {
               </div>
 
               <div class="cards-layer">
-                <div class="cards-stage">
+                <div ref="cardsStageRef" class="cards-stage">
                   <div
                     v-for="(card, cardIndex) in cards"
                     :key="card.id"
@@ -245,6 +246,8 @@ onUnmounted(() => {
     grid-column: 1;
     justify-self: center;
     width: min(100%, 28rem);
+    height: auto;
+    min-height: 0;
   }
 }
 
@@ -254,6 +257,10 @@ onUnmounted(() => {
     padding-left: 1rem;
   }
 
+  .scroll-hint {
+    bottom: calc(7.6rem + env(safe-area-inset-bottom));
+  }
+
   .cards-layer {
     padding-top: clamp(3.5rem, 7vh, 4.5rem);
     padding-right: 0.15rem;
@@ -261,8 +268,7 @@ onUnmounted(() => {
   }
 
   .experience-card-shell {
-    height: min(72vh, 38rem);
-    min-height: 26rem;
+    max-height: none;
   }
 }
 </style>

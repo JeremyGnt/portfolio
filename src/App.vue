@@ -186,17 +186,22 @@ onUnmounted(() => {
       <div class="mini-scrollbar__thumb" :style="{ transform: `translateY(${scrollProgress * 120}px)` }" />
     </div>
 
-    <Transition name="scroll-top-fade">
-      <button
-        v-if="showScrollTop"
-        :class="['scroll-top-button', { 'is-clicked': isScrollTopClicked }]"
-        type="button"
-        aria-label="Remonter en haut de la page"
-        @click="scrollToTop"
-      >
-        <ChevronUp :size="24" />
-      </button>
-    </Transition>
+    <button
+      :class="[
+        'scroll-top-button',
+        {
+          'is-clicked': isScrollTopClicked,
+          'is-visible': showScrollTop,
+        },
+      ]"
+      type="button"
+      aria-label="Remonter en haut de la page"
+      :aria-hidden="!showScrollTop"
+      :tabindex="showScrollTop ? 0 : -1"
+      @click="scrollToTop"
+    >
+      <ChevronUp :size="24" />
+    </button>
 
     <AppFooter />
     </div>
@@ -372,16 +377,26 @@ onUnmounted(() => {
   overflow: hidden;
   background-color: rgba(15, 15, 15, 0.1);
   backdrop-filter: brightness(1.2) blur(1px) url(#menuDisplacementFilter);
+  -webkit-backdrop-filter: brightness(1.2) blur(1px);
+  isolation: isolate;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   box-shadow:
     inset 1px 1px 1px 0 rgba(255, 255, 255, 0.4),
     inset -1px -1px 2px 0 rgba(0, 0, 0, 0.1),
     inset 0 0 8px 1px rgba(255, 255, 255, 0.15),
     0 10px 40px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.92);
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
     background-color 0.25s ease,
-    opacity 0.25s ease;
+    opacity 0.25s ease,
+    visibility 0s linear 0.25s;
 }
 
 .scroll-top-button::after {
@@ -395,23 +410,17 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-.scroll-top-fade-enter-active,
-.scroll-top-fade-leave-active {
-  transition:
-    opacity 0.32s ease,
-    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.scroll-top-fade-enter-from,
-.scroll-top-fade-leave-to {
-  opacity: 0;
-  transform: translateY(10px) scale(0.92);
-}
-
-.scroll-top-fade-enter-to,
-.scroll-top-fade-leave-from {
+.scroll-top-button.is-visible {
   opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
   transform: translateY(0) scale(1);
+  transition:
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    opacity 0.32s ease,
+    visibility 0s linear 0s;
 }
 
 .scroll-top-button:hover {
@@ -505,6 +514,9 @@ onUnmounted(() => {
     bottom: calc(7.1rem + env(safe-area-inset-bottom));
     width: 52px;
     height: 52px;
+    background-color: rgba(15, 15, 15, 0.24);
+    backdrop-filter: blur(14px) saturate(1.08);
+    -webkit-backdrop-filter: blur(14px) saturate(1.08);
   }
 
   .mini-scrollbar {

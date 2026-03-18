@@ -180,6 +180,12 @@ const restoreBubbleTransitions = () => {
   isBubbleTransitionSuppressed.value = false
 }
 
+const syncMobileContentVisibility = () => {
+  if (isMobileViewport()) {
+    isMenuContentVisible.value = true
+  }
+}
+
 const clearMenuContentRevealTimeout = () => {
   if (menuContentRevealTimeout) {
     clearTimeout(menuContentRevealTimeout)
@@ -188,6 +194,11 @@ const clearMenuContentRevealTimeout = () => {
 }
 
 const revealMenuContentAfterExpand = () => {
+  if (isMobileViewport()) {
+    isMenuContentVisible.value = true
+    return
+  }
+
   clearMenuContentRevealTimeout()
   menuContentRevealTimeout = setTimeout(() => {
     if (!isCompactMode.value) {
@@ -414,6 +425,13 @@ const handleCompactModeChange = (event: Event) => {
 
   clearMenuContentRevealTimeout()
 
+  if (isMobileViewport()) {
+    isCompactMode.value = compact
+    isMenuContentVisible.value = true
+    scheduleMenuLayoutSync()
+    return
+  }
+
   if (compact) {
     isMenuContentVisible.value = false
   }
@@ -441,6 +459,7 @@ const handleMenuShellTransitionEnd = (event: TransitionEvent) => {
 }
 
 const handleWindowResize = () => {
+  syncMobileContentVisibility()
   syncMenuLayout(true)
 }
 
@@ -468,6 +487,7 @@ onMounted(() => {
 
   isCompactMode.value = document.querySelector('.app-header')?.classList.contains('app-header--menu-compact') ?? false
   isMenuContentVisible.value = !isCompactMode.value
+  syncMobileContentVisibility()
 
   window.addEventListener('resize', handleWindowResize)
   window.addEventListener('experience-menu-compact-change', handleCompactModeChange as EventListener)

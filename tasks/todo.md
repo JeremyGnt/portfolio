@@ -1,5 +1,18 @@
 # Todo
 
+## Experience Mobile Stacked Scroll
+
+- [completed] Auditer la scene `/experience` mobile et definir les offsets d'arret des cards sous le header compact et sous les titres precedents.
+- [completed] Adapter le layout mobile et le composable GSAP pour faire monter les cards 1, 2 et 3 l'une apres l'autre avec scroll continu sur toute la surface.
+- [completed] Verifier l'ajustement avec `npm run build` et documenter le resultat.
+
+### Outcome
+
+- La scene `/experience` conserve le reveal desktop existant, mais passe maintenant sur mobile a un empilement sequentiel: chaque card part du bas, monte avec le scroll et s'arrete a une position calculee sous le header puis sous le header visible de la card precedente.
+- Les positions finales mobiles sont mesurees a partir de la hauteur reelle du header fixe et du bloc titre de chaque card, ce qui aligne la card 2 sous le titre de la card 1 puis la card 3 sous celui de la card 2 au lieu de les faire converger au meme niveau.
+- Le scroll vertical sur mobile n'est plus capte par un scroll interne dans la card: un geste sur la card ou sur le fond continue de piloter la scene scrollée.
+- `npm run build` passe apres ce changement.
+
 ## Liquid Menu Mobile Rebase
 
 - [completed] Reprendre la capsule `LiquidMenu` d'origine comme navbar unique au lieu d'une navigation mobile separee.
