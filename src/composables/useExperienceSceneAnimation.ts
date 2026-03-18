@@ -10,6 +10,23 @@ const logoSpinResetThreshold = 0.68
 const mobileExperienceBreakpoint = '(max-width: 720px)'
 const mobileFirstCardOffset = 24
 const mobileCardHeaderGap = 10
+const mobileCardEntrySpacingViewportFactor = 0.52
+const mobileHeroSpaceViewportFactor = 0.46
+const mobileCardStageEntryViewportFactor = 0.12
+const mobileBottomSceneViewportFactor = 0.34
+const mobileBottomSceneMinimum = 160
+const mobileBottomNavClearance = 16
+const mobileScrollHintFadeDistance = 96
+
+const mobileSceneCssVars = [
+  '--experience-mobile-first-top',
+  '--experience-mobile-second-top',
+  '--experience-mobile-third-top',
+  '--experience-mobile-hero-space',
+  '--experience-mobile-entry-space',
+  '--experience-mobile-stack-spacing',
+  '--experience-mobile-bottom-space',
+] as const
 
 type SceneAnimationConfig = {
   endPercent: number
@@ -53,52 +70,63 @@ const getPinnedHeaderHeight = (card: HTMLElement) => {
   return Math.max(headerRect.bottom - cardRect.top, 84)
 }
 
-const createMobileSceneConfig = (
+const clearCardAnimationStyles = (cards: HTMLElement[]) => {
+  cards.forEach((card) => {
+    gsap.set(card, {
+      clearProps: 'transform,opacity,visibility,will-change',
+    })
+  })
+}
+
+const clearMobileSceneStyles = (stage: HTMLElement) => {
+  mobileSceneCssVars.forEach((cssVar) => {
+    stage.style.removeProperty(cssVar)
+  })
+}
+
+const syncMobileSceneStyles = (
   cards: HTMLElement[],
   stage: HTMLElement,
   header: HTMLElement | null,
-): SceneAnimationConfig => {
-  const stageRect = stage.getBoundingClientRect()
-  const stageTop = stageRect.top
-  const headerBottom = header?.getBoundingClientRect().bottom ?? stageTop
-  let stackedTop = Math.max(headerBottom + mobileFirstCardOffset - stageTop, 0)
-
-  const cardStates = cards.map((card, index) => {
-    const cardRect = card.getBoundingClientRect()
-    const naturalTop = cardRect.top - stageTop
-    const targetY = stackedTop - naturalTop
-    const initialY = Math.max(stageRect.height - naturalTop + 56, cardRect.height * 0.95)
-
-    stackedTop += getPinnedHeaderHeight(card) + mobileCardHeaderGap
-
-    return {
-      card,
-      initialY,
-      position: index * 1.14,
-      vars: {
-        y: targetY,
-        duration: 0.98,
-      } satisfies gsap.TweenVars,
+): void => {
+  const headerBottom = Math.round(header?.getBoundingClientRect().bottom ?? 56)
+  const bottomNavTop = Math.round(
+    document.querySelector<HTMLElement>('.header-menu')?.getBoundingClientRect().top ??
+      window.innerHeight - mobileBottomNavClearance,
+  )
+  const stickyTops = cards.map((_, index) => {
+    if (index === 0) {
+      return headerBottom + mobileFirstCardOffset
     }
+
+    return 0
   })
 
-  return {
-    endPercent: Math.max(cards.length * 125, 360),
-    setup: () => {
-      cardStates.forEach(({ card, initialY }) => {
-        gsap.set(card, {
-          y: initialY,
-          autoAlpha: 1,
-          willChange: 'transform',
-        })
-      })
-    },
-    entries: cardStates.map(({ card, position, vars }) => ({
-      element: card,
-      position,
-      vars,
-    })),
+  for (let index = 1; index < stickyTops.length; index += 1) {
+    stickyTops[index] = stickyTops[index - 1] + getPinnedHeaderHeight(cards[index - 1]) + mobileCardHeaderGap
   }
+
+  const lastCard = cards.at(-1)
+  const lastTop = stickyTops.at(-1) ?? headerBottom + mobileFirstCardOffset
+  const lastCardHeight = Math.ceil(lastCard?.getBoundingClientRect().height ?? 0)
+  const availableBottom = bottomNavTop - mobileBottomNavClearance
+  const bottomSpace = Math.max(
+    availableBottom - (lastTop + lastCardHeight) + Math.max(window.innerHeight * mobileBottomSceneViewportFactor, 180),
+    mobileBottomSceneMinimum,
+  )
+  const heroSpace = Math.max(window.innerHeight * mobileHeroSpaceViewportFactor, 280)
+  const entrySpace = Math.max(window.innerHeight * mobileCardStageEntryViewportFactor, 72)
+  const stackSpacing = Math.max(window.innerHeight * mobileCardEntrySpacingViewportFactor, 280)
+
+  stage.style.setProperty('--experience-mobile-first-top', `${Math.round(stickyTops[0] ?? 96)}px`)
+  stage.style.setProperty('--experience-mobile-second-top', `${Math.round(stickyTops[1] ?? stickyTops[0] ?? 156)}px`)
+  stage.style.setProperty('--experience-mobile-third-top', `${Math.round(stickyTops[2] ?? stickyTops[1] ?? 216)}px`)
+  stage.style.setProperty('--experience-mobile-hero-space', `${Math.round(heroSpace)}px`)
+  stage.style.setProperty('--experience-mobile-entry-space', `${Math.round(entrySpace)}px`)
+  stage.style.setProperty('--experience-mobile-stack-spacing', `${Math.round(stackSpacing)}px`)
+  stage.style.setProperty('--experience-mobile-bottom-space', `${Math.round(bottomSpace)}px`)
+
+  clearCardAnimationStyles(cards)
 }
 
 export function useExperienceSceneAnimation() {
@@ -144,6 +172,18 @@ export function useExperienceSceneAnimation() {
     dispatchLogoSpinCue(false)
   }
 
+  const syncMobileScrollHint = () => {
+    if (!window.matchMedia(mobileExperienceBreakpoint).matches || !scrollHintRef.value) {
+      return
+    }
+
+    gsap.to(scrollHintRef.value, {
+      autoAlpha: window.scrollY > mobileScrollHintFadeDistance ? 0 : 0.72,
+      duration: 0.18,
+      overwrite: true,
+    })
+  }
+
   const buildScene = () => {
     const track = scrollTrackRef.value
     const stage = cardsStageRef.value
@@ -156,11 +196,18 @@ export function useExperienceSceneAnimation() {
       return
     }
 
+    const isMobileScene = window.matchMedia(mobileExperienceBreakpoint).matches
+
+    clearMobileSceneStyles(stage)
+
+    if (isMobileScene) {
+      syncMobileSceneStyles(cards, stage, header)
+      syncMobileScrollHint()
+      return
+    }
+
     context = gsap.context(() => {
-      const isMobileScene = window.matchMedia(mobileExperienceBreakpoint).matches
-      const sceneConfig = isMobileScene
-        ? createMobileSceneConfig(cards, stage, header)
-        : createDesktopSceneConfig(cards)
+      const sceneConfig = createDesktopSceneConfig(cards)
 
       sceneConfig.setup()
 
@@ -228,8 +275,14 @@ export function useExperienceSceneAnimation() {
 
     resizeTimeout = setTimeout(() => {
       buildScene()
-      ScrollTrigger.refresh()
+      if (!window.matchMedia(mobileExperienceBreakpoint).matches) {
+        ScrollTrigger.refresh()
+      }
     }, 160)
+  }
+
+  const handleScroll = () => {
+    syncMobileScrollHint()
   }
 
   onBeforeUpdate(resetCardRefs)
@@ -238,6 +291,7 @@ export function useExperienceSceneAnimation() {
     scrollWindowToTopInstantly()
     buildScene()
     window.addEventListener('resize', handleResize, { passive: true })
+    window.addEventListener('scroll', handleScroll, { passive: true })
   })
 
   onUnmounted(() => {
@@ -247,6 +301,7 @@ export function useExperienceSceneAnimation() {
     }
 
     window.removeEventListener('resize', handleResize)
+    window.removeEventListener('scroll', handleScroll)
     destroyScene()
   })
 

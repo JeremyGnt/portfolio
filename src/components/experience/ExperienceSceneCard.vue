@@ -318,8 +318,32 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 }
 
 @media (max-width: 720px) {
+  .experience-card {
+    padding: 1.2rem;
+  }
+
+  .experience-card__number {
+    top: -0.4rem;
+    right: 0.25rem;
+    font-size: clamp(5rem, 20vw, 7.2rem);
+  }
+
+  .experience-card__header {
+    margin-bottom: 0.9rem;
+  }
+
   .experience-card__meta-title {
     font-size: 0.8rem;
+  }
+
+  .experience-card__panel {
+    gap: 0.68rem;
+    padding: 0.9rem;
+    border-radius: 1.15rem;
+  }
+
+  .experience-card__stack {
+    gap: 0.8rem;
   }
 
   .experience-card__company-logo-box {
@@ -330,7 +354,15 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 
   .experience-card__description,
   .experience-card__bullet-list :deep(li) {
-    font-size: 0.9rem;
+    font-size: 0.86rem;
+    line-height: 1.52;
+  }
+
+  .experience-card__date-line,
+  .experience-card__cert-date,
+  .experience-card__cert-subtitle,
+  .timeline-role {
+    font-size: 0.78rem;
   }
 
   .experience-card__body {

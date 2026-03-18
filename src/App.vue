@@ -496,6 +496,12 @@ onUnmounted(() => {
     align-self: flex-start;
   }
 
+  #header-logo-bg {
+    background-color: rgba(15, 15, 15, 0.24);
+    backdrop-filter: blur(14px) saturate(1.08);
+    -webkit-backdrop-filter: blur(14px) saturate(1.08);
+  }
+
   .header-menu {
     position: fixed;
     left: 1rem;

@@ -1,5 +1,19 @@
 # Todo
 
+## Experience Mobile Browser Reliability
+
+- [completed] Reprendre `/experience` mobile pour supprimer la dependance au pin/scrub GSAP sur navigateur mobile et definir un empilement natif fiable.
+- [completed] Adapter la nav mobile avec un fallback glass coherent sur vrai Safari/Chrome mobile au lieu de dependre du filtre SVG de distortion.
+- [completed] Verifier avec `npm run build` et documenter le resultat de cette refonte mobile.
+
+### Outcome
+
+- La variante mobile de `/experience` n'utilise plus le reveal `ScrollTrigger` pince en mobile: elle repose maintenant sur un empilement natif `position: sticky` avec offsets mesures en JavaScript, ce qui evite les disparitions, coupes et positions incoherentes observees sur Safari et Chrome reels.
+- Les offsets mobiles des cards sont calcules a partir de la hauteur du header et des headers de cards, et la scene reserve maintenant aussi l'espace necessaire sous la troisieme card avant l'arrivee du footer.
+- Les cards mobiles ont ete compactees pour mieux rentrer dans le viewport reel au-dessus de la bottom nav, sans depender d'un scroll interne fragile.
+- La bottom nav mobile et le badge `JG` utilisent maintenant un fallback glass base sur `blur/saturate` au lieu du filtre SVG de distortion desktop, afin d'avoir un rendu stable sur navigateur mobile reel.
+- `npm run build` passe apres cette refonte.
+
 ## Experience Mobile Stacked Scroll
 
 - [completed] Auditer la scene `/experience` mobile et definir les offsets d'arret des cards sous le header compact et sous les titres precedents.

@@ -182,6 +182,7 @@ const restoreBubbleTransitions = () => {
 
 const syncMobileContentVisibility = () => {
   if (isMobileViewport()) {
+    isCompactMode.value = false
     isMenuContentVisible.value = true
   }
 }
@@ -195,6 +196,7 @@ const clearMenuContentRevealTimeout = () => {
 
 const revealMenuContentAfterExpand = () => {
   if (isMobileViewport()) {
+    isCompactMode.value = false
     isMenuContentVisible.value = true
     return
   }
@@ -426,7 +428,7 @@ const handleCompactModeChange = (event: Event) => {
   clearMenuContentRevealTimeout()
 
   if (isMobileViewport()) {
-    isCompactMode.value = compact
+    isCompactMode.value = false
     isMenuContentVisible.value = true
     scheduleMenuLayoutSync()
     return
@@ -704,6 +706,7 @@ onBeforeUnmount(() => {
   border-radius: inherit;
   background-color: rgba(15, 15, 15, 0.1);
   backdrop-filter: brightness(1.2) blur(1px) url(#menuDisplacementFilter);
+  -webkit-backdrop-filter: brightness(1.2) blur(1px);
   box-shadow:
     inset 1px 1px 1px 0 rgba(255, 255, 255, 0.4),
     inset -1px -1px 2px 0 rgba(0, 0, 0, 0.1),
@@ -781,6 +784,9 @@ onBeforeUnmount(() => {
   border-radius: 35px;
   pointer-events: none;
   transform: scale(1);
+  isolation: isolate;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   transition:
     left var(--move-duration, 0.8s) cubic-bezier(0.34, 1.25, 0.64, 1),
     top var(--move-duration, 0.8s) cubic-bezier(0.34, 1.25, 0.64, 1),
@@ -791,6 +797,7 @@ onBeforeUnmount(() => {
     box-shadow 0.3s ease,
     transform var(--grow-duration, 0.46s) cubic-bezier(0.22, 1, 0.36, 1);
   backdrop-filter: blur(20px) saturate(1.1);
+  -webkit-backdrop-filter: blur(20px) saturate(1.1);
   background-color: rgba(255, 255, 255, 0.18);
   box-shadow:
     inset 0 1px 2px rgba(255, 255, 255, 0.25),
@@ -820,6 +827,7 @@ onBeforeUnmount(() => {
 
 .active-bubble.moving {
   backdrop-filter: brightness(1.2) blur(1px) url(#menuDisplacementFilter);
+  -webkit-backdrop-filter: brightness(1.2) blur(1px);
   background-color: rgba(255, 255, 255, 0.02);
   box-shadow:
     inset 1px 1px 1px 0 rgba(255, 255, 255, 0.4),
@@ -839,6 +847,7 @@ onBeforeUnmount(() => {
 .active-bubble.dragging {
   transform: scale(1.28);
   backdrop-filter: brightness(1.2) blur(1px) url(#menuDisplacementFilter);
+  -webkit-backdrop-filter: brightness(1.2) blur(1px);
   background-color: rgba(255, 255, 255, 0.03);
   box-shadow:
     inset 1px 1px 1px 0 rgba(255, 255, 255, 0.42),
@@ -857,6 +866,20 @@ onBeforeUnmount(() => {
   .liquid-menu.is-compact .menu-shell {
     width: 100%;
     max-width: 100%;
+  }
+
+  .menu-shell {
+    isolation: isolate;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .menu-bg {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%),
+      rgba(12, 14, 18, 0.42);
+    backdrop-filter: blur(18px) saturate(1.16);
+    -webkit-backdrop-filter: blur(18px) saturate(1.16);
   }
 
   .menu-shell-track {
@@ -901,6 +924,23 @@ onBeforeUnmount(() => {
     opacity: 1;
     pointer-events: auto;
     transform: none;
+  }
+
+  .liquid-menu:not(.is-content-visible) .active-bubble {
+    opacity: 1;
+  }
+
+  .active-bubble,
+  .active-bubble.moving,
+  .active-bubble.growing,
+  .active-bubble.dragging {
+    backdrop-filter: blur(16px) saturate(1.12);
+    -webkit-backdrop-filter: blur(16px) saturate(1.12);
+    background-color: rgba(255, 255, 255, 0.16);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.26),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 10px 28px rgba(0, 0, 0, 0.18);
   }
 
   .item-icon {
