@@ -1,40 +1,41 @@
 <script setup lang="ts">
+import gsap from 'gsap'
 import { Ellipsis } from 'lucide-vue-next'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-
-type MenuItem = {
-  text: string
-  path: string
-  icon: string
-}
+import { getNavigationIndexByPath, navigationItems } from '../constants/navigation'
 
 type CompactMenuEvent = CustomEvent<{ compact?: boolean }>
+type ItemMetric = {
+  left: number
+  top: number
+  width: number
+  height: number
+  center: number
+}
 
 const route = useRoute()
 const router = useRouter()
 const compactSize = 58
 const menuShellExpandDurationMs = 520
+const mobileBreakpoint = 768
 
-const items: MenuItem[] = [
-  { text: 'À propos', path: '/', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>' },
-  { text: 'Expériences', path: '/experience', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>' },
-  { text: 'Projets', path: '/projects', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>' },
-  { text: 'Contact', path: '/contact', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>' },
-]
+const items = navigationItems
 
 function getActiveIndexFromRoute() {
-  const index = items.findIndex((item) => item.path === route.path)
-  return Math.max(index, 0)
+  return getNavigationIndexByPath(route.path)
 }
 
 const menuRootRef = ref<HTMLElement | null>(null)
 const menuShellRef = ref<HTMLElement | null>(null)
 const menuTrackRef = ref<HTMLElement | null>(null)
+const bubbleRef = ref<HTMLElement | null>(null)
 const itemRefs = ref<HTMLElement[]>([])
 const activeIndex = ref(getActiveIndexFromRoute())
+const dragIndex = ref(activeIndex.value)
 const isMoving = ref(false)
 const isGrowing = ref(false)
+const isDraggingBubble = ref(false)
 const moveDuration = ref(0.8)
 const growDuration = ref(0.46)
 const bubbleStyle = ref({ width: '0px', height: '0px', left: '0px', top: '0px' })
@@ -48,6 +49,12 @@ const bubbleInlineStyle = computed(() => ({
   '--move-duration': isBubbleTransitionSuppressed.value ? '0s' : `${moveDuration.value}s`,
   '--grow-duration': `${growDuration.value}s`,
 }))
+const highlightedIndex = computed(() => (isDraggingBubble.value ? dragIndex.value : activeIndex.value))
+const bubbleStateClasses = computed(() => ({
+  moving: isMoving.value || isDraggingBubble.value,
+  growing: isGrowing.value || isDraggingBubble.value,
+  dragging: isDraggingBubble.value,
+}))
 
 const menuShellStyle = computed(() => ({
   '--compact-size': `${compactSize}px`,
@@ -60,6 +67,10 @@ let compactSyncTimeout: ReturnType<typeof setTimeout> | null = null
 let menuContentRevealTimeout: ReturnType<typeof setTimeout> | null = null
 let bubbleTransitionRestoreFrame: number | null = null
 let bubbleTransitionRestoreNestedFrame: number | null = null
+let activePointerId: number | null = null
+let pendingPointerId: number | null = null
+let pendingPointerStartX = 0
+let pendingPointerStartY = 0
 
 const getMoveDurationForDistance = (distance: number) => {
   if (distance <= 0) {
@@ -76,6 +87,79 @@ const getMoveDurationForDistance = (distance: number) => {
 const setItemRef = (element: Element | null, index: number) => {
   if (element) {
     itemRefs.value[index] = element as HTMLElement
+  }
+}
+
+const isMobileViewport = () => window.innerWidth <= mobileBreakpoint
+
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
+const dragStartThreshold = 8
+
+const getItemMetrics = () => {
+  const parent = menuTrackRef.value
+  if (!parent) {
+    return null
+  }
+
+  const parentRect = parent.getBoundingClientRect()
+  const metrics = itemRefs.value
+    .filter(Boolean)
+    .map((item) => {
+      const itemRect = item.getBoundingClientRect()
+      const left = itemRect.left - parentRect.left
+
+      return {
+        left,
+        top: itemRect.top - parentRect.top,
+        width: itemRect.width,
+        height: itemRect.height,
+        center: left + itemRect.width / 2,
+      }
+    })
+
+  if (metrics.length === 0) {
+    return null
+  }
+
+  return { parentRect, metrics }
+}
+
+const getIndexFromClientX = (clientX: number, parentRect: DOMRect, metrics: ItemMetric[]) => {
+  const relativeX = clientX - parentRect.left
+  const insideIndex = metrics.findIndex((metric) => relativeX >= metric.left && relativeX <= metric.left + metric.width)
+
+  if (insideIndex !== -1) {
+    return insideIndex
+  }
+
+  return metrics.reduce((closestIndex, metric, index) => {
+    const currentDistance = Math.abs(metric.center - relativeX)
+    const bestDistance = Math.abs(metrics[closestIndex].center - relativeX)
+    return currentDistance < bestDistance ? index : closestIndex
+  }, 0)
+}
+
+const updateBubbleDuringDrag = (clientX: number) => {
+  const layout = getItemMetrics()
+  if (!layout) {
+    return
+  }
+
+  const { parentRect, metrics } = layout
+  const nextIndex = getIndexFromClientX(clientX, parentRect, metrics)
+  const metric = metrics[nextIndex]
+  const draggedLeft = clamp(
+    clientX - parentRect.left - metric.width / 2,
+    0,
+    Math.max(parentRect.width - metric.width, 0),
+  )
+
+  dragIndex.value = nextIndex
+  bubbleStyle.value = {
+    width: `${metric.width}px`,
+    height: `${metric.height}px`,
+    left: `${draggedLeft}px`,
+    top: `${metric.top}px`,
   }
 }
 
@@ -197,6 +281,8 @@ const scheduleMenuLayoutSync = () => {
 }
 
 const selectItem = (index: number) => {
+  dragIndex.value = index
+
   if (activeIndex.value !== index) {
     const distance = Math.abs(index - activeIndex.value)
     const calculatedDuration = getMoveDurationForDistance(distance)
@@ -227,6 +313,99 @@ const selectItem = (index: number) => {
   }
 
   router.push(items[index].path)
+}
+
+const handlePointerDown = (event: PointerEvent) => {
+  if (!isMobileViewport() || isCompactMode.value) {
+    return
+  }
+
+  if (event.pointerType === 'mouse' && event.button !== 0) {
+    return
+  }
+
+  if (!menuTrackRef.value || !getItemMetrics()) {
+    return
+  }
+
+  pendingPointerId = event.pointerId
+  pendingPointerStartX = event.clientX
+  pendingPointerStartY = event.clientY
+}
+
+const handlePointerMove = (event: PointerEvent) => {
+  if (isDraggingBubble.value && activePointerId === event.pointerId) {
+    updateBubbleDuringDrag(event.clientX)
+    event.preventDefault()
+    return
+  }
+
+  if (pendingPointerId !== event.pointerId) {
+    return
+  }
+
+  const movedX = event.clientX - pendingPointerStartX
+  const movedY = event.clientY - pendingPointerStartY
+  const distance = Math.hypot(movedX, movedY)
+
+  if (distance < dragStartThreshold) {
+    return
+  }
+
+  if (!menuTrackRef.value) {
+    return
+  }
+
+  pendingPointerId = null
+  activePointerId = event.pointerId
+  isDraggingBubble.value = true
+  dragIndex.value = activeIndex.value
+  isBubbleTransitionSuppressed.value = true
+  menuTrackRef.value.setPointerCapture(event.pointerId)
+  gsap.killTweensOf(bubbleRef.value)
+  updateBubbleDuringDrag(event.clientX)
+  event.preventDefault()
+}
+
+const finishBubbleDrag = (event: PointerEvent) => {
+  if (pendingPointerId === event.pointerId) {
+    pendingPointerId = null
+    return
+  }
+
+  if (!isDraggingBubble.value || activePointerId !== event.pointerId) {
+    return
+  }
+
+  if (menuTrackRef.value?.hasPointerCapture(event.pointerId)) {
+    menuTrackRef.value.releasePointerCapture(event.pointerId)
+  }
+
+  isDraggingBubble.value = false
+  activePointerId = null
+  restoreBubbleTransitions()
+  selectItem(dragIndex.value)
+  event.preventDefault()
+}
+
+const cancelBubbleDrag = (event: PointerEvent) => {
+  if (pendingPointerId === event.pointerId) {
+    pendingPointerId = null
+    return
+  }
+
+  if (!isDraggingBubble.value || activePointerId !== event.pointerId) {
+    return
+  }
+
+  if (menuTrackRef.value?.hasPointerCapture(event.pointerId)) {
+    menuTrackRef.value.releasePointerCapture(event.pointerId)
+  }
+
+  isDraggingBubble.value = false
+  activePointerId = null
+  dragIndex.value = activeIndex.value
+  syncMenuLayout(true)
 }
 
 const handleCompactModeChange = (event: Event) => {
@@ -335,18 +514,27 @@ onBeforeUnmount(() => {
     >
       <div class="menu-shell-viewport">
         <div class="menu-bg"></div>
-        <div ref="menuTrackRef" class="menu-shell-track">
+        <div
+          ref="menuTrackRef"
+          class="menu-shell-track"
+          @pointerdown="handlePointerDown"
+          @pointermove="handlePointerMove"
+          @pointerup="finishBubbleDrag"
+          @pointercancel="cancelBubbleDrag"
+        >
           <ul class="menu-list" :aria-hidden="isCompactMode || !isMenuContentVisible">
             <li
               v-for="(item, index) in items"
               :key="item.path"
               :ref="(el) => setItemRef(el, index)"
               class="menu-item"
-              :class="{ active: activeIndex === index }"
+              :class="{ active: highlightedIndex === index }"
               @click="selectItem(index)"
             >
               <div class="item-content">
-                <span class="item-icon" v-html="item.icon" />
+                <span class="item-icon">
+                  <component :is="item.icon" :size="18" :stroke-width="2" />
+                </span>
                 <span class="item-text">{{ item.text }}</span>
               </div>
             </li>
@@ -364,8 +552,9 @@ onBeforeUnmount(() => {
         </div>
       </div>
       <div
+        ref="bubbleRef"
         class="active-bubble"
-        :class="{ moving: isMoving, growing: isGrowing }"
+        :class="bubbleStateClasses"
         :style="bubbleInlineStyle"
       />
     </div>
@@ -627,19 +816,50 @@ onBeforeUnmount(() => {
     inset 0 0 8px 1px rgba(255, 255, 255, 0.15);
 }
 
-@media (max-width: 900px) {
+.active-bubble.dragging {
+  transform: scale(1.28);
+  backdrop-filter: brightness(1.2) blur(1px) url(#menuDisplacementFilter);
+  background-color: rgba(255, 255, 255, 0.03);
+  box-shadow:
+    inset 1px 1px 1px 0 rgba(255, 255, 255, 0.42),
+    inset -1px -1px 2px 0 rgba(0, 0, 0, 0.1),
+    inset 0 0 10px 1px rgba(255, 255, 255, 0.18),
+    0 10px 28px rgba(0, 0, 0, 0.14);
+}
+
+@media (max-width: 768px) {
+  .liquid-menu {
+    --compact-size: 74px;
+    width: 100%;
+  }
+
   .menu-shell,
   .liquid-menu.is-compact .menu-shell {
-    width: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .menu-shell-track {
+    width: 100%;
+    touch-action: none;
+  }
+
+  .menu-list {
+    width: 100%;
+    padding: 5px;
   }
 
   .menu-item {
-    padding: 9px 16px;
-    font-size: 14px;
+    flex: 1 1 0;
+    min-height: calc(var(--compact-size) - 10px);
+    padding: 10px 12px;
+    font-size: 12px;
   }
 
   .item-content {
-    gap: 6px;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 54px;
   }
 
   .liquid-menu.is-compact .compact-trigger {
@@ -662,31 +882,31 @@ onBeforeUnmount(() => {
     pointer-events: auto;
     transform: none;
   }
-}
-
-@media (max-width: 640px) {
-  .menu-list {
-    padding: 4px;
-  }
-
-  .menu-item {
-    padding: 8px 10px;
-    font-size: 12px;
-  }
 
   .item-icon {
-    display: none;
+    width: 18px;
+    height: 18px;
   }
 
   .item-text {
     white-space: nowrap;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1;
   }
 }
 
 @media (max-width: 480px) {
   .menu-item {
-    padding: 8px 8px;
-    font-size: 11px;
+    padding: 9px 8px;
+  }
+
+  .item-content {
+    min-width: 48px;
+  }
+
+  .item-text {
+    font-size: 9px;
   }
 }
 </style>

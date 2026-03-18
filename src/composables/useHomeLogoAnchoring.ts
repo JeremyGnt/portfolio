@@ -7,6 +7,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const anchorScrollDistanceFactor = 3.4
 const anchorScrub = 0.95
+const mobileBreakpoint = 768
 
 export function useHomeLogoAnchoring() {
   let resizeTimer: number | null = null
@@ -19,6 +20,11 @@ export function useHomeLogoAnchoring() {
     gsap.set(logoEl, { autoAlpha: isReady ? 1 : 0 })
   }
 
+  const destroyAnchoring = () => {
+    stTimeline?.kill()
+    stTimeline = null
+  }
+
   const calculateAndSetLogoAnimations = () => {
     const logoJ = document.getElementById('logo-j')
     const logoG = document.getElementById('logo-g')
@@ -27,11 +33,23 @@ export function useHomeLogoAnchoring() {
     const fadeTexts = document.querySelectorAll('.fade-text')
     const logoBg = document.getElementById('header-logo-bg')
 
-    if (!logoJ || !logoG || !targetJ || !targetG || !logoBg) return
+    if (window.innerWidth <= mobileBreakpoint || !logoJ || !logoG || !targetJ || !targetG || !logoBg) {
+      destroyAnchoring()
+      gsap.set(fadeTexts, { clearProps: 'all' })
+      if (targetJ && targetG) {
+        gsap.set([targetJ, targetG], { clearProps: 'all' })
+      }
+      if (logoJ && logoG) {
+        gsap.set([logoJ, logoG], { clearProps: 'all' })
+      }
+      if (logoBg) {
+        gsap.set(logoBg, { clearProps: 'all' })
+      }
+      return
+    }
 
     gsap.set([logoJ, logoG, fadeTexts, logoBg], { clearProps: 'all' })
-    stTimeline?.kill()
-    stTimeline = null
+    destroyAnchoring()
 
     ScrollTrigger.refresh()
 
@@ -158,8 +176,7 @@ export function useHomeLogoAnchoring() {
       resizeTimer = null
     }
 
-    stTimeline?.kill()
-    stTimeline = null
+    destroyAnchoring()
 
     const logoJ = document.getElementById('logo-j')
     const logoG = document.getElementById('logo-g')

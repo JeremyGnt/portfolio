@@ -77,6 +77,11 @@ function handleWindowScroll() {
   showMiniScrollbarWhileScrolling()
 }
 
+function handleWindowResize() {
+  updateScrollTopVisibility()
+  setHeaderLogoVisibility(route.path)
+}
+
 function scrollToTop() {
   if (scrollTopClickTimeout !== null) {
     globalThis.clearTimeout(scrollTopClickTimeout)
@@ -94,7 +99,7 @@ function scrollToTop() {
 onMounted(() => {
   updateScrollTopVisibility()
   window.addEventListener('scroll', handleWindowScroll, { passive: true })
-  window.addEventListener('resize', updateScrollTopVisibility)
+  window.addEventListener('resize', handleWindowResize)
 })
 
 watch(
@@ -141,7 +146,7 @@ onUnmounted(() => {
   document.body.style.overflow = ''
 
   window.removeEventListener('scroll', handleWindowScroll)
-  window.removeEventListener('resize', updateScrollTopVisibility)
+  window.removeEventListener('resize', handleWindowResize)
 })
 </script>
 
@@ -461,24 +466,34 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
+  .app-ready-shell {
+    padding-bottom: calc(6.75rem + env(safe-area-inset-bottom));
+  }
+
   .app-header {
     --header-pill-height: 46px;
     top: 1rem;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0;
     padding: 0 1rem;
   }
 
   .header-logo {
     width: 120px;
     height: 46px;
-    align-self: center;
+    margin-right: 0;
+    align-self: flex-start;
   }
 
   .header-menu {
-    justify-content: center;
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: calc(1.5rem + env(safe-area-inset-bottom));
+    z-index: 9100;
+    justify-content: stretch;
   }
 
   .app-shell {
@@ -487,7 +502,7 @@ onUnmounted(() => {
 
   .scroll-top-button {
     right: 1rem;
-    bottom: 1rem;
+    bottom: calc(7.1rem + env(safe-area-inset-bottom));
     width: 52px;
     height: 52px;
   }

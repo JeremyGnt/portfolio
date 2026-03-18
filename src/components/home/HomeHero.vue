@@ -230,6 +230,13 @@
   }
 }
 
+@media (max-width: 768px) {
+  .target-letter {
+    opacity: 1;
+    color: #ffffff;
+  }
+}
+
 @media (max-width: 640px) {
   .home-hero-title {
     flex-direction: column;

@@ -21,3 +21,8 @@
 - Si l'utilisateur demande les memes parametres qu'un composant existant, reprendre les valeurs exactes depuis la source au lieu d'un style approche.
 - Pour reproduire une typo existante dans un SVG ou une favicon, verifier quelle fonte du stack CSS est reellement disponible et resolue sur la machine; ne pas supposer que le premier nom de la pile est celui qui s'affiche.
 - Si l'utilisateur cite un texte precis comme reference visuelle, repartir de ce composant exact et remonter toute sa chaine d'heritage CSS avant de modifier le rendu; ne pas basculer vers une autre reference typo proche.
+- Pour un composant responsive purement visuel, preferer le laisser monte et piloter l'affichage par media queries plutot qu'avec un `v-if` JS si une des variantes doit absolument rester visible.
+- Quand on ajoute un `fixed` global dans ce portfolio, verifier sa visibilite reelle face aux `z-index` deja eleves du header, du bouton scroll-top et des scenes animees; `z-50` n'est pas toujours suffisant ici.
+- Quand l'utilisateur demande une evolution d'un composant de navigation existant, partir d'abord du menu de base et limiter les changements au comportement et au layout demandes avant d'introduire une variante separee.
+- Si l'utilisateur veut conserver "la meme bulle" pendant un drag, reutiliser les etats visuels deja presents du composant et les lier a l'etat de drag, plutot que d'afficher une bulle statique de simple position finale.
+- Si un menu mobile doit distinguer tap simple et drag, ne pas basculer en mode drag au `pointerdown`; attendre un vrai seuil de mouvement pour laisser les clics rejouer l'animation normale du menu.

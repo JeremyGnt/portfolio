@@ -1,5 +1,33 @@
 # Todo
 
+## Liquid Menu Mobile Rebase
+
+- [completed] Reprendre la capsule `LiquidMenu` d'origine comme navbar unique au lieu d'une navigation mobile separee.
+- [completed] Ajouter uniquement les ajustements mobiles demandes sur ce menu de base: texte sous les icones et bulle draggable sur mobile.
+- [completed] Nettoyer le code obsolete de l'ancienne bottom bar mobile et verifier le resultat avec `npm run build`.
+
+### Outcome
+
+- Le site reutilise maintenant `src/components/LiquidMenu.vue` comme seule barre de navigation, sur desktop comme sur mobile.
+- En mobile, les items du menu gardent la capsule liquid d'origine mais affichent desormais l'icone au-dessus du texte.
+- La bulle active du menu de base peut maintenant etre draguee horizontalement sur mobile; au relachement elle se recale sur l'item vise et active la route correspondante.
+- Le composant `src/components/MobileTabBar.vue` a ete retire pour revenir a une architecture plus simple et plus proche du menu initial.
+- Le build `npm run build` passe apres ce recentrage sur le menu de base.
+
+## Responsive Mobile iOS Tab Bar
+
+- [completed] Auditer la navigation globale existante, les contraintes du logo header et les dependances GSAP deja en place pour definir une separation desktop/mobile propre.
+- [completed] Extraire un modele de navigation partage, conserver `LiquidMenu` pour le desktop et ajouter une barre mobile bottom tab glassmorphism avec icones Lucide et bulle draggable pilotée par `pointer` + GSAP.
+- [completed] Recomposer le shell global pour garder le brand `JG` fixe en haut a gauche sur mobile, reserver le bottom tab bar aux ecrans `<= 768px` et neutraliser l'ancrage du logo desktop sur la home en mobile.
+- [completed] Verifier la refonte avec `npm run build` et une revue ciblee des breakpoints, de la synchro de route et du comportement de snap de la bulle.
+
+### Outcome
+
+- Le header garde maintenant le `LiquidMenu` existant en desktop, tandis qu'un composant dedie `src/components/MobileTabBar.vue` prend le relais en mobile avec une vraie bottom tab bar iOS-like centree, glassmorphism et `touch-action: none`.
+- La bulle mobile suit horizontalement le doigt pendant le drag, calcule l'item courant sous le pointeur, puis snappe avec GSAP `power3.out` vers l'onglet relache avant d'activer la route correspondante.
+- Le brand `JG` mobile reste fixe en haut a gauche via un badge dedie, et la home evite maintenant le conflit avec l'ancien logo 3D de header en reaffichant les lettres du hero et en desactivant l'ancrage desktop sous `768px`.
+- Le build `npm run build` passe apres cette refonte responsive du systeme de navigation.
+
 ## Repository Cleanup
 
 - [completed] Auditer la structure du depot pour distinguer les artefacts generes, les dependances orphelines et les fichiers source non references.
