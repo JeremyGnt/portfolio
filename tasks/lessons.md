@@ -28,4 +28,3 @@
 - Si un menu mobile doit distinguer tap simple et drag, ne pas basculer en mode drag au `pointerdown`; attendre un vrai seuil de mouvement pour laisser les clics rejouer l'animation normale du menu.
 - Si un flash visuel persiste en mobile autour d'elements glassmorphism, verifier d'abord les `backdrop-filter` et filtres SVG partages entre composants fixes avant d'incriminer seulement le montage `v-if`.
 - Si un composant de navigation reutilise une logique `compact` desktop en mobile, verifier que les etats derives comme `isMenuContentVisible` ne masquent pas encore la bulle active pendant les transitions de page ou de scroll.
-- Ne pas valider une animation mobile complexe uniquement via l'emulation "inspecter l'element": pour Safari/Chrome reels, preferer un comportement natif `sticky`/flux normal a un `pin` GSAP si la fiabilite mobile est prioritaire.

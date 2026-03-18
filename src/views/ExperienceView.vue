@@ -230,76 +230,24 @@ onUnmounted(() => {
 }
 
 @media (max-width: 720px) {
-  .scroll-track {
-    height: auto;
-  }
-
-  .sticky-wrap {
-    height: auto;
-    display: block;
-    overflow: visible;
-  }
-
-  .scene-hero {
-    position: relative;
-    inset: auto;
-    min-height: var(--experience-mobile-hero-space, 320px);
-    align-items: flex-start;
-    padding-top: calc(var(--experience-mobile-first-top, 96px) + 1rem);
-    padding-bottom: 0.75rem;
-  }
-
   .scene-hero h1 {
     width: min(100%, 32rem);
     font-size: clamp(2.4rem, 12vw, 4.2rem);
   }
 
-  .cards-layer {
-    position: relative;
-    inset: auto;
-    padding: 0;
-  }
-
   .cards-stage {
-    --experience-mobile-first-top: 96px;
-    --experience-mobile-second-top: 164px;
-    --experience-mobile-third-top: 232px;
-    --experience-mobile-hero-space: 320px;
-    --experience-mobile-entry-space: 72px;
-    --experience-mobile-stack-spacing: 300px;
-    --experience-mobile-bottom-space: 180px;
-    max-width: 28rem;
-    height: auto;
-    display: block;
-    padding-top: var(--experience-mobile-entry-space);
-    padding-bottom: var(--experience-mobile-bottom-space);
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .experience-card-shell,
   .experience-card-shell--left,
   .experience-card-shell--center,
   .experience-card-shell--right {
-    position: sticky;
-    grid-column: auto;
-    grid-row: auto;
-    top: var(--experience-mobile-first-top);
-    margin: 0 auto;
-    justify-self: stretch;
+    grid-column: 1;
+    justify-self: center;
     width: min(100%, 28rem);
     height: auto;
     min-height: 0;
-  }
-
-  .experience-card-shell + .experience-card-shell {
-    margin-top: var(--experience-mobile-stack-spacing);
-  }
-
-  .experience-card-shell--center {
-    top: var(--experience-mobile-second-top);
-  }
-
-  .experience-card-shell--right {
-    top: var(--experience-mobile-third-top);
   }
 }
 
@@ -314,6 +262,7 @@ onUnmounted(() => {
   }
 
   .cards-layer {
+    padding-top: clamp(3.5rem, 7vh, 4.5rem);
     padding-right: 0.15rem;
     padding-left: 0.15rem;
   }
