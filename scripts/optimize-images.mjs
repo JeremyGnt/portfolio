@@ -30,6 +30,24 @@ const assets = [
     webp: { quality: 84, effort: 6, smartSubsample: true },
   },
   {
+    input: 'public/projects/projet_omnesbnb.jpg',
+    output: 'public/projects/projet_omnesbnb.webp',
+    width: 1200,
+    webp: { quality: 82, effort: 6, smartSubsample: true },
+  },
+  {
+    input: 'public/projects/projet_snoopy.png',
+    output: 'public/projects/projet_snoopy.webp',
+    width: 900,
+    webp: { quality: 82, effort: 6, smartSubsample: true },
+  },
+  {
+    input: 'public/projects/projet_escooked.jpg',
+    output: 'public/projects/projet_escooked.webp',
+    width: 1200,
+    webp: { quality: 82, effort: 6, smartSubsample: true },
+  },
+  {
     input: 'public/brands/carrefour-logo.png',
     output: 'public/brands/carrefour-logo.webp',
     width: 320,

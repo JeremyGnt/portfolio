@@ -27,9 +27,11 @@ export const projectsData: ProjectData[] = [
     year: 2025,
     title: 'Airbnb for Students',
     category: 'Plateforme web',
-    listTags: ['JavaScript', 'PHP'],
+    listTags: ['JS', 'PHP'],
     description: 'Plateforme web inspirée d’Airbnb pour étudiants avec recherche de logements, favoris, avis utilisateurs et base de données relationnelle.',
-    badges: ['HTML', 'CSS', 'JavaScript', 'PHP', 'SQL'],
+    badges: ['HTML', 'CSS', 'JS', 'PHP', 'SQL'],
+    imageSrc: '/projects/projet_omnesbnb.webp',
+    imageAlt: 'Capture du projet Omnes BnB de plateforme web pour etudiants',
   },
   {
     id: 'fruit-ninja-fpga',
@@ -38,7 +40,7 @@ export const projectsData: ProjectData[] = [
     category: 'Systeme embarque interactif',
     listTags: ['VHDL', 'FPGA'],
     description: 'Jeu Fruit Ninja sur FPGA piloté par capteur ultrason avec détection de mouvement, calcul de trajectoire, collision en temps réel et système de score.',
-    badges: ['FPGA', 'VHDL', 'Capteur ultrason', 'Temps reel'],
+    badges: ['FPGA', 'VHDL', 'Capteur ultrason'],
   },
   {
     id: 'programmable-controller',
@@ -59,7 +61,7 @@ export const projectsData: ProjectData[] = [
     listTags: ['C', 'Allegro 5'],
     description: 'Jeu multijoueur inspiré d’Overcooked avec interface graphique Allegro 5 et programmation système avancée.',
     badges: ['C', 'Allegro 5', 'Gameplay', 'Systeme'],
-    imageSrc: '/projects/projet_snoopy.png',
+    imageSrc: '/projects/projet_escooked.webp',
     imageAlt: 'Capture du jeu cooperatif Overcooked multijoueur',
   },
   {
@@ -83,5 +85,16 @@ export const projectsData: ProjectData[] = [
     badges: ['Python', 'Simulation', 'Modelisation'],
     imageSrc: '/projects/projet_simulation.webp',
     imageAlt: 'Capture de la simulation scientifique de reseaux trophiques',
+  },
+  {
+    id: 'snoopy-console-game',
+    year: 2023,
+    title: 'Jeu console : Snoopy',
+    category: 'Jeu console en C',
+    listTags: ['C', 'Console'],
+    description: 'Jeu console en C inspiré de Snoopy, avec plusieurs niveaux et un menu interactif. Gestion des collisions, du score, du temps et de mécaniques.',
+    badges: ['C', 'Algorithmique', 'Interface console'],
+    imageSrc: '/projects/projet_snoopy.webp',
+    imageAlt: 'Capture du jeu console inspire de Snoopy',
   },
 ]

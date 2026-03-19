@@ -1,5 +1,30 @@
 # Todo
 
+## Contact Data Obfuscation
+
+- [completed] Auditer `src/views/ContactView.vue` pour reperer les donnees sensibles exposees en clair dans le HTML de `/contact`.
+- [completed] Retirer les `href` mail, telephone et LinkedIn du markup et reconstruire les actions cote client a partir d'une version obfusquee.
+- [completed] Supprimer de l'UI les coordonnees visibles, meme obfusquees, au profit de libelles generiques par carte.
+- [pending] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Les cartes `/contact` n'exposent plus les `href` sensibles ni les valeurs completes dans le markup initial: les boutons reconstruisent maintenant l'action au clic a partir d'une version encodee cote client.
+- L'interface n'affiche plus les coordonnees, meme obfusquees: seules des intentions generiques comme `Envoyer un message`, `Ouvrir le profil` ou `Appeler` restent visibles.
+
+## Ajout Projet Snoopy
+
+- [completed] Inspecter la source de donnees de `/projects` et verifier l'asset image disponible pour le nouveau projet.
+- [completed] Ajouter l'entree du projet 2023 dans `src/data/projectsData.ts` avec description, hard skills et visuel associe.
+- [completed] Verifier le changement avec `npm run build`.
+- [completed] Convertir le visuel `projet_snoopy` en WebP, mettre a jour la reference et reverifier le build.
+
+### Outcome
+
+- La page `/projects` reference maintenant un nouveau projet `Jeu console inspire de Snoopy` date de 2023.
+- L'entree reprend la description fournie, les hard skills cles et utilise maintenant `public/projects/projet_snoopy.webp`.
+- `npm run build` passe apres l'ajout.
+
 ## Experience Mobile Stacked Scroll
 
 - [completed] Auditer la scene `/experience` mobile et definir les offsets d'arret des cards sous le header compact et sous les titres precedents.

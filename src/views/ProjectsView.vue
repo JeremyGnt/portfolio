@@ -236,7 +236,7 @@ onUnmounted(() => {
                 @focus="handleProjectFocus(project)"
                 @click="handleProjectClick(project)"
               >
-                <span class="project-row__year font-display text-[0.68rem] uppercase tracking-[0.28em] text-white/36">
+                <span class="project-row__year font-display uppercase tracking-[0.28em] text-white/36">
                   {{ project.year }}
                 </span>
 
@@ -376,6 +376,10 @@ onUnmounted(() => {
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
+}
+
+.project-row__year {
+  font-size: clamp(0.82rem, 1.28vw, 1rem);
 }
 
 .project-row__title {
