@@ -19,7 +19,7 @@ defineProps<{
 }>()
 
 const importantSkills = [
-  'Python', 'JavaScript', 'TypeScript', 'Vue.js', 'Tailwind CSS', 'SQL', 'Git', 'GitHub'
+  'Python', 'JavaScript', 'Java', 'TypeScript', 'SQL', 'Git', 'GitHub', 'Machine Learning'
 ]
 
 const {

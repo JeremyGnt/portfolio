@@ -1,5 +1,29 @@
 # Todo
 
+## Projects Cursor Card First Project Only
+
+- [completed] Reprendre le correctif de clamp viewport de la floating card sur `/projects`.
+- [completed] Limiter la borne haute au seul premier projet, sans changer le comportement des autres cards.
+- [completed] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- La borne haute de securite de la floating card sur `/projects` ne s'applique maintenant qu'au premier projet affiche.
+- Les autres cards conservent leur suivi curseur d'origine, sans clamp additionnel.
+- `npm run build` passe apres cette correction ciblee.
+
+## Projects Cursor Card Top Clamp
+
+- [completed] Inspecter le positionnement de la floating card sur `/projects` pour comprendre pourquoi elle se fait couper en haut pres du premier projet.
+- [completed] Ajouter un clamp viewport sur la position de la floating card en conservant son ancrage interne sur les badges.
+- [completed] Verifier le correctif avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- La floating card de `/projects` est maintenant bornee dans le viewport avec une marge de securite, ce qui evite que son haut se fasse couper quand le premier projet est survole pres du bord superieur.
+- Le point d'ancrage interne de la card reste cale sur la zone badges, puis la position finale est reclampée pour rester visible en haut comme en bas.
+- `npm run build` passe apres ce correctif.
+
 ## Projects List Tags Active Only
 
 - [completed] Corriger la couleur de base des `listTags` sur `/projects` pour annuler la mise en or permanente.

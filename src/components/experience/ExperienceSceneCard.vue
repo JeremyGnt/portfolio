@@ -254,7 +254,9 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 }
 
 .experience-card__bullet-list :deep(li)::before {
+  content: '•';
   color: rgba(255, 255, 255, 0.3);
+  font-weight: 700;
 }
 
 .experience-card__description {
@@ -272,10 +274,10 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: 0.9rem;
   color: rgba(255, 255, 255, 0.82);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.012) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
 }
 
 .experience-card__company-logo-box {

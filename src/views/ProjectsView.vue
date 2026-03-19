@@ -39,12 +39,21 @@ let hoverMediaQuery: MediaQueryList | null = null
 let hoverMediaListener: ((event: MediaQueryListEvent) => void) | null = null
 let setCardX: ((value: number) => void) | null = null
 let setCardY: ((value: number) => void) | null = null
+let cursorCardHeight = 0
+let cursorCardAnchorY = 0
+let lastPointerX = 0
+let lastPointerY = 0
 
 const CURSOR_CARD_X_PERCENT = -50
 const CURSOR_CARD_DEFAULT_Y_PERCENT = -50
 const CURSOR_CARD_BADGE_OFFSET = 10
+const CURSOR_CARD_VIEWPORT_MARGIN = 16
 
 useRevealAnimation(100, '.projects-reveal')
+
+function clamp(value: number, minValue: number, maxValue: number) {
+  return Math.min(Math.max(value, minValue), maxValue)
+}
 
 function syncHoverCapability() {
   canUseCursorCard.value = hoverMediaQuery?.matches ?? false
@@ -59,8 +68,24 @@ function moveCursorCard(clientX: number, clientY: number) {
     return
   }
 
+  lastPointerX = clientX
+  lastPointerY = clientY
+
+  const cardHeight = cursorCardHeight || cursorCardRef.value?.offsetHeight || 0
+
+  if (cardHeight <= 0) {
+    setCardX(clientX)
+    setCardY(clientY)
+    return
+  }
+
+  const firstProjectId = sortedProjects.value[0]?.id
+  const isFirstProjectHovered = hoveredProjectId.value === firstProjectId
+  const minY = cursorCardAnchorY + CURSOR_CARD_VIEWPORT_MARGIN
+  const clampedY = isFirstProjectHovered ? Math.max(clientY, minY) : clientY
+
   setCardX(clientX)
-  setCardY(clientY)
+  setCardY(clampedY)
 }
 
 function syncCursorCardAnchor() {
@@ -81,19 +106,27 @@ function syncCursorCardAnchor() {
 
   const cardRect = cardElement.getBoundingClientRect()
   const badgeListRect = badgeListElement.getBoundingClientRect()
+  const measuredCardHeight = cardElement.offsetHeight || cardRect.height
 
-  if (cardRect.height <= 0) {
+  if (measuredCardHeight <= 0 || cardRect.height <= 0) {
     return
   }
 
-  const anchorY = Math.min(
-    cardRect.height - 24,
-    Math.max(0, badgeListRect.bottom - cardRect.top + CURSOR_CARD_BADGE_OFFSET),
+  const anchorRatio = Math.min(
+    1,
+    Math.max(
+      0,
+      (badgeListRect.bottom - cardRect.top + CURSOR_CARD_BADGE_OFFSET) / cardRect.height,
+    ),
   )
+  const anchorY = Math.min(measuredCardHeight - 24, Math.max(0, anchorRatio * measuredCardHeight))
+
+  cursorCardHeight = measuredCardHeight
+  cursorCardAnchorY = anchorY
 
   gsap.set(cursorCardRef.value, {
     xPercent: CURSOR_CARD_X_PERCENT,
-    yPercent: -(anchorY / cardRect.height) * 100,
+    yPercent: -(anchorY / measuredCardHeight) * 100,
   })
 }
 
@@ -148,6 +181,10 @@ function handleWindowMouseMove(event: MouseEvent) {
 
 function handleWindowResize() {
   syncCursorCardAnchor()
+
+  if (hoveredProjectId.value !== null) {
+    moveCursorCard(lastPointerX, lastPointerY)
+  }
 }
 
 function handleProjectFocus(project: ProjectData) {
@@ -167,6 +204,10 @@ watch(
   async () => {
     await nextTick()
     syncCursorCardAnchor()
+
+    if (hoveredProjectId.value !== null) {
+      moveCursorCard(lastPointerX, lastPointerY)
+    }
 
     if (!canUseCursorCard.value || !cursorCardInnerRef.value) {
       return
@@ -190,6 +231,8 @@ watch(
 onMounted(async () => {
   hoverMediaQuery = window.matchMedia('(any-hover: hover) and (any-pointer: fine)')
   syncHoverCapability()
+  lastPointerX = window.innerWidth * 0.5
+  lastPointerY = window.innerHeight * 0.5
 
   hoverMediaListener = () => {
     syncHoverCapability()

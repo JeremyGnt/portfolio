@@ -19,18 +19,16 @@ const softSkills = [
   "Communication",
   'Travail en autonomie',
   'Gestion de projet',
-  'Curiosite intellectuelle',
+  'Curieux',
   'Esprit analytique',
-  'Organisé',
-  'Gestion du temps'
+  'Organisé'
 ]
 
 const importantSoftSkills = [
   "Esprit d'équipe",
   "Communication",
   'Gestion de projet',
-  'Organisé',
-  'Gestion du temps'
+  'Organisé'
 ]
 
 const {
