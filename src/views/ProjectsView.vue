@@ -1,11 +1,35 @@
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import gsap from 'gsap'
 import ProjectPreviewCard from '../components/projects/ProjectPreviewCard.vue'
 import { useRevealAnimation } from '../composables/useRevealAnimation'
 import { projectsData, type ProjectData } from '../data/projectsData'
 
-const activeProject = ref<ProjectData>(projectsData[0])
+const sortedProjects = computed(() =>
+  [...projectsData].sort((leftProject, rightProject) => rightProject.year - leftProject.year),
+)
+
+const projectsByYear = computed(() => {
+  const groupedProjects = new Map<number, ProjectData[]>()
+
+  for (const project of sortedProjects.value) {
+    const yearProjects = groupedProjects.get(project.year)
+
+    if (yearProjects) {
+      yearProjects.push(project)
+      continue
+    }
+
+    groupedProjects.set(project.year, [project])
+  }
+
+  return Array.from(groupedProjects.entries()).map(([year, projects]) => ({
+    year,
+    projects,
+  }))
+})
+
+const activeProject = ref<ProjectData>(sortedProjects.value[0])
 const hoveredProjectId = ref<string | null>(null)
 const canUseCursorCard = ref(false)
 const cursorCardRef = ref<HTMLElement | null>(null)
@@ -225,40 +249,53 @@ onUnmounted(() => {
         <div class="projects-reveal reveal">
           <div class="projects-hover-shell relative">
             <div :class="['projects-list', { 'is-hovering': hoveredProjectId !== null }]">
-              <button
-                v-for="(project, index) in projectsData"
-                :key="project.id"
-                type="button"
-                :class="['project-row', { 'is-active': isProjectActive(project) }]"
-                :aria-pressed="activeProject.id === project.id"
-                @mouseenter="showCursorCard(project, $event)"
-                @mouseleave="hideCursorCard"
-                @focus="handleProjectFocus(project)"
-                @click="handleProjectClick(project)"
+              <section
+                v-for="yearGroup in projectsByYear"
+                :key="yearGroup.year"
+                class="project-year-group"
               >
-                <span class="project-row__year font-display uppercase tracking-[0.28em] text-white/36">
-                  {{ project.year }}
-                </span>
+                <header class="project-year-group__header">
+                  <span class="project-year-group__label">Année</span>
+                  <h2 class="project-year-group__year">{{ yearGroup.year }}</h2>
+                </header>
 
-                <div class="project-row__content">
-                  <div class="min-w-0">
-                    <h2 class="project-row__title">
-                      <span>{{ project.title }}</span>
-                      <span class="project-row__dot" aria-hidden="true"></span>
-                    </h2>
-                  </div>
+                <div class="project-year-group__rows">
+                  <button
+                    v-for="project in yearGroup.projects"
+                    :key="project.id"
+                    type="button"
+                    :class="['project-row', { 'is-active': isProjectActive(project) }]"
+                    :aria-pressed="activeProject.id === project.id"
+                    @mouseenter="showCursorCard(project, $event)"
+                    @mouseleave="hideCursorCard"
+                    @focus="handleProjectFocus(project)"
+                    @click="handleProjectClick(project)"
+                  >
+                    <span class="project-row__edge project-row__edge--left" aria-hidden="true">►</span>
 
-                  <div class="project-row__tags">
-                    <span
-                      v-for="tag in project.listTags"
-                      :key="tag"
-                      class="font-display text-[0.68rem] uppercase tracking-[0.24em] text-white/48"
-                    >
-                      {{ tag }}
-                    </span>
-                  </div>
+                    <div class="project-row__content">
+                      <div class="min-w-0">
+                        <h3 class="project-row__title">
+                          <span>{{ project.title }}</span>
+                          <span class="project-row__dot" aria-hidden="true"></span>
+                        </h3>
+                      </div>
+
+                      <div class="project-row__tags">
+                        <span
+                          v-for="tag in project.listTags"
+                          :key="tag"
+                          class="font-display text-[0.68rem] uppercase tracking-[0.24em] text-white/48"
+                        >
+                          {{ tag }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span class="project-row__edge project-row__edge--right" aria-hidden="true">◄</span>
+                  </button>
                 </div>
-              </button>
+              </section>
             </div>
           </div>
         </div>
@@ -295,6 +332,47 @@ onUnmounted(() => {
   margin-top: 1.95rem;
 }
 
+.project-year-group {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(4.5rem, 6.2rem) minmax(0, 1fr);
+  gap: 1.25rem;
+}
+
+.project-year-group__header {
+  position: sticky;
+  top: 7.5rem;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.35rem 0;
+}
+
+.project-year-group__label,
+.project-year-group__year {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.project-year-group__label {
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  color: rgba(255, 255, 255, 0.36);
+}
+
+.project-year-group__year {
+  margin: 0;
+  font-size: clamp(0.82rem, 1.28vw, 1rem);
+  letter-spacing: 0.15em;
+  color: #ebb207;
+}
+
+.project-year-group__rows {
+  min-width: 0;
+}
+
 .projects-list::before {
   content: '';
   position: absolute;
@@ -324,10 +402,9 @@ onUnmounted(() => {
 .project-row {
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(4.5rem, 6.2rem) minmax(0, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  padding: 1.35rem 0;
+  padding: 1.35rem 1.85rem;
   border: 0;
   background: transparent;
   color: inherit;
@@ -370,16 +447,35 @@ onUnmounted(() => {
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.project-row__year,
+.project-row__edge {
+  position: absolute;
+  top: 50%;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  opacity: 0;
+  transition:
+    opacity 0.28s ease,
+    transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-row__edge--left {
+  left: 0;
+  transform: translate3d(-10px, -50%, 0);
+}
+
+.project-row__edge--right {
+  right: 0;
+  transform: translate3d(10px, -50%, 0);
+}
+
 .project-row__tags span {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-}
-
-.project-row__year {
-  font-size: clamp(0.82rem, 1.28vw, 1rem);
 }
 
 .project-row__title {
@@ -427,20 +523,30 @@ onUnmounted(() => {
   transform: translate3d(0, 0, 0);
 }
 
+.project-row.is-active .project-row__edge,
+.project-row:focus-visible .project-row__edge {
+  opacity: 1;
+}
+
+.project-row.is-active .project-row__edge--left,
+.project-row:focus-visible .project-row__edge--left {
+  transform: translate3d(0, -50%, 0);
+}
+
+.project-row.is-active .project-row__edge--right,
+.project-row:focus-visible .project-row__edge--right {
+  transform: translate3d(0, -50%, 0);
+}
+
 .project-row.is-active .project-row__title,
 .project-row:focus-visible .project-row__title {
   color: transparent;
   -webkit-text-stroke: 1px #ffffff;
 }
 
-.project-row.is-active .project-row__year,
-.project-row:focus-visible .project-row__year {
-  color: #ffd600;
-}
-
 .project-row.is-active .project-row__tags span,
 .project-row:focus-visible .project-row__tags span {
-  color: #ffd600;
+  color: #ebb207;
 }
 
 .project-cursor-card {
@@ -463,10 +569,20 @@ onUnmounted(() => {
 }
 
 @media (max-width: 1024px) {
+  .project-year-group {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .project-year-group__header {
+    position: static;
+    padding-bottom: 0.4rem;
+  }
+
   .project-row {
     grid-template-columns: 1fr;
     gap: 0.8rem;
-    padding: 1.1rem 0 1.25rem;
+    padding: 1.1rem 1.4rem 1.25rem;
   }
 
   .project-row__content {

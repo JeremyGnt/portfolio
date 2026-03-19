@@ -1,5 +1,77 @@
 # Todo
 
+## Projects List Tags Active Only
+
+- [completed] Corriger la couleur de base des `listTags` sur `/projects` pour annuler la mise en or permanente.
+- [completed] Conserver `#ebb207` uniquement sur les etats selectionne/focus du projet.
+- [completed] Verifier la correction avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Les `listTags` de `/projects` ont retrouve leur couleur d'origine hors selection.
+- La couleur `#ebb207` s'applique maintenant uniquement quand la ligne projet est selectionnee ou focus.
+- `npm run build` passe apres cette correction.
+
+## Projects List Tags Color
+
+- [completed] Reprendre le style des `listTags` sur la page `/projects`.
+- [completed] Passer la couleur des `listTags` a `#ebb207`.
+- [completed] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Les `listTags` de la page `/projects` utilisent maintenant la couleur `#ebb207`.
+- Le changement est purement visuel et conserve les interactions hover/focus existantes.
+- `npm run build` passe apres ce changement.
+
+## Projects Years Color
+
+- [completed] Reprendre le style des annees sur la page `/projects`.
+- [completed] Passer la couleur des annees a `#ebb207`.
+- [completed] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Les annees affichees sur la page `/projects` utilisent maintenant la couleur `#ebb207`.
+- Le changement est purement visuel et ne modifie ni l'ordre des projets ni les interactions existantes.
+- `npm run build` passe apres ce changement.
+
+## Projects Hover Edge Arrows Color
+
+- [completed] Reprendre le style des marqueurs lateraux `►` et `◄` sur `/projects`.
+- [completed] Passer leur couleur en blanc sans modifier leur reveal ni leur positionnement.
+- [completed] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Les marqueurs lateraux `►` et `◄` de la ligne active sur `/projects` sont maintenant blancs.
+- Leur position, leur animation de reveal et leur comportement hover/focus restent inchanges.
+- `npm run build` passe apres ce changement.
+
+## Projects Hover Edge Arrows
+
+- [completed] Reprendre la ligne active de `/projects` pour identifier ou injecter deux marqueurs lateraux sans casser le layout.
+- [completed] Ajouter les glyphes `►` et `◄` aux extremites opposees du projet actif avec un reveal discret au hover/focus.
+- [completed] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- La ligne projet active sur `/projects` affiche maintenant `►` a gauche et `◄` a droite, chacun a l'oppose de l'autre, uniquement a l'etat hover/focus.
+- Le reveal reste discret via `opacity` et un léger glissement lateral, sans modifier la logique de selection ni la preview card.
+- `npm run build` passe apres ce changement.
+
+## Projects Sorting By Year
+
+- [completed] Inspecter la structure de `src/views/ProjectsView.vue` et la source `src/data/projectsData.ts` pour identifier le bon point d'application du tri.
+- [completed] Regrouper la liste `/projects` par annee en ordre decroissant, en conservant le comportement de preview active.
+- [completed] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- La page `/projects` regroupe maintenant les projets par annee avec les annees les plus recentes affichees en premier.
+- Le comportement de hover/focus/click et la preview card restent inchanges; seul l'ordre editorial de la liste a ete restructure autour des groupes d'annee.
+- `npm run build` passe apres ce changement.
+
 ## Contact Data Obfuscation
 
 - [completed] Auditer `src/views/ContactView.vue` pour reperer les donnees sensibles exposees en clair dans le HTML de `/contact`.

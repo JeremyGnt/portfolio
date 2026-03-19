@@ -48,6 +48,12 @@ const assets = [
     webp: { quality: 82, effort: 6, smartSubsample: true },
   },
   {
+    input: 'public/projects/projet_fruitninja.jpg',
+    output: 'public/projects/projet_fruitninja.webp',
+    width: 1200,
+    webp: { quality: 82, effort: 6, smartSubsample: true },
+  },
+  {
     input: 'public/brands/carrefour-logo.png',
     output: 'public/brands/carrefour-logo.webp',
     width: 320,

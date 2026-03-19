@@ -41,10 +41,12 @@ export const projectsData: ProjectData[] = [
     listTags: ['VHDL', 'FPGA'],
     description: 'Jeu Fruit Ninja sur FPGA piloté par capteur ultrason avec détection de mouvement, calcul de trajectoire, collision en temps réel et système de score.',
     badges: ['FPGA', 'VHDL', 'Capteur ultrason'],
+    imageSrc: '/projects/projet_fruitninja.webp',
+    imageAlt: 'Photo du projet Fruit Ninja FPGA',
   },
   {
     id: 'programmable-controller',
-    year: 2024,
+    year: 2023,
     title: 'Manette programmable',
     category: 'Interface hardware',
     listTags: ['C++', 'ATTiny'],
@@ -77,7 +79,7 @@ export const projectsData: ProjectData[] = [
   },
   {
     id: 'food-web-simulation',
-    year: 2024,
+    year: 2025,
     title: 'Simulation trophique',
     category: 'Simulation scientifique',
     listTags: ['Python', 'Modelisation'],
