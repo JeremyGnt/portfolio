@@ -39,7 +39,6 @@ let hoverMediaQuery: MediaQueryList | null = null
 let hoverMediaListener: ((event: MediaQueryListEvent) => void) | null = null
 let setCardX: ((value: number) => void) | null = null
 let setCardY: ((value: number) => void) | null = null
-let cursorCardHeight = 0
 let cursorCardAnchorY = 0
 let lastPointerX = 0
 let lastPointerY = 0
@@ -50,10 +49,6 @@ const CURSOR_CARD_BADGE_OFFSET = 10
 const CURSOR_CARD_VIEWPORT_MARGIN = 16
 
 useRevealAnimation(100, '.projects-reveal')
-
-function clamp(value: number, minValue: number, maxValue: number) {
-  return Math.min(Math.max(value, minValue), maxValue)
-}
 
 function syncHoverCapability() {
   canUseCursorCard.value = hoverMediaQuery?.matches ?? false
@@ -71,9 +66,7 @@ function moveCursorCard(clientX: number, clientY: number) {
   lastPointerX = clientX
   lastPointerY = clientY
 
-  const cardHeight = cursorCardHeight || cursorCardRef.value?.offsetHeight || 0
-
-  if (cardHeight <= 0) {
+  if (cursorCardAnchorY <= 0) {
     setCardX(clientX)
     setCardY(clientY)
     return
@@ -121,7 +114,6 @@ function syncCursorCardAnchor() {
   )
   const anchorY = Math.min(measuredCardHeight - 24, Math.max(0, anchorRatio * measuredCardHeight))
 
-  cursorCardHeight = measuredCardHeight
   cursorCardAnchorY = anchorY
 
   gsap.set(cursorCardRef.value, {

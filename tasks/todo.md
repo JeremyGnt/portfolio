@@ -1,5 +1,17 @@
 # Todo
 
+## Projects Cursor Card No Bottom Clamp
+
+- [completed] Reprendre la logique de protection de la floating card du premier projet.
+- [completed] Rendre explicite qu'il n'y a qu'une borne haute de securite, sans aucune restriction vers le bas.
+- [completed] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- La floating card du premier projet conserve uniquement une borne haute pour ne pas passer derriere la barre d'onglet.
+- Aucune borne basse n'est appliquee: la card peut descendre librement vers le bas comme avant.
+- `npm run build` passe apres ce nettoyage cible.
+
 ## Projects Cursor Card First Project Only
 
 - [completed] Reprendre le correctif de clamp viewport de la floating card sur `/projects`.
