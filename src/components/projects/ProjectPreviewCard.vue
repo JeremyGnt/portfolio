@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ArrowUpRight, Github } from 'lucide-vue-next'
 import type { ProjectData } from '../../data/projectsData'
 
 defineProps<{
@@ -32,7 +33,8 @@ defineProps<{
           class="project-preview-card__link-indicator"
           aria-hidden="true"
         >
-          {{ project.externalLabel }}
+          <Github :size="20" />
+          <ArrowUpRight :size="20" />
         </span>
       </header>
 
@@ -115,6 +117,16 @@ defineProps<{
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  flex-direction: row;
+  width: 100%;
+}
+
+.project-preview-card__header .project-preview-card__copy {
+  padding-right: 1rem;
+}
+
+.project-preview-card__header:has(.project-preview-card__link-indicator) {
+  align-items: flex-start;
   gap: 1rem;
 }
 
@@ -145,19 +157,12 @@ defineProps<{
 }
 
 .project-preview-card__link-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   flex: 0 0 auto;
   align-self: flex-start;
-  padding: 0.48rem 0.78rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82);
-  white-space: nowrap;
+  color: #ebb207;
 }
 
 .project-preview-card__description {

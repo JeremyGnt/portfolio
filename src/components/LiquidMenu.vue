@@ -549,14 +549,20 @@ onBeforeUnmount(() => {
               :ref="(el) => setItemRef(el, index)"
               class="menu-item"
               :class="{ active: highlightedIndex === index }"
-              @click="selectItem(index)"
             >
-              <div class="item-content">
-                <span class="item-icon">
-                  <component :is="item.icon" :size="18" :stroke-width="2" />
-                </span>
-                <span class="item-text">{{ item.text }}</span>
-              </div>
+              <a
+                class="menu-item-link"
+                :href="item.path"
+                :aria-current="highlightedIndex === index ? 'page' : undefined"
+                @click.prevent="selectItem(index)"
+              >
+                <div class="item-content">
+                  <span class="item-icon">
+                    <component :is="item.icon" :size="18" :stroke-width="2" />
+                  </span>
+                  <span class="item-text">{{ item.text }}</span>
+                </div>
+              </a>
             </li>
           </ul>
 
@@ -736,25 +742,39 @@ onBeforeUnmount(() => {
   justify-content: center;
   min-height: calc(var(--compact-size) - 12px);
   box-sizing: border-box;
-  padding: 10px 24px;
   color: #909090;
   font-family: system-ui, sans-serif;
   font-size: 16px;
   font-weight: 400;
   user-select: none;
-  cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .menu-item.active,
-.menu-item:hover {
+.menu-item:hover,
+.menu-item:focus-within {
   color: #ffffff;
   z-index: 3;
 }
 
 .menu-item.active .item-content,
-.menu-item:hover .item-content {
+.menu-item:hover .item-content,
+.menu-item:focus-within .item-content {
   transform: scale(1.05);
+}
+
+.menu-item-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: inherit;
+  padding: 10px 24px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.menu-item-link:focus-visible {
+  outline: none;
 }
 
 .item-content {
@@ -872,8 +892,12 @@ onBeforeUnmount(() => {
   .menu-item {
     flex: 1 1 0;
     min-height: calc(var(--compact-size) - 10px);
-    padding: 10px 12px;
     font-size: 12px;
+  }
+
+  .menu-item-link {
+    width: 100%;
+    padding: 10px 12px;
   }
 
   .item-content {
@@ -917,7 +941,7 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 480px) {
-  .menu-item {
+  .menu-item-link {
     padding: 9px 8px;
   }
 

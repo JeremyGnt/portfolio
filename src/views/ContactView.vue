@@ -3,7 +3,7 @@ import { onBeforeUpdate, onMounted, onUnmounted, ref, type Component } from 'vue
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ArrowUpRight, Github, Linkedin, Mail, Phone } from 'lucide-vue-next'
-import { GITHUB_PROFILE_URL } from '../constants/externalLinks'
+import { GITHUB_PROFILE_URL, LINKEDIN_PROFILE_URL } from '../constants/externalLinks'
 import { scrollWindowToTopInstantly } from '../utils/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -27,7 +27,7 @@ const contacts: ContactItem[] = [
   },
   {
     id: 'linkedin',
-    href: 'https://linkedin.com/in/jeremygonnet',
+    href: LINKEDIN_PROFILE_URL,
     icon: Linkedin,
     label: 'LinkedIn',
     value: 'linkedin.com/in/jeremygonnet',

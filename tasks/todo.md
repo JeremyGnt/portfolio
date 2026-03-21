@@ -1,5 +1,22 @@
 # Todo
 
+## SEO Route Prerender And Identity Signals
+
+- [completed] Auditer le runtime client et le build Vite pour mettre en place un prerender statique route par route sans casser la navigation existante.
+- [completed] Generer un HTML initial propre pour `/`, `/experience`, `/projects` et `/contact` avec titre, description, canonical, OG/Twitter et contenu prerendu.
+- [completed] Rendre le maillage interne crawlable avec de vrais liens HTML et ajouter des donnees structurees d'identite (`sameAs`) pour relier le site a LinkedIn/GitHub.
+- [completed] Ajouter un support optionnel pour Google Search Console et GA4 via variables d'environnement, verifier avec `npm run build`, puis consigner le resultat.
+
+### Outcome
+
+- Le build genere maintenant un vrai HTML par route pour `/`, `/experience`, `/projects` et `/contact`, au lieu d'une coque SPA identique servie partout.
+- Les pages prerendered injectent des `title`, `description`, `canonical`, Open Graph, Twitter Cards et JSON-LD coherents avec l'URL demandee, ce qui corrige le signal de duplication vers la home.
+- Le shell global a ete rendu compatible SSR/hydratation sans casser la navigation ni les animations cote client, en detectant le markup prerendu et en evitant le wrapper `Transition` cote serveur.
+- Le menu principal expose maintenant de vrais liens `href`, donc Google peut decouvrir les pages via le maillage interne et plus seulement via le sitemap.
+- Un pipeline de prerender Vite + SSR a ete ajoute dans `scripts/prerender.mjs`, avec support optionnel de `VITE_GOOGLE_SITE_VERIFICATION` et `VITE_GA_MEASUREMENT_ID` via `.env.example`.
+- `vercel.json` ne force plus toutes les routes vers `index.html`, ce qui laisse Vercel servir les vrais fichiers `dist/contact/index.html`, `dist/projects/index.html`, etc.
+- Verification effectuee: `npm run build` passe; `dist/contact/index.html` contient bien le `h1`, le texte de contact, la canonical `https://jeremygonnet.com/contact`, les liens de menu en `href` et le JSON-LD `Person`/`ContactPage`.
+
 ## Static 3D Logo On Internal Scroll
 
 - [completed] Auditer `src/composables/useLogoThreeScene.ts` pour identifier toutes les rotations pilotées par le scroll sur `/experience`, `/projects` et `/contact`.
@@ -30,14 +47,16 @@
 ## Projects Airbnb Github Hint
 
 - [completed] Inspecter la preview card et la cible GitHub existante a reutiliser pour `/projects`.
-- [completed] Ajouter un indicateur clair en haut a droite de la card `Airbnb for Students` quand elle est ouverte.
-- [completed] Relier le clic du projet a ton GitHub pour cette premiere iteration, verifier avec `npm run build` puis consigner le resultat.
+- [completed] Ajouter un indicateur visuel base sur la fleche des cards `/contact` avec le logo GitHub sur la card `Airbnb for Students`.
+- [completed] Relier le clic du projet a ton GitHub pour cette premiere iteration.
+- [completed] Tenter une verification avec `npm run build` et consigner le blocage actuel du repo.
 
 ### Outcome
 
-- La preview card du projet `Airbnb for Students` affiche maintenant un indicateur `Voir GitHub` en haut a droite lorsqu'elle est ouverte.
+- La preview card du projet `Airbnb for Students` affiche maintenant la fleche `ArrowUpRight` utilisee sur `/contact`, en jaune, avec le logo GitHub juste a cote en haut a gauche.
 - Le clic sur la ligne de ce projet dans `/projects` ouvre maintenant le profil GitHub `https://github.com/JeremyGnt` dans un nouvel onglet pour cette premiere iteration.
-- La cible GitHub a ete centralisee dans `src/constants/externalLinks.ts`, puis verifiee avec `npm run build`.
+- La cible GitHub reste centralisee dans `src/constants/externalLinks.ts`.
+- La verification `npm run build` est actuellement bloquee par des erreurs TypeScript hors de cette modif dans `src/router/index.ts` et `src/seo.ts`.
 
 ## Projects Cursor Card No Bottom Clamp
 

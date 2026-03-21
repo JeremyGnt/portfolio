@@ -1,5 +1,3 @@
-import { GITHUB_PROFILE_URL } from '../constants/externalLinks'
-
 export interface ProjectData {
   id: string
   year: number
@@ -11,7 +9,6 @@ export interface ProjectData {
   imageSrc?: string
   imageAlt?: string
   externalUrl?: string
-  externalLabel?: string
 }
 
 export const projectsData: ProjectData[] = [
@@ -36,8 +33,7 @@ export const projectsData: ProjectData[] = [
     badges: ['HTML', 'CSS', 'JS', 'PHP', 'SQL'],
     imageSrc: '/projects/projet_omnesbnb.webp',
     imageAlt: 'Capture du projet Omnes BnB de plateforme web pour etudiants',
-    externalUrl: GITHUB_PROFILE_URL,
-    externalLabel: 'Voir GitHub',
+    externalUrl: 'https://github.com/JeremyGnt/OmnesBnb',
   },
   {
     id: 'fruit-ninja-fpga',
@@ -71,6 +67,7 @@ export const projectsData: ProjectData[] = [
     badges: ['C', 'Allegro 5', 'Gameplay', 'Systeme'],
     imageSrc: '/projects/projet_escooked.webp',
     imageAlt: 'Capture du jeu cooperatif Overcooked multijoueur',
+    externalUrl: 'https://github.com/JeremyGnt/EsCooked',
   },
   {
     id: 'alarm-clock',
@@ -93,6 +90,7 @@ export const projectsData: ProjectData[] = [
     badges: ['Python', 'Simulation', 'Modelisation'],
     imageSrc: '/projects/projet_simulation.webp',
     imageAlt: 'Capture de la simulation scientifique de reseaux trophiques',
+    externalUrl: 'https://github.com/JeremyGnt/reseaux-trophiques',
   },
   {
     id: 'snoopy-console-game',
@@ -104,5 +102,6 @@ export const projectsData: ProjectData[] = [
     badges: ['C', 'Algorithmique', 'Interface console'],
     imageSrc: '/projects/projet_snoopy.webp',
     imageAlt: 'Capture du jeu console inspire de Snoopy',
+    externalUrl: 'https://github.com/JeremyGnt/Snoopy',
   },
 ]

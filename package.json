@@ -6,12 +6,13 @@
   "scripts": {
     "dev": "vite",
     "images:optimize": "node scripts/optimize-images.mjs",
-    "build": "tsc && vite build",
+    "build": "tsc && node scripts/prerender.mjs",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@types/three": "^0.183.1",
     "@vitejs/plugin-vue": "^6.0.4",
+    "@vue/server-renderer": "^3.5.30",
     "autoprefixer": "^10.4.27",
     "postcss": "^8.5.8",
     "sharp": "^0.34.5",
