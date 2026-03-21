@@ -8,6 +8,7 @@ gsap.registerPlugin(ScrollTrigger)
 const mobileExperienceBreakpoint = '(max-width: 720px)'
 const mobileFirstCardOffset = 24
 const mobileCardHeaderGap = 10
+const cardsReadyProgress = 0.94
 
 type SceneAnimationConfig = {
   endPercent: number
@@ -107,6 +108,7 @@ export function useExperienceSceneAnimation() {
   const cardRefs = ref<HTMLElement[]>([])
 
   let context: gsap.Context | null = null
+  let sceneTrigger: ScrollTrigger | null = null
   let resizeTimeout: ReturnType<typeof setTimeout> | null = null
   let isHeaderCompacted = false
 
@@ -125,6 +127,7 @@ export function useExperienceSceneAnimation() {
   const destroyScene = () => {
     context?.revert()
     context = null
+    sceneTrigger = null
 
     const header = document.querySelector<HTMLElement>('.app-header')
     if (header) {
@@ -194,6 +197,7 @@ export function useExperienceSceneAnimation() {
           },
         },
       })
+      sceneTrigger = timeline.scrollTrigger ?? null
 
       sceneConfig.entries.forEach(({ element, position, vars }) => {
         timeline.to(
@@ -203,6 +207,25 @@ export function useExperienceSceneAnimation() {
         )
       })
     }, track)
+  }
+
+  const scrollToCardsStage = () => {
+    if (sceneTrigger) {
+      const start = Number(sceneTrigger.start) || 0
+      const end = Number(sceneTrigger.end) || start
+      const targetTop = start + (end - start) * cardsReadyProgress
+
+      window.scrollTo({
+        top: Math.max(targetTop, 0),
+        behavior: 'smooth',
+      })
+      return
+    }
+
+    window.scrollBy({
+      top: window.innerHeight * 0.8,
+      behavior: 'smooth',
+    })
   }
 
   const handleResize = () => {
@@ -239,6 +262,7 @@ export function useExperienceSceneAnimation() {
     cardsStageRef,
     mainTitleRef,
     scrollHintRef,
+    scrollToCardsStage,
     setCardRef,
   }
 }

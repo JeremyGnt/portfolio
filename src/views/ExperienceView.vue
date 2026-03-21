@@ -8,7 +8,7 @@ const hero = experiencesPageData.hero
 const cards = experiencesPageData.cards
 const cardSlots = ['left', 'center', 'right'] as const
 
-const { scrollTrackRef, cardsStageRef, mainTitleRef, scrollHintRef, setCardRef } =
+const { scrollTrackRef, cardsStageRef, mainTitleRef, scrollHintRef, scrollToCardsStage, setCardRef } =
   useExperienceSceneAnimation()
 
 onMounted(() => {
@@ -25,7 +25,13 @@ onUnmounted(() => {
     <section class="page active experience-page">
       <div class="page-inner experience-page__inner">
         <div class="experience-scene">
-          <div ref="scrollHintRef" class="scroll-hint">
+          <button
+            ref="scrollHintRef"
+            class="scroll-hint"
+            type="button"
+            aria-label="Descendre vers les cartes d'experience"
+            @click="scrollToCardsStage"
+          >
             <svg
               class="scroll-hint__arrow"
               xmlns="http://www.w3.org/2000/svg"
@@ -42,7 +48,7 @@ onUnmounted(() => {
               <path d="M12 5v14" />
               <path d="m19 12-7 7-7-7" />
             </svg>
-          </div>
+          </button>
 
           <div ref="scrollTrackRef" class="scroll-track">
             <div class="sticky-wrap">
@@ -198,13 +204,23 @@ onUnmounted(() => {
   justify-content: center;
   opacity: 0.72;
   transform: translateX(-50%);
-  pointer-events: none;
+  pointer-events: auto;
   color: #666666;
   animation: experience-bounce 2s infinite ease-in-out;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
 .scroll-hint__arrow {
   display: block;
+}
+
+.scroll-hint:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 8px;
 }
 
 @keyframes experience-bounce {

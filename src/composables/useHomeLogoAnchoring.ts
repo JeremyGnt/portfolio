@@ -30,7 +30,11 @@ export function useHomeLogoAnchoring() {
     const logoG = document.getElementById('logo-g')
     const targetJ = document.getElementById('target-j')
     const targetG = document.getElementById('target-g')
-    const fadeTexts = document.querySelectorAll('.fade-text')
+    const titleFadeTexts = document.querySelectorAll('.home-hero-title .fade-text')
+    const otherFadeTexts = document.querySelectorAll(
+      '.home-hero .fade-text:not(.home-hero-title .fade-text)',
+    )
+    const fadeTexts = [...titleFadeTexts, ...otherFadeTexts]
     const logoBg = document.getElementById('header-logo-bg')
 
     if (window.innerWidth <= mobileBreakpoint || !logoJ || !logoG || !targetJ || !targetG || !logoBg) {
@@ -103,7 +107,8 @@ export function useHomeLogoAnchoring() {
     stTimeline.to(logoJ, { x: 20, y: 0, scale: 1, ease: 'none', duration: dockingDuration }, 0)
     stTimeline.to(logoG, { x: -20, y: 0, scale: 1, ease: 'none', duration: dockingDuration }, 0)
     stTimeline.to(logoBg, { opacity: 1, ease: 'power2.inOut' }, 0)
-    stTimeline.to(fadeTexts, { opacity: 0, y: -40, stagger: 0.1, ease: 'power1.out' }, 0)
+    stTimeline.to(titleFadeTexts, { opacity: 0, y: -40, ease: 'power1.out' }, 0)
+    stTimeline.to(otherFadeTexts, { opacity: 0, y: -40, stagger: 0.1, ease: 'power1.out' }, 0)
 
     // Start bounce exactly when docking ends, not at timeline end.
     const pillContainer = document.querySelector('.header-logo-card')

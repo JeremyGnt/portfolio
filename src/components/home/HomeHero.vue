@@ -1,3 +1,10 @@
+<script setup lang="ts">
+function scrollToCardsSection() {
+  const cardsSection = document.getElementById('home-cards-section')
+  cardsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+</script>
+
 <template>
   <div id="hero-section" class="home-hero">
     <div class="hero-content-shift-up hero-content-up">
@@ -26,7 +33,12 @@
       </p>
     </div>
 
-    <div class="hero-scroll-indicator fade-text hero-arrow-up">
+    <button
+      class="hero-scroll-indicator fade-text hero-arrow-up"
+      type="button"
+      aria-label="Descendre vers les cartes de presentation"
+      @click="scrollToCardsSection"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -41,7 +53,7 @@
         <path d="M12 5v14" />
         <path d="m19 12-7 7-7-7" />
       </svg>
-    </div>
+    </button>
   </div>
 </template>
 
@@ -212,6 +224,16 @@
   margin-top: 3rem;
   color: #666;
   animation: bounce 2s infinite ease-in-out;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.hero-scroll-indicator:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 8px;
 }
 
 .hero-arrow-up {

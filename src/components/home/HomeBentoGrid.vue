@@ -10,7 +10,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="bento-grid">
+  <div id="home-cards-section" class="bento-grid">
     <div class="bento-span-7 bento-stack">
       <div class="reveal">
         <HomeSoftSkillsCard />
@@ -34,6 +34,10 @@ defineProps<{
 </template>
 
 <style scoped>
+.bento-grid {
+  scroll-margin-top: 7.5rem;
+}
+
 .bento-stack-stretch {
   height: 100%;
 }

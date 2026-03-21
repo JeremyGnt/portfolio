@@ -522,7 +522,7 @@ onUnmounted(() => {
   align-items: baseline;
   gap: 0.08em;
   margin: 0.65rem 0 0;
-  font-size: clamp(2.2rem, 5.8vw, 5.25rem);
+  font-size: clamp(1.9rem, 4.9vw, 4.4rem);
   font-weight: 600;
   line-height: 0.94;
   letter-spacing: -0.08em;
@@ -638,7 +638,7 @@ onUnmounted(() => {
 
 @media (max-width: 640px) {
   .project-row__title {
-    font-size: clamp(2rem, 11vw, 3.4rem);
+    font-size: clamp(1.7rem, 9vw, 2.9rem);
   }
 }
 </style>
