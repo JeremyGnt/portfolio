@@ -1,3 +1,5 @@
+import { GITHUB_PROFILE_URL } from '../constants/externalLinks'
+
 export interface ProjectData {
   id: string
   year: number
@@ -8,6 +10,8 @@ export interface ProjectData {
   badges: string[]
   imageSrc?: string
   imageAlt?: string
+  externalUrl?: string
+  externalLabel?: string
 }
 
 export const projectsData: ProjectData[] = [
@@ -32,6 +36,8 @@ export const projectsData: ProjectData[] = [
     badges: ['HTML', 'CSS', 'JS', 'PHP', 'SQL'],
     imageSrc: '/projects/projet_omnesbnb.webp',
     imageAlt: 'Capture du projet Omnes BnB de plateforme web pour etudiants',
+    externalUrl: GITHUB_PROFILE_URL,
+    externalLabel: 'Voir GitHub',
   },
   {
     id: 'fruit-ninja-fpga',

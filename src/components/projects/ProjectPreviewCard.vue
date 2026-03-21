@@ -27,7 +27,13 @@ defineProps<{
             {{ project.title }}
           </h2>
         </div>
-
+        <span
+          v-if="project.externalUrl"
+          class="project-preview-card__link-indicator"
+          aria-hidden="true"
+        >
+          {{ project.externalLabel }}
+        </span>
       </header>
 
       <p class="project-preview-card__description">
@@ -136,6 +142,22 @@ defineProps<{
   font-weight: 600;
   line-height: 0.92;
   letter-spacing: -0.06em;
+}
+
+.project-preview-card__link-indicator {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  padding: 0.48rem 0.78rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
 }
 
 .project-preview-card__description {

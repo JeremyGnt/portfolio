@@ -1,5 +1,32 @@
 # Todo
 
+## SEO Technique Vercel
+
+- [completed] Auditer le stack, les routes publiques et le fallback Vercel pour choisir une implementation SEO native a la SPA Vue/Vite.
+- [completed] Ajouter les fichiers techniques publics attendus (`sitemap.xml`, `robots.txt`, assets SEO) et des metadonnees/canonicals propres par route.
+- [completed] Verifier le build et controler localement les endpoints SEO ainsi que les metadonnees principales, puis consigner le resultat.
+
+### Outcome
+
+- Le projet utilise une SPA Vue 3 + Vite avec `vue-router`, donc le SEO technique a ete implemente nativement pour ce stack: fichiers statiques dans `public/` et metadonnees pilotees par route cote client.
+- `public/sitemap.xml`, `public/robots.txt`, `public/manifest.json` et `public/og-image.svg` ont ete ajoutes; le build `dist/` contient bien ces fichiers.
+- `index.html`, `src/router/index.ts`, `src/main.ts` et `src/seo.ts` configurent maintenant un `title`, une `description`, les balises Open Graph/Twitter, `robots` et un canonical cohérents avec le domaine `https://jeremygonnet.com`, y compris sur `/experience`, `/projects` et `/contact`.
+- `vercel.json` a ete resserre pour ne faire le fallback SPA que sur les routes sans extension, ce qui evite que `/sitemap.xml`, `/robots.txt`, `/manifest.json` ou `/favicon.ico` tombent sur la landing.
+- Verification locale effectuee: `npm run build` passe; `http://127.0.0.1:4173/sitemap.xml` repond `200` en `text/xml`, `robots.txt` repond `200` en `text/plain`, `manifest.json` repond `200` en `application/json`, et les pages `/`, `/experience`, `/projects`, `/contact` exposent les bons `title`, `description` et `canonical` apres execution du JS.
+- Verification production effectuee le 21 mars 2026 avant deploiement du correctif: `https://jeremygonnet.com/sitemap.xml` et `https://jeremygonnet.com/robots.txt` renvoient encore l'HTML de la landing. Le depot est corrige, mais le domaine live ne refletera ce fix qu'apres deploiement sur Vercel.
+
+## Projects Airbnb Github Hint
+
+- [completed] Inspecter la preview card et la cible GitHub existante a reutiliser pour `/projects`.
+- [completed] Ajouter un indicateur clair en haut a droite de la card `Airbnb for Students` quand elle est ouverte.
+- [completed] Relier le clic du projet a ton GitHub pour cette premiere iteration, verifier avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- La preview card du projet `Airbnb for Students` affiche maintenant un indicateur `Voir GitHub` en haut a droite lorsqu'elle est ouverte.
+- Le clic sur la ligne de ce projet dans `/projects` ouvre maintenant le profil GitHub `https://github.com/JeremyGnt` dans un nouvel onglet pour cette premiere iteration.
+- La cible GitHub a ete centralisee dans `src/constants/externalLinks.ts`, puis verifiee avec `npm run build`.
+
 ## Projects Cursor Card No Bottom Clamp
 
 - [completed] Reprendre la logique de protection de la floating card du premier projet.

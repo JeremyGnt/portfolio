@@ -3,10 +3,18 @@ import router from './router'
 import App from './App.vue'
 import './style.css'
 import './tailwind.css'
+import { applyRouteSeo } from './seo'
 
-createApp(App).use(router).mount('#app')
+const app = createApp(App)
 
-const bootLoader = document.getElementById('boot-loader')
-if (bootLoader) {
-	bootLoader.remove()
-}
+app.use(router)
+
+void router.isReady().then(() => {
+	applyRouteSeo(router.currentRoute.value)
+	app.mount('#app')
+
+	const bootLoader = document.getElementById('boot-loader')
+	if (bootLoader) {
+		bootLoader.remove()
+	}
+})

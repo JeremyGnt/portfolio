@@ -185,6 +185,10 @@ function handleProjectFocus(project: ProjectData) {
 
 function handleProjectClick(project: ProjectData) {
   activeProject.value = project
+
+  if (project.externalUrl) {
+    window.open(project.externalUrl, '_blank', 'noopener,noreferrer')
+  }
 }
 
 function isProjectActive(project: ProjectData) {

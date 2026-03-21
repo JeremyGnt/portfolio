@@ -1,0 +1,19 @@
+{
+  "name": "Jérémy Gonnet",
+  "short_name": "JG",
+  "description": "Portfolio de Jérémy Gonnet, élève ingénieur en développement, data et robotique.",
+  "lang": "fr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
