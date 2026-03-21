@@ -329,7 +329,7 @@ const emit = defineEmits<{
 
 @media (max-width: 768px) {
   .app-ready-shell {
-    padding-bottom: calc(6.75rem + env(safe-area-inset-bottom));
+    padding-bottom: calc(5.6rem + env(safe-area-inset-bottom));
   }
 
   .app-header {
@@ -352,7 +352,7 @@ const emit = defineEmits<{
     position: fixed;
     left: 1rem;
     right: 1rem;
-    bottom: calc(1.5rem + env(safe-area-inset-bottom));
+    bottom: calc(0.35rem + env(safe-area-inset-bottom));
     z-index: 9100;
     justify-content: stretch;
   }

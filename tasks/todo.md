@@ -502,6 +502,30 @@
 - La card active mobile ne scrolle plus en interne non plus; toute la scene reste fixe.
 - Verification effectuee: `npm run build` passe apres ce verrouillage.
 
+## Experience Mobile Tight Vertical Spacing
+
+- [completed] Descendre le menu mobile au plus bas du viewport avec un offset minimal compatible safe-area.
+- [completed] Reduire les marges verticales de la scene `/experience` entre header/card et card/menu avec des valeurs `clamp()` plus faibles.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Le menu mobile global est maintenant pose beaucoup plus bas sur l'ecran, avec seulement une petite marge de securite au-dessus de la safe-area.
+- La scene `/experience` mobile utilise des offsets plus compacts entre header, card active et dock bas, tout en restant adaptable selon la hauteur d'ecran.
+- Verification effectuee: `npm run build` passe apres ce recalage.
+
+## Experience Mobile Initial Header Gap
+
+- [completed] Ajouter une legere marge supplementaire entre le header et les cards uniquement a l'etat initial mobile.
+- [completed] Conserver la position plus haute de la card active en focus sans la redescendre.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Le stack initial mobile utilise maintenant un `top` dedie legerement plus bas que le slot de focus, ce qui recree une petite respiration sous le header.
+- La card active focus conserve sa position haute actuelle.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
 # Review
 
 - La page `/projects` a ete refondue en hover reveal list minimaliste, avec une liste editoriale plein format a la place de la grille de cards.

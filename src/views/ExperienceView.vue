@@ -413,19 +413,20 @@ onUnmounted(() => {
     height: 100%;
     min-height: 0;
     isolation: isolate;
-    --wallet-main-top: clamp(6.9rem, 13vh, 8.45rem);
-    --wallet-active-top: calc(var(--wallet-main-top) - clamp(4.4rem, 9vh, 5.8rem));
-    --wallet-peek-height: clamp(3.5rem, 10vw, 4rem);
-    --wallet-focus-gap: clamp(1rem, 3.5vw, 1.4rem);
+    --wallet-main-top: clamp(4.9rem, 9vh, 6.1rem);
+    --wallet-stack-top: calc(var(--wallet-main-top) + clamp(0.45rem, 1.2vh, 0.7rem));
+    --wallet-active-top: calc(var(--wallet-main-top) - clamp(2rem, 4.5vh, 2.85rem));
+    --wallet-peek-height: clamp(3rem, 8vw, 3.45rem);
+    --wallet-focus-gap: clamp(0.45rem, 1.8vh, 0.8rem);
     --wallet-card-height:
       min(31.5rem, calc(100% - var(--wallet-main-top) - var(--wallet-peek-height) - var(--wallet-focus-gap)));
   }
 
   .cards-layer {
     padding:
-      calc(5.85rem + env(safe-area-inset-top))
+      calc(4.15rem + env(safe-area-inset-top))
       0.35rem
-      calc(6.05rem + env(safe-area-inset-bottom));
+      calc(4.75rem + env(safe-area-inset-bottom));
     display: flex;
     align-items: stretch;
     justify-content: center;
@@ -437,7 +438,7 @@ onUnmounted(() => {
   .experience-card-shell--right {
     position: absolute;
     left: 50%;
-    top: var(--wallet-main-top);
+    top: var(--wallet-stack-top);
     grid-column: auto;
     justify-self: auto;
     width: min(100%, 28rem);
@@ -457,7 +458,7 @@ onUnmounted(() => {
   }
 
   .experience-card-shell--mobile-stack {
-    top: calc(var(--wallet-main-top) + var(--mobile-stack-offset, 0px));
+    top: calc(var(--wallet-stack-top) + var(--mobile-stack-offset, 0px));
     bottom: auto;
     transform: translate3d(-50%, 0, 0) scale(var(--mobile-stack-scale, 1));
     filter: saturate(0.96);
@@ -514,10 +515,11 @@ onUnmounted(() => {
   }
 
   .cards-stage {
-    --wallet-main-top: clamp(6.3rem, 12vh, 7.45rem);
-    --wallet-active-top: calc(var(--wallet-main-top) - clamp(3.8rem, 8vh, 4.9rem));
-    --wallet-peek-height: clamp(3.3rem, 12vw, 3.8rem);
-    --wallet-focus-gap: clamp(0.85rem, 3vw, 1.2rem);
+    --wallet-main-top: clamp(4.35rem, 8vh, 5.35rem);
+    --wallet-stack-top: calc(var(--wallet-main-top) + clamp(0.4rem, 1vh, 0.6rem));
+    --wallet-active-top: calc(var(--wallet-main-top) - clamp(1.8rem, 4vh, 2.45rem));
+    --wallet-peek-height: clamp(2.95rem, 9vw, 3.4rem);
+    --wallet-focus-gap: clamp(0.4rem, 1.6vh, 0.65rem);
     --wallet-card-height:
       min(30rem, calc(100% - var(--wallet-main-top) - var(--wallet-peek-height) - var(--wallet-focus-gap)));
   }

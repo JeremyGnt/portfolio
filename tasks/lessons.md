@@ -33,4 +33,6 @@
 - Pour un stack mobile superpose avec ordre editorial explicite, conserver cet ordre aussi dans le dock de focus; ne pas reordonner les cards restantes selon un tri implicite.
 - Si l'utilisateur demande seulement de remonter la card active dans un focus mobile, ajouter un offset vertical dedie a l'etat actif au lieu de retoucher la hauteur de la card ou le stack initial.
 - Si une scene mobile doit devenir totalement fixe, verrouiller a la fois le scroll du `body` et le scroll interne eventuel des cards actives; ne pas en traiter seulement un des deux.
+- Quand l'utilisateur demande un layout mobile "au plus bas" ou "marge minimale", reprendre aussi les offsets du shell global (`header-menu`, padding bottom) et pas seulement ceux du composant local.
+- Si l'utilisateur demande une marge supplementaire seulement a l'etat initial d'un stack mobile, introduire un `top` dedie au stack initial plutot que retoucher la position du focus.
 - Si l'utilisateur demande un correctif sur un cas localise, ne pas generaliser la logique a tout le composant sans validation; cibler d'abord strictement l'element ou l'etat mentionne.
