@@ -1,5 +1,19 @@
 # Todo
 
+## Favicon Production Reliability
+
+- [completed] Auditer le build prerender et la reponse live du domaine pour comprendre pourquoi le favicon disparait en production.
+- [completed] Reinjecter des balises favicon/manifest dans le HTML prerenderise et ajouter des assets de fallback robustes (`.ico` + PNG).
+- [completed] Verifier le correctif avec `npm run build`, controler la sortie `dist/`, puis consigner le resultat.
+
+### Outcome
+
+- La cause principale etait le prerender SEO: `scripts/prerender.mjs` remplaçait le bloc `<!--app-seo:start-->` par `renderHeadTags()`, mais `src/seo.ts` ne regenerait ni les balises favicon ni le `manifest`, donc le HTML de production perdait ces liens.
+- Le head genere inclut maintenant `favicon.ico`, le SVG, des PNG `16x16` et `32x32`, un `apple-touch-icon` et le `manifest`, autant dans `index.html` que dans les pages prerendered `/contact`, `/experience` et `/projects`.
+- Un script reproductible `scripts/generate-favicons.mjs` genere les assets PNG et ICO depuis `public/favicon.svg`, et `npm run build` l'execute avant le build Vite pour eviter les oublis.
+- `public/manifest.json` pointe maintenant vers des icones PNG `192x192` et `512x512`, mieux supportees pour les contexts installables.
+- Verification effectuee: `npm run build` passe; `dist/index.html`, `dist/contact/index.html`, `dist/experience/index.html` et `dist/projects/index.html` contiennent tous les liens d'icone attendus; `dist/` contient bien `favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png`, `android-chrome-192x192.png` et `android-chrome-512x512.png`.
+
 ## SEO Route Prerender And Identity Signals
 
 - [completed] Auditer le runtime client et le build Vite pour mettre en place un prerender statique route par route sans casser la navigation existante.
@@ -526,6 +540,78 @@
 - La card active focus conserve sa position haute actuelle.
 - Verification effectuee: `npm run build` passe apres cet ajustement.
 
+## Experience Mobile Volunteering Fit And Dock Stack
+
+- [completed] Resserer le layout interne mobile des cards pour que `Volontariat` affiche bien la fin du texte sans scroll.
+- [completed] Augmenter l'ecart vertical du dock focus mobile pour rendre visibles les deux cards non selectionnees.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- La card `Volontariat` utilise maintenant des espacements internes mobiles plus compacts, avec titres, meta et descriptions legerement reduits, ce qui laisse apparaitre la fin du texte `Scouts & Guides`.
+- Le focus mobile n'utilise plus un dock calcule card par card: la card active descend legerement depuis sa position initiale, tandis que les deux autres descendent ensemble vers une meme ligne basse en conservant leurs offsets de stack.
+- Verification effectuee: `npm run build` passe apres ce correctif.
+
+## Experience Mobile First Card Peek Depth
+
+- [completed] Ajouter un offset supplementaire de descente pour les cards reduites quand la card `1` est active.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `1` est selectionnee, les cards `2` et `3` descendent maintenant un peu plus bas ensemble tout en conservant leur decalage relatif.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
+## Experience Mobile First Card 1 Lowering Tune
+
+- [completed] Augmenter encore la descente conditionnelle des cards `2` et `3` quand la card `1` est active, sans toucher aux autres cas.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `1` est active, les cards `2` et `3` descendent maintenant un peu plus bas qu'avant, tout en gardant exactement le meme ordre et leur decalage relatif.
+- Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
+
+## Experience Mobile First Card 1 Lowering Tune V2
+
+- [completed] Augmenter encore la descente conditionnelle des cards `2` et `3` quand la card `1` est active.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `1` est active, les cards `2` et `3` descendent maintenant encore plus bas qu'avant, sans modifier le comportement des autres selections.
+- Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
+
+## Experience Mobile First Card 1 Lowering Tune V3
+
+- [completed] Descendre encore les cards `2` et `3` quand la card `1` est active pour rapprocher `Volontariat` du menu.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `1` est active, les cards `2` et `3` descendent maintenant encore davantage, avec `Volontariat` rapproche du menu sans changer les autres cas de focus.
+- Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
+
+## Experience Mobile First Card 1 Lowering Tune V4
+
+- [completed] Descendre encore les cards `2` et `3` uniquement quand la card `1` est active.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `1` est active, les cards `2` et `3` descendent maintenant encore plus bas qu'au palier precedent, sans modifier la logique des autres cas mobiles.
+- Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
+
+## Experience Mobile First Card 1 Lowering Tune V5
+
+- [completed] Descendre encore un peu les cards `2` et `3` uniquement quand la card `1` est active.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `1` est active, les cards `2` et `3` descendent maintenant encore legerement plus bas que dans le palier precedent, sans changer les autres etats mobiles.
+- Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
+
 # Review
 
 - La page `/projects` a ete refondue en hover reveal list minimaliste, avec une liste editoriale plein format a la place de la grille de cards.
@@ -601,3 +687,6 @@
 - Le desktop utilise un `pin` avec translation GPU du track et barre de progression, tandis que le mobile et `prefers-reduced-motion` basculent proprement vers une pile verticale sans pinning.
 - Le build `npm run build` passe après cette refonte de `/contact`.
 - Après retour utilisateur, la version finale de `/contact` a ete simplifiee: plus de grand panneau ni de texte long, juste le background existant, un bloc intro minimal et des cards `glass` sobres alignees sur la landing.
+- [completed] Forcer le snap de la bulle draggable mobile du `LiquidMenu` sur l'un des 4 slots, y compris quand le relache se fait sur l'index deja actif.
+- `src/components/LiquidMenu.vue` recalcule maintenant l'index au `pointerup` avec la position finale du doigt, puis recentre toujours la bulle sur la position exacte de l'onglet vise.
+- Le cas de relache sur l'onglet deja selectionne ne laisse plus la bulle entre deux positions: un resnap court la recale explicitement sur son slot.

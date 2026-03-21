@@ -13,12 +13,18 @@ function scrollToCardsSection() {
         <span class="hero-dot subtitle-dot align-dot kicker-col-dot">&bull;</span>
         <span class="kicker-right kicker-col-right">BIG DATA &amp; IA</span>
       </div>
-      <h1 class="home-hero-title">
-        <span class="home-hero-word">
+      <h1 class="home-hero-title" aria-label="Jérémy Gonnet">
+        <span class="home-hero-word home-hero-word-desktop" aria-hidden="true">
           <span id="target-j" class="target-letter" aria-hidden="true">J</span><span class="fade-text">érémy</span>
         </span>
-        <span class="home-hero-word">
+        <span class="home-hero-word home-hero-word-desktop" aria-hidden="true">
           <span id="target-g" class="target-letter" aria-hidden="true">G</span><span class="fade-text home-hero-last-name">onnet</span>
+        </span>
+        <span class="home-hero-word home-hero-word-mobile" aria-hidden="true">
+          <span class="fade-text">Jérémy</span>
+        </span>
+        <span class="home-hero-word home-hero-word-mobile" aria-hidden="true">
+          <span class="fade-text home-hero-last-name">Gonnet</span>
         </span>
       </h1>
       <p
@@ -98,6 +104,10 @@ function scrollToCardsSection() {
   display: flex;
   align-items: center;
   position: relative;
+}
+
+.home-hero-word-mobile {
+  display: none;
 }
 
 .home-hero-last-name {
@@ -253,9 +263,16 @@ function scrollToCardsSection() {
 }
 
 @media (max-width: 768px) {
-  .target-letter {
-    opacity: 1;
-    color: #ffffff;
+  .hero-kicker-top {
+    font-size: 0.90rem;
+  }
+
+  .home-hero-word-desktop {
+    display: none;
+  }
+
+  .home-hero-word-mobile {
+    display: flex;
   }
 }
 

@@ -11,6 +11,15 @@ export const PERSON_SUMMARY =
 
 const GOOGLE_SITE_VERIFICATION = import.meta.env.VITE_GOOGLE_SITE_VERIFICATION?.trim() ?? ''
 const GOOGLE_ANALYTICS_ID = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ?? ''
+const ICON_LINK_TAGS = [
+  '<link rel="icon" href="/favicon.ico" sizes="any" />',
+  '<link rel="shortcut icon" href="/favicon.ico" />',
+  '<link rel="icon" type="image/svg+xml" href="/favicon.svg" />',
+  '<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />',
+  '<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />',
+  '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />',
+  '<link rel="manifest" href="/manifest.json" />',
+]
 
 export type SeoDefinition = {
   title: string
@@ -223,6 +232,7 @@ export function renderHeadTags(route: SeoRouteLike) {
     `<meta name="robots" content="${DEFAULT_ROBOTS_CONTENT}" />`,
     `<meta name="author" content="${escapeHtml(SITE_NAME)}" />`,
     '<meta name="theme-color" content="#050505" />',
+    ...ICON_LINK_TAGS,
     `<link rel="canonical" href="${canonicalUrl}" />`,
     '<meta property="og:locale" content="fr_FR" />',
     '<meta property="og:type" content="website" />',

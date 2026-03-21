@@ -10,8 +10,8 @@ const cards = experiencesPageData.cards
 const cardSlots = ['left', 'center', 'right'] as const
 const mobileStackOffsets = ['-5rem', '-2.5rem', '0rem']
 const mobileStackScales = ['1', '1', '1']
-const mobilePeekBottoms = ['0.95rem', '0rem']
 const mobilePeekScales = ['1', '1']
+const firstMobileCardId = cards[0]?.id ?? null
 
 const { scrollTrackRef, cardsStageRef, mainTitleRef, scrollHintRef, scrollToCardsStage, setCardRef } =
   useExperienceSceneAnimation()
@@ -34,15 +34,6 @@ const syncMobileViewport = (matches: boolean) => {
   }
 }
 
-const getRemainingMobileCardIndices = () =>
-  cards
-    .map((card, index) => ({ id: card.id, index }))
-    .filter(({ id }) => id !== mobileActiveCardId.value)
-    .sort((left, right) => right.index - left.index)
-
-const getMobilePeekIndex = (cardId: string) =>
-  getRemainingMobileCardIndices().findIndex(({ id }) => id === cardId)
-
 const getCardShellClass = (cardId: string) => {
   if (!isMobileExperienceViewport.value) {
     return null
@@ -63,15 +54,14 @@ const getCardShellStyle = (cardId: string, cardIndex: number) => {
   }
 
   const isActiveCard = mobileActiveCardId.value === cardId
-  const peekIndex = getMobilePeekIndex(cardId)
-  const resolvedPeekIndex = peekIndex === -1 ? 0 : peekIndex
+  const shouldLowerPeekCards = !isActiveCard && mobileActiveCardId.value === firstMobileCardId
 
   return {
-    zIndex: isActiveCard ? '30' : `${18 - resolvedPeekIndex}`,
+    zIndex: isActiveCard ? '30' : `${10 + cardIndex}`,
     '--mobile-stack-offset': mobileStackOffsets[cardIndex] ?? '0px',
     '--mobile-stack-scale': mobileStackScales[cardIndex] ?? '1',
-    '--mobile-peek-bottom': mobilePeekBottoms[resolvedPeekIndex] ?? mobilePeekBottoms[0],
-    '--mobile-peek-scale': mobilePeekScales[resolvedPeekIndex] ?? mobilePeekScales[0],
+    '--mobile-peek-scale': mobilePeekScales[Math.min(cardIndex, mobilePeekScales.length - 1)] ?? mobilePeekScales[0],
+    '--mobile-peek-extra-shift': shouldLowerPeekCards ? 'clamp(3.55rem, 6.8vh, 4.2rem)' : '0px',
   }
 }
 
@@ -415,9 +405,11 @@ onUnmounted(() => {
     isolation: isolate;
     --wallet-main-top: clamp(4.9rem, 9vh, 6.1rem);
     --wallet-stack-top: calc(var(--wallet-main-top) + clamp(0.45rem, 1.2vh, 0.7rem));
-    --wallet-active-top: calc(var(--wallet-main-top) - clamp(2rem, 4.5vh, 2.85rem));
+    --wallet-active-shift: clamp(0.9rem, 2.6vh, 1.3rem);
     --wallet-peek-height: clamp(3rem, 8vw, 3.45rem);
     --wallet-focus-gap: clamp(0.45rem, 1.8vh, 0.8rem);
+    --wallet-dock-base-bottom: clamp(4.15rem, 9vw, 4.55rem);
+    --wallet-dock-top: calc(100% - var(--wallet-peek-height) - var(--wallet-dock-base-bottom));
     --wallet-card-height:
       min(31.5rem, calc(100% - var(--wallet-main-top) - var(--wallet-peek-height) - var(--wallet-focus-gap)));
   }
@@ -465,15 +457,15 @@ onUnmounted(() => {
   }
 
   .experience-card-shell--mobile-active {
-    top: var(--wallet-active-top);
+    top: calc(var(--wallet-stack-top) + var(--mobile-stack-offset, 0px) + var(--wallet-active-shift));
     bottom: auto;
     transform: translate3d(-50%, 0, 0) scale(1);
     filter: none;
   }
 
   .experience-card-shell--mobile-peek {
-    top: auto;
-    bottom: calc(var(--mobile-peek-bottom, 0rem) - (var(--wallet-card-height) - var(--wallet-peek-height)));
+    top: calc(var(--wallet-dock-top) + var(--mobile-stack-offset, 0px) + var(--mobile-peek-extra-shift, 0px));
+    bottom: auto;
     transform: translate3d(-50%, 0, 0) scale(var(--mobile-peek-scale, 0.98));
     filter: saturate(0.88) brightness(0.92);
   }
@@ -517,9 +509,11 @@ onUnmounted(() => {
   .cards-stage {
     --wallet-main-top: clamp(4.35rem, 8vh, 5.35rem);
     --wallet-stack-top: calc(var(--wallet-main-top) + clamp(0.4rem, 1vh, 0.6rem));
-    --wallet-active-top: calc(var(--wallet-main-top) - clamp(1.8rem, 4vh, 2.45rem));
+    --wallet-active-shift: clamp(0.75rem, 2.3vh, 1.1rem);
     --wallet-peek-height: clamp(2.95rem, 9vw, 3.4rem);
     --wallet-focus-gap: clamp(0.4rem, 1.6vh, 0.65rem);
+    --wallet-dock-base-bottom: clamp(3.95rem, 9vw, 4.3rem);
+    --wallet-dock-top: calc(100% - var(--wallet-peek-height) - var(--wallet-dock-base-bottom));
     --wallet-card-height:
       min(30rem, calc(100% - var(--wallet-main-top) - var(--wallet-peek-height) - var(--wallet-focus-gap)));
   }

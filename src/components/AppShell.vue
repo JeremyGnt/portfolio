@@ -342,10 +342,18 @@ const emit = defineEmits<{
   }
 
   .header-logo {
-    width: 120px;
+    width: 85px;
     height: 46px;
     margin-right: 0;
     align-self: flex-start;
+  }
+
+  #logo-j {
+    transform: translateX(26px);
+  }
+
+  #logo-g {
+    transform: translateX(-26px);
   }
 
   .header-menu {

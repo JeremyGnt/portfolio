@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "icons:generate": "node scripts/generate-favicons.mjs",
     "images:optimize": "node scripts/optimize-images.mjs",
-    "build": "tsc && node scripts/prerender.mjs",
+    "build": "tsc && node scripts/generate-favicons.mjs && node scripts/prerender.mjs",
     "preview": "vite preview"
   },
   "devDependencies": {

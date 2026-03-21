@@ -209,8 +209,8 @@ const revealMenuContentAfterExpand = () => {
   }, menuShellExpandDurationMs + 40)
 }
 
-const setBubble = ({ immediate = false }: { immediate?: boolean } = {}) => {
-  const activeItem = itemRefs.value[activeIndex.value]
+const setBubbleForIndex = (index: number, { immediate = false }: { immediate?: boolean } = {}) => {
+  const activeItem = itemRefs.value[index]
   const parent = menuTrackRef.value
 
   if (!activeItem || !parent) {
@@ -244,6 +244,10 @@ const setBubble = ({ immediate = false }: { immediate?: boolean } = {}) => {
       })
     })
   }
+}
+
+const setBubble = ({ immediate = false }: { immediate?: boolean } = {}) => {
+  setBubbleForIndex(activeIndex.value, { immediate })
 }
 
 const updateLayoutMetrics = () => {
@@ -294,8 +298,9 @@ const scheduleMenuLayoutSync = () => {
 
 const selectItem = (index: number) => {
   dragIndex.value = index
+  const isSameIndex = activeIndex.value === index
 
-  if (activeIndex.value !== index) {
+  if (!isSameIndex) {
     const distance = Math.abs(index - activeIndex.value)
     const calculatedDuration = getMoveDurationForDistance(distance)
     const calculatedGrowDuration = Math.max(0.44, calculatedDuration * 1.1)
@@ -306,7 +311,7 @@ const selectItem = (index: number) => {
     activeIndex.value = index
     isMoving.value = true
     isGrowing.value = true
-    setBubble()
+    setBubbleForIndex(index)
 
     if (growTimeout) {
       clearTimeout(growTimeout)
@@ -324,7 +329,15 @@ const selectItem = (index: number) => {
     }, calculatedDuration * 1000)
   }
 
-  router.push(items[index].path)
+  if (isSameIndex) {
+    moveDuration.value = 0.28
+    growDuration.value = 0.46
+    setBubbleForIndex(index)
+  }
+
+  if (route.path !== items[index].path) {
+    router.push(items[index].path)
+  }
 }
 
 const handlePointerDown = (event: PointerEvent) => {
@@ -395,6 +408,7 @@ const finishBubbleDrag = (event: PointerEvent) => {
 
   isDraggingBubble.value = false
   activePointerId = null
+  updateBubbleDuringDrag(event.clientX)
   restoreBubbleTransitions()
   selectItem(dragIndex.value)
   event.preventDefault()

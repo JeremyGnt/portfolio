@@ -342,8 +342,13 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
     min-height: 0;
   }
 
+  .experience-card__title {
+    font-size: 1.12rem;
+  }
+
   .experience-card__meta-title {
-    font-size: 0.8rem;
+    font-size: 0.76rem;
+    letter-spacing: 0.13em;
   }
 
   .experience-card__company-logo-box {
@@ -354,7 +359,41 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 
   .experience-card__description,
   .experience-card__bullet-list :deep(li) {
-    font-size: 0.9rem;
+    font-size: 0.84rem;
+  }
+
+  .experience-card__header {
+    margin-bottom: 0.72rem;
+  }
+
+  .experience-card__stack {
+    gap: 0.65rem;
+  }
+
+  .experience-card__panel {
+    gap: 0.55rem;
+    padding: 0.8rem;
+  }
+
+  .experience-card__description {
+    line-height: 1.42;
+  }
+
+  .experience-card__date-line {
+    gap: 0.38rem;
+  }
+
+  .experience-card__bullet-list {
+    gap: 0.58rem;
+  }
+
+  :deep(.timeline-role) {
+    font-size: 0.82rem;
+    margin-bottom: 0.15rem;
+  }
+
+  :deep(.timeline-date) {
+    font-size: 0.74rem;
   }
 
   .experience-card--mobile-interactive .experience-card__body {

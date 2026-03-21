@@ -35,4 +35,13 @@
 - Si une scene mobile doit devenir totalement fixe, verrouiller a la fois le scroll du `body` et le scroll interne eventuel des cards actives; ne pas en traiter seulement un des deux.
 - Quand l'utilisateur demande un layout mobile "au plus bas" ou "marge minimale", reprendre aussi les offsets du shell global (`header-menu`, padding bottom) et pas seulement ceux du composant local.
 - Si l'utilisateur demande une marge supplementaire seulement a l'etat initial d'un stack mobile, introduire un `top` dedie au stack initial plutot que retoucher la position du focus.
+- Si un dock mobile doit montrer plusieurs cards reduites, verifier le recouvrement reel entre leurs headers visibles; deux offsets trop proches peuvent donner l'impression qu'une card manque alors qu'elle est juste masquee.
+- Si l'ordre des cards reduites depend de la card active, modeliser explicitement cet ordre a partir de l'index actif au lieu d'un tri fixe; sinon certains cas (comme card 1 active) paraissent faux meme si le CSS est correct.
+- Si le comportement attendu est "la card active descend un peu, les autres beaucoup plus en gardant leur decalage initial", ne pas bricoler un dock avec positions absolues independantes; repartir d'un meme axe vertical et ajouter les offsets de stack existants.
+- Si l'utilisateur demande un ajustement seulement pour le cas "card 1 active", ajouter un offset conditionnel localise sur les cards reduites au lieu de recasser toute la logique de focus mobile.
 - Si l'utilisateur demande un correctif sur un cas localise, ne pas generaliser la logique a tout le composant sans validation; cibler d'abord strictement l'element ou l'etat mentionne.
+- Quand l'utilisateur valide la logique d'un mouvement mobile mais demande "un peu plus", augmenter d'abord l'offset conditionnel deja en place avant de retoucher les autres variables de layout.
+- Quand un utilisateur demande plusieurs hausses successives d'un meme mouvement, conserver la meme logique et augmenter par palier visible; eviter les micro-ajustements trop faibles qui obligent a reiterer inutilement.
+- Quand l'objectif visuel mentionne une position cible concrete comme "juste au-dessus du menu", calibrer l'offset conditionnel par rapport a ce repere d'ecran plutot que par petits ajustements abstraits.
+- Si l'utilisateur continue a demander "encore" sur un mouvement mobile deja isole, augmenter la valeur de facon plus nette au prochain palier pour converger plus vite vers la cible visuelle.
+- Quand l'utilisateur demande ensuite "encore un peu", rester sur un palier plus fin sans changer de logique ni de variable; ajuster seulement l'amplitude du meme offset.
