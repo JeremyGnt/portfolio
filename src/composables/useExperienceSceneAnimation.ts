@@ -6,8 +6,6 @@ import { scrollWindowToTopInstantly } from '../utils/scroll'
 gsap.registerPlugin(ScrollTrigger)
 
 const mobileExperienceBreakpoint = '(max-width: 720px)'
-const mobileFirstCardOffset = 24
-const mobileCardHeaderGap = 10
 const cardsReadyProgress = 0.94
 
 type SceneAnimationConfig = {
@@ -38,67 +36,6 @@ const createDesktopSceneConfig = (cards: HTMLElement[]): SceneAnimationConfig =>
     },
   })),
 })
-
-const getPinnedHeaderHeight = (card: HTMLElement) => {
-  const header = card.querySelector<HTMLElement>('.experience-card__header')
-
-  if (!header) {
-    return 84
-  }
-
-  const cardRect = card.getBoundingClientRect()
-  const headerRect = header.getBoundingClientRect()
-
-  return Math.max(headerRect.bottom - cardRect.top, 84)
-}
-
-const createMobileSceneConfig = (
-  cards: HTMLElement[],
-  stage: HTMLElement,
-  header: HTMLElement | null,
-): SceneAnimationConfig => {
-  const stageRect = stage.getBoundingClientRect()
-  const stageTop = stageRect.top
-  const headerBottom = header?.getBoundingClientRect().bottom ?? stageTop
-  let stackedTop = Math.max(headerBottom + mobileFirstCardOffset - stageTop, 0)
-
-  const cardStates = cards.map((card, index) => {
-    const cardRect = card.getBoundingClientRect()
-    const naturalTop = cardRect.top - stageTop
-    const targetY = stackedTop - naturalTop
-    const initialY = Math.max(stageRect.height - naturalTop + 56, cardRect.height * 0.95)
-
-    stackedTop += getPinnedHeaderHeight(card) + mobileCardHeaderGap
-
-    return {
-      card,
-      initialY,
-      position: index * 1.14,
-      vars: {
-        y: targetY,
-        duration: 0.98,
-      } satisfies gsap.TweenVars,
-    }
-  })
-
-  return {
-    endPercent: Math.max(cards.length * 125, 360),
-    setup: () => {
-      cardStates.forEach(({ card, initialY }) => {
-        gsap.set(card, {
-          y: initialY,
-          autoAlpha: 1,
-          willChange: 'transform',
-        })
-      })
-    },
-    entries: cardStates.map(({ card, position, vars }) => ({
-      element: card,
-      position,
-      vars,
-    })),
-  }
-}
 
 export function useExperienceSceneAnimation() {
   const scrollTrackRef = ref<HTMLElement | null>(null)
@@ -150,11 +87,13 @@ export function useExperienceSceneAnimation() {
       return
     }
 
+    if (window.matchMedia(mobileExperienceBreakpoint).matches) {
+      sceneTrigger = null
+      return
+    }
+
     context = gsap.context(() => {
-      const isMobileScene = window.matchMedia(mobileExperienceBreakpoint).matches
-      const sceneConfig = isMobileScene
-        ? createMobileSceneConfig(cards, stage, header)
-        : createDesktopSceneConfig(cards)
+      const sceneConfig = createDesktopSceneConfig(cards)
 
       sceneConfig.setup()
 

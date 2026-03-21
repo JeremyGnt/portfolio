@@ -182,6 +182,7 @@ const restoreBubbleTransitions = () => {
 
 const syncMobileContentVisibility = () => {
   if (isMobileViewport()) {
+    isCompactMode.value = false
     isMenuContentVisible.value = true
   }
 }
@@ -426,7 +427,7 @@ const handleCompactModeChange = (event: Event) => {
   clearMenuContentRevealTimeout()
 
   if (isMobileViewport()) {
-    isCompactMode.value = compact
+    isCompactMode.value = false
     isMenuContentVisible.value = true
     scheduleMenuLayoutSync()
     return
@@ -485,7 +486,9 @@ watch(isCompactMode, () => {
 onMounted(() => {
   scheduleMenuLayoutSync()
 
-  isCompactMode.value = document.querySelector('.app-header')?.classList.contains('app-header--menu-compact') ?? false
+  isCompactMode.value = isMobileViewport()
+    ? false
+    : (document.querySelector('.app-header')?.classList.contains('app-header--menu-compact') ?? false)
   isMenuContentVisible.value = !isCompactMode.value
   syncMobileContentVisibility()
 

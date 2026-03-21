@@ -172,6 +172,12 @@ body.route-experience .footer {
   border-top-color: transparent;
 }
 
+body.route-experience.route-experience-mobile-lock {
+  overflow: hidden;
+  overscroll-behavior: none;
+  height: 100dvh;
+}
+
 .mesh-orb {
   position: absolute;
   border-radius: 50%;

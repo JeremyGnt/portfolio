@@ -1,22 +1,122 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import ExperienceSceneCard from '../components/experience/ExperienceSceneCard.vue'
 import { useExperienceSceneAnimation } from '../composables/useExperienceSceneAnimation'
 import { experiencesPageData } from '../data/experiencesData'
 
+const mobileExperienceBreakpoint = '(max-width: 720px)'
 const hero = experiencesPageData.hero
 const cards = experiencesPageData.cards
 const cardSlots = ['left', 'center', 'right'] as const
+const mobileStackOffsets = ['-5rem', '-2.5rem', '0rem']
+const mobileStackScales = ['1', '1', '1']
+const mobilePeekBottoms = ['0.95rem', '0rem']
+const mobilePeekScales = ['1', '1']
 
 const { scrollTrackRef, cardsStageRef, mainTitleRef, scrollHintRef, scrollToCardsStage, setCardRef } =
   useExperienceSceneAnimation()
 
+const isMobileExperienceViewport = ref(false)
+const mobileActiveCardId = ref<string | null>(null)
+const isMobileWalletFocused = computed(
+  () => isMobileExperienceViewport.value && mobileActiveCardId.value !== null,
+)
+
+let mobileViewportQuery: MediaQueryList | null = null
+let mobileViewportListener: ((event: MediaQueryListEvent) => void) | null = null
+
+const syncMobileViewport = (matches: boolean) => {
+  isMobileExperienceViewport.value = matches
+  document.body.classList.toggle('route-experience-mobile-lock', matches)
+
+  if (!matches) {
+    mobileActiveCardId.value = null
+  }
+}
+
+const getRemainingMobileCardIndices = () =>
+  cards
+    .map((card, index) => ({ id: card.id, index }))
+    .filter(({ id }) => id !== mobileActiveCardId.value)
+    .sort((left, right) => right.index - left.index)
+
+const getMobilePeekIndex = (cardId: string) =>
+  getRemainingMobileCardIndices().findIndex(({ id }) => id === cardId)
+
+const getCardShellClass = (cardId: string) => {
+  if (!isMobileExperienceViewport.value) {
+    return null
+  }
+
+  if (!mobileActiveCardId.value) {
+    return 'experience-card-shell--mobile-stack'
+  }
+
+  return mobileActiveCardId.value === cardId
+    ? 'experience-card-shell--mobile-active'
+    : 'experience-card-shell--mobile-peek'
+}
+
+const getCardShellStyle = (cardId: string, cardIndex: number) => {
+  if (!isMobileExperienceViewport.value) {
+    return { zIndex: `${cardIndex + 2}` }
+  }
+
+  const isActiveCard = mobileActiveCardId.value === cardId
+  const peekIndex = getMobilePeekIndex(cardId)
+  const resolvedPeekIndex = peekIndex === -1 ? 0 : peekIndex
+
+  return {
+    zIndex: isActiveCard ? '30' : `${18 - resolvedPeekIndex}`,
+    '--mobile-stack-offset': mobileStackOffsets[cardIndex] ?? '0px',
+    '--mobile-stack-scale': mobileStackScales[cardIndex] ?? '1',
+    '--mobile-peek-bottom': mobilePeekBottoms[resolvedPeekIndex] ?? mobilePeekBottoms[0],
+    '--mobile-peek-scale': mobilePeekScales[resolvedPeekIndex] ?? mobilePeekScales[0],
+  }
+}
+
+const handleMobileCardInteraction = (cardId: string) => {
+  if (!isMobileExperienceViewport.value) {
+    return
+  }
+
+  if (!mobileActiveCardId.value) {
+    mobileActiveCardId.value = cardId
+    return
+  }
+
+  if (mobileActiveCardId.value !== cardId) {
+    mobileActiveCardId.value = null
+  }
+}
+
+const handleMobileCardKeydown = (event: KeyboardEvent, cardId: string) => {
+  if (event.key !== 'Enter' && event.key !== ' ') {
+    return
+  }
+
+  event.preventDefault()
+  handleMobileCardInteraction(cardId)
+}
+
 onMounted(() => {
   document.body.classList.add('route-experience')
+
+  mobileViewportQuery = window.matchMedia(mobileExperienceBreakpoint)
+  syncMobileViewport(mobileViewportQuery.matches)
+  mobileViewportListener = (event) => syncMobileViewport(event.matches)
+  mobileViewportQuery.addEventListener('change', mobileViewportListener)
 })
 
 onUnmounted(() => {
   document.body.classList.remove('route-experience')
+  document.body.classList.remove('route-experience-mobile-lock')
+
+  if (mobileViewportQuery && mobileViewportListener) {
+    mobileViewportQuery.removeEventListener('change', mobileViewportListener)
+    mobileViewportQuery = null
+    mobileViewportListener = null
+  }
 })
 </script>
 
@@ -24,8 +124,15 @@ onUnmounted(() => {
   <div class="pages-wrapper">
     <section class="page active experience-page">
       <div class="page-inner experience-page__inner">
-        <div class="experience-scene">
+        <div
+          class="experience-scene"
+          :class="{
+            'experience-scene--mobile-wallet': isMobileExperienceViewport,
+            'experience-scene--mobile-focus': isMobileWalletFocused,
+          }"
+        >
           <button
+            v-if="!isMobileExperienceViewport"
             ref="scrollHintRef"
             class="scroll-hint"
             type="button"
@@ -68,10 +175,22 @@ onUnmounted(() => {
                     :key="card.id"
                     :ref="(el) => setCardRef(el, cardIndex)"
                     class="experience-card-shell"
-                    :class="`experience-card-shell--${cardSlots[cardIndex] ?? 'center'}`"
-                    :style="{ zIndex: cardIndex + 2 }"
+                    :class="[
+                      `experience-card-shell--${cardSlots[cardIndex] ?? 'center'}`,
+                      getCardShellClass(card.id),
+                    ]"
+                    :style="getCardShellStyle(card.id, cardIndex)"
+                    :role="isMobileExperienceViewport ? 'button' : undefined"
+                    :tabindex="isMobileExperienceViewport ? 0 : undefined"
+                    :aria-expanded="isMobileExperienceViewport ? mobileActiveCardId === card.id : undefined"
+                    @click="handleMobileCardInteraction(card.id)"
+                    @keydown="handleMobileCardKeydown($event, card.id)"
                   >
-                    <ExperienceSceneCard :card="card" />
+                    <ExperienceSceneCard
+                      :card="card"
+                      :mobile-interactive="isMobileExperienceViewport"
+                      :mobile-active="mobileActiveCardId === card.id"
+                    />
                   </div>
                 </div>
               </div>
@@ -246,24 +365,140 @@ onUnmounted(() => {
 }
 
 @media (max-width: 720px) {
+  .experience-page__inner {
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+  }
+
+  .experience-scene {
+    min-height: 100dvh;
+  }
+
+  .scroll-track,
+  .sticky-wrap {
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+
+  .sticky-wrap {
+    overflow: visible;
+  }
+
+  .scene-hero {
+    padding:
+      calc(5.75rem + env(safe-area-inset-top))
+      1rem
+      calc(10rem + env(safe-area-inset-bottom));
+    transition:
+      opacity 0.42s ease,
+      transform 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.42s ease;
+  }
+
+  .experience-scene--mobile-focus .scene-hero {
+    opacity: 0.16;
+    filter: blur(10px);
+    transform: scale(1.025);
+  }
+
   .scene-hero h1 {
     width: min(100%, 32rem);
     font-size: clamp(2.4rem, 12vw, 4.2rem);
   }
 
   .cards-stage {
-    grid-template-columns: minmax(0, 1fr);
+    position: relative;
+    display: block;
+    width: min(100%, 28rem);
+    max-width: 28rem;
+    height: 100%;
+    min-height: 0;
+    isolation: isolate;
+    --wallet-main-top: clamp(6.9rem, 13vh, 8.45rem);
+    --wallet-active-top: calc(var(--wallet-main-top) - clamp(4.4rem, 9vh, 5.8rem));
+    --wallet-peek-height: clamp(3.5rem, 10vw, 4rem);
+    --wallet-focus-gap: clamp(1rem, 3.5vw, 1.4rem);
+    --wallet-card-height:
+      min(31.5rem, calc(100% - var(--wallet-main-top) - var(--wallet-peek-height) - var(--wallet-focus-gap)));
+  }
+
+  .cards-layer {
+    padding:
+      calc(5.85rem + env(safe-area-inset-top))
+      0.35rem
+      calc(6.05rem + env(safe-area-inset-bottom));
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
   }
 
   .experience-card-shell,
   .experience-card-shell--left,
   .experience-card-shell--center,
   .experience-card-shell--right {
-    grid-column: 1;
-    justify-self: center;
+    position: absolute;
+    left: 50%;
+    top: var(--wallet-main-top);
+    grid-column: auto;
+    justify-self: auto;
     width: min(100%, 28rem);
-    height: auto;
+    height: var(--wallet-card-height);
     min-height: 0;
+    max-height: none;
+    transform-origin: 50% 12%;
+    will-change: transform, top, bottom;
+    transition:
+      transform 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      top 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      bottom 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.42s ease,
+      filter 0.42s ease;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .experience-card-shell--mobile-stack {
+    top: calc(var(--wallet-main-top) + var(--mobile-stack-offset, 0px));
+    bottom: auto;
+    transform: translate3d(-50%, 0, 0) scale(var(--mobile-stack-scale, 1));
+    filter: saturate(0.96);
+  }
+
+  .experience-card-shell--mobile-active {
+    top: var(--wallet-active-top);
+    bottom: auto;
+    transform: translate3d(-50%, 0, 0) scale(1);
+    filter: none;
+  }
+
+  .experience-card-shell--mobile-peek {
+    top: auto;
+    bottom: calc(var(--mobile-peek-bottom, 0rem) - (var(--wallet-card-height) - var(--wallet-peek-height)));
+    transform: translate3d(-50%, 0, 0) scale(var(--mobile-peek-scale, 0.98));
+    filter: saturate(0.88) brightness(0.92);
+  }
+
+  .experience-card-shell:focus-visible {
+    outline: none;
+  }
+
+  .experience-card-shell:focus-visible :deep(.experience-card) {
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.24),
+      0 24px 56px rgba(0, 0, 0, 0.54);
+  }
+
+  .experience-card-shell--mobile-active :deep(.experience-card) {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.02),
+      0 28px 80px rgba(0, 0, 0, 0.58);
+  }
+
+  .experience-card-shell--mobile-peek :deep(.experience-card) {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.015),
+      0 18px 48px rgba(0, 0, 0, 0.46);
   }
 }
 
@@ -273,18 +508,25 @@ onUnmounted(() => {
     padding-left: 1rem;
   }
 
-  .scroll-hint {
-    bottom: calc(7.6rem + env(safe-area-inset-bottom));
-  }
-
   .cards-layer {
-    padding-top: clamp(3.5rem, 7vh, 4.5rem);
     padding-right: 0.15rem;
     padding-left: 0.15rem;
   }
 
-  .experience-card-shell {
-    max-height: none;
+  .cards-stage {
+    --wallet-main-top: clamp(6.3rem, 12vh, 7.45rem);
+    --wallet-active-top: calc(var(--wallet-main-top) - clamp(3.8rem, 8vh, 4.9rem));
+    --wallet-peek-height: clamp(3.3rem, 12vw, 3.8rem);
+    --wallet-focus-gap: clamp(0.85rem, 3vw, 1.2rem);
+    --wallet-card-height:
+      min(30rem, calc(100% - var(--wallet-main-top) - var(--wallet-peek-height) - var(--wallet-focus-gap)));
+  }
+
+  .experience-card-shell,
+  .experience-card-shell--left,
+  .experience-card-shell--center,
+  .experience-card-shell--right {
+    width: min(100%, 26.5rem);
   }
 }
 </style>

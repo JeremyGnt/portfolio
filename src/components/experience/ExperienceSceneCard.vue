@@ -14,9 +14,17 @@ import type {
   ExperienceSectionIcon,
 } from '../../data/experiencesData'
 
-defineProps<{
-  card: ExperienceCard
-}>()
+withDefaults(
+  defineProps<{
+    card: ExperienceCard
+    mobileInteractive?: boolean
+    mobileActive?: boolean
+  }>(),
+  {
+    mobileInteractive: false,
+    mobileActive: false,
+  },
+)
 
 const sectionIconMap: Record<ExperienceSectionIcon, Component> = {
   briefcase: Briefcase,
@@ -35,7 +43,13 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 </script>
 
 <template>
-  <article class="experience-card card glass">
+  <article
+    class="experience-card card glass"
+    :class="{
+      'experience-card--mobile-interactive': mobileInteractive,
+      'experience-card--mobile-active': mobileActive,
+    }"
+  >
     <div class="experience-card__number">{{ card.number }}</div>
 
     <div class="experience-card__inner">
@@ -320,6 +334,14 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
 }
 
 @media (max-width: 720px) {
+  .experience-card--mobile-interactive {
+    overflow: hidden;
+  }
+
+  .experience-card--mobile-interactive .experience-card__inner {
+    min-height: 0;
+  }
+
   .experience-card__meta-title {
     font-size: 0.8rem;
   }
@@ -333,6 +355,21 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   .experience-card__description,
   .experience-card__bullet-list :deep(li) {
     font-size: 0.9rem;
+  }
+
+  .experience-card--mobile-interactive .experience-card__body {
+    overflow-y: hidden;
+    padding-right: 0;
+    scrollbar-width: none;
+    overscroll-behavior: auto;
+  }
+
+  .experience-card--mobile-active .experience-card__body {
+    overflow-y: hidden;
+    padding-right: 0;
+    scrollbar-width: none;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
   }
 
   .experience-card__body {

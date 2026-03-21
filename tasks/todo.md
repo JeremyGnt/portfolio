@@ -426,6 +426,82 @@
 - [completed] Reprendre sur `/projects` la même police que `ÉTUDIANT INGÉNIEUR` pour l'année, le numéro et les deux skills de chaque ligne projet.
 - [completed] Vérifier avec un build ce changement ciblé de typographie sur la liste `/projects`.
 
+## Experience Mobile Wallet Stack
+
+- [completed] Auditer la scene mobile existante de `/experience` et isoler la logique scrollée a remplacer uniquement sur telephone.
+- [completed] Ajouter dans `src/views/ExperienceView.vue` un etat mobile Wallet a deux modes (`stack` et `focus`) avec stack chevauche au chargement et reset au tap sur une card reduite.
+- [completed] Adapter `ExperienceSceneCard` pour autoriser le scroll interne seulement sur la card active en mobile et garder les cards reduites visuellement fermees.
+- [completed] Desactiver l'ancienne timeline GSAP mobile dans `useExperienceSceneAnimation` sans toucher au comportement desktop.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Sur telephone, `/experience` n'utilise plus la montee scrollée precedente: la page arrive directement sur un stack type Wallet avec les trois cards chevauchees, la card 3 dans le slot principal et les cards 2 puis 1 visibles par leur tete au-dessus.
+- Un tap sur une card mobile ne change pas sa taille: la card choisie vient simplement prendre le meme slot principal que la card de premier plan de l'etat de base.
+- Les deux autres cards descendent sous l'ecran avec seulement leur tete visible juste au-dessus du menu mobile, puis un tap sur l'une d'elles remet la scene a l'etat initial.
+- `ExperienceSceneCard` n'autorise le scroll interne que pour la card active en mobile, ce qui garde les cards reduites propres et lisibles tout en laissant le contenu complet accessible.
+- Verification effectuee: `npm run build` passe apres ce changement.
+
+## Experience Mobile Wallet Dock Alignment
+
+- [completed] Abaisser le dock mobile de `/experience` pour que les cards reduites viennent vraiment se poser au plus pres du bas de l'ecran, juste au-dessus du menu.
+- [completed] Isoler le `LiquidMenu` mobile de tout etat `compact` emis par `/experience` pour eviter les disparitions ou masquages intermittents.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Le dock mobile des cards reduites sur `/experience` est maintenant descendu plus bas: la card reduite de premier plan vient se poser au ras du menu mobile, avec son titre juste au-dessus.
+- La seconde card reduite reste accessible derriere comme un vrai stack Wallet, mais ne remonte plus inutilement au milieu de l'ecran.
+- Le `LiquidMenu` mobile ignore maintenant les evenements de compaction emis par la scene `/experience`, ce qui evite les disparitions intermittentes du menu sur telephone.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
+## Experience Mobile Wallet Fixed Slot
+
+- [completed] Recaler la scene mobile selon le schema utilisateur: un slot principal fixe et des cards secondaires dockees en bas sans redimensionnement.
+- [completed] Garder une hauteur de card stable entre l'etat de base et l'etat focus, puis ne faire varier que les positions des cards.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- La card active mobile garde maintenant la meme taille que la card principale de l'etat initial; seul son emplacement change.
+- Les cards non actives sont poussees sous l'ecran avec un simple reveal de header au-dessus du menu, au lieu de comprimer ou d'etirer la card active.
+- Verification effectuee: `npm run build` passe apres ce recalage.
+
+## Experience Mobile Wallet Stack Order And Size
+
+- [completed] Reprendre la geometrie du stack initial mobile pour supprimer l'effet de cards coupees et mieux utiliser la hauteur disponible.
+- [completed] Reordonner le dock mobile en focus pour que la card `3` reste au-dessus de la `1` quand la `2` est selectionnee.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- La hauteur des cards mobiles est maintenant calculee depuis l'espace reel disponible dans la scene, ce qui reduit l'effet de card coupee a l'etat initial.
+- En mode focus, l'ordre du mini-stack bas reste maintenant `3` au-dessus de `1` quand la card `2` est active, conformement au schema demande.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
+## Experience Mobile Wallet Active Offset
+
+- [completed] Relever davantage la card active mobile sans modifier sa hauteur ni l'etat initial du stack.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- La card selectionnee sur `/experience` utilise maintenant un `top` dedie plus haut que le slot principal de base, sans changer sa taille.
+- L'etat initial et le dock bas des cards reduites restent inchanges.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
+## Experience Mobile Scroll Lock
+
+- [completed] Retirer le scroll de la page `/experience` en mode mobile uniquement.
+- [completed] Neutraliser aussi le scroll interne de la card active mobile pour garder une scene totalement fixe.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- `/experience` ajoute maintenant une classe `body` mobile-only qui verrouille `overflow` et l'overscroll pendant l'affichage sur telephone.
+- La card active mobile ne scrolle plus en interne non plus; toute la scene reste fixe.
+- Verification effectuee: `npm run build` passe apres ce verrouillage.
+
 # Review
 
 - La page `/projects` a ete refondue en hover reveal list minimaliste, avec une liste editoriale plein format a la place de la grille de cards.

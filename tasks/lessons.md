@@ -28,4 +28,9 @@
 - Si un menu mobile doit distinguer tap simple et drag, ne pas basculer en mode drag au `pointerdown`; attendre un vrai seuil de mouvement pour laisser les clics rejouer l'animation normale du menu.
 - Si un flash visuel persiste en mobile autour d'elements glassmorphism, verifier d'abord les `backdrop-filter` et filtres SVG partages entre composants fixes avant d'incriminer seulement le montage `v-if`.
 - Si un composant de navigation reutilise une logique `compact` desktop en mobile, verifier que les etats derives comme `isMenuContentVisible` ne masquent pas encore la bulle active pendant les transitions de page ou de scroll.
+- Quand une scene mobile animee partage l'ecran avec un menu fixe en bas, caler les offsets et la zone de dock contre la hauteur reelle du menu et verifier que le composant de navigation mobile ignore les evenements desktop de compaction.
+- Pour une interaction mobile type Wallet, ne pas "resoudre" le focus en changeant la taille de la card active si le brief parle seulement de superposition et de deplacement; garder un slot principal fixe et ne faire varier que les positions.
+- Pour un stack mobile superpose avec ordre editorial explicite, conserver cet ordre aussi dans le dock de focus; ne pas reordonner les cards restantes selon un tri implicite.
+- Si l'utilisateur demande seulement de remonter la card active dans un focus mobile, ajouter un offset vertical dedie a l'etat actif au lieu de retoucher la hauteur de la card ou le stack initial.
+- Si une scene mobile doit devenir totalement fixe, verrouiller a la fois le scroll du `body` et le scroll interne eventuel des cards actives; ne pas en traiter seulement un des deux.
 - Si l'utilisateur demande un correctif sur un cas localise, ne pas generaliser la logique a tout le composant sans validation; cibler d'abord strictement l'element ou l'etat mentionne.
