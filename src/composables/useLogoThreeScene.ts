@@ -10,6 +10,7 @@ const routeRotationDamping = 7
 const fullRotation = Math.PI * 2
 const topNavigationThreshold = 24
 const routeOrder = ['/', '/experience', '/projects', '/contact']
+const scrollDrivenRoutes = new Set(['/'])
 const heroScaleFactor = 4
 const maxPixelRatio = 1.5
 const rotationSettleThreshold = 0.001
@@ -17,7 +18,6 @@ const momentumSettleThreshold = 0.01
 const scrollStopDelayMs = 70
 const scrollMomentumDuration = 0.42
 const maxMomentumAngle = Math.PI * 0.4
-const scrollDrivenRoutes = new Set(routeOrder)
 const bottomScrollTolerance = 2
 const overscrollVelocityFactor = 7
 const lineScrollPixels = 16
@@ -26,7 +26,6 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
   const route = useRoute()
 
   let reqId: number | null = null
-  let handleExperienceLogoSpinCue: ((event: Event) => void) | null = null
   let handleResize: (() => void) | null = null
   let handleScroll: (() => void) | null = null
   let handleWheel: ((event: WheelEvent) => void) | null = null
@@ -94,8 +93,6 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     let lastScrollSampleTop = 0
     let currentScrollVelocity = 0
     let shouldReturnFromMomentum = false
-    let isExperienceSpinActive = false
-    let isExperienceSpinArmed = true
     let rotationSyncMode: 'scroll' | 'scrollMomentum' | 'animated' =
       scrollDrivenRoutes.has(route.path) ? 'scroll' : 'animated'
 
@@ -132,16 +129,11 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     }
 
     const syncRotationTargetWithScroll = (referenceAngle: number) => {
-      const targetAngle =
-        route.path === '/experience' && isExperienceSpinActive
-          ? scrollRotationTargetY + fullRotation
-          : scrollRotationTargetY
-
-      currentRotationTargetY = getContinuousAngle(targetAngle, referenceAngle)
+      currentRotationTargetY = getContinuousAngle(scrollRotationTargetY, referenceAngle)
     }
 
     const startScrollMomentum = (velocityOverride?: number) => {
-      if (!isScrollDrivenRoute(route.path) || !textMesh || isExperienceSpinActive) return
+      if (!isScrollDrivenRoute(route.path) || !textMesh) return
 
       const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0)
       const effectiveVelocity = velocityOverride ?? currentScrollVelocity
@@ -226,16 +218,15 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       currentScrollVelocity = deltaScroll / deltaTime
       lastScrollSampleTime = now
       lastScrollSampleTop = nextScrollTop
-      lastKnownScrollTop = window.scrollY || document.documentElement.scrollTop
-      setRotationTargetFromScroll()
-      shouldReturnFromMomentum = false
-      syncRotationTargetWithScroll(textMesh ? logoGroup.rotation.y : currentRotationTargetY)
+      lastKnownScrollTop = nextScrollTop
 
-      if (route.path === '/experience' && isExperienceSpinActive) {
-        rotationSyncMode = 'animated'
+      if (!isScrollDrivenRoute(route.path)) {
         return
       }
 
+      setRotationTargetFromScroll()
+      shouldReturnFromMomentum = false
+      syncRotationTargetWithScroll(textMesh ? logoGroup.rotation.y : currentRotationTargetY)
       rotationSyncMode = 'scroll'
 
       if (textMesh) {
@@ -254,12 +245,23 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       localRenderer.domElement.style.width = '100%'
       localRenderer.domElement.style.height = '100%'
       localRenderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio))
-      updateScrollRotation()
+      if (isScrollDrivenRoute(route.path)) {
+        updateScrollRotation()
+      }
       requestRender()
     }
 
     handleScroll = () => {
       updateScrollRotation()
+
+      if (!isScrollDrivenRoute(route.path)) {
+        if (scrollStopTimer !== null) {
+          globalThis.clearTimeout(scrollStopTimer)
+          scrollStopTimer = null
+        }
+        return
+      }
+
       if (scrollStopTimer !== null) {
         globalThis.clearTimeout(scrollStopTimer)
       }
@@ -271,7 +273,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     }
 
     handleWheel = (event: WheelEvent) => {
-      if (!isScrollDrivenRoute(route.path) || isExperienceSpinActive) {
+      if (!isScrollDrivenRoute(route.path)) {
         return
       }
 
@@ -290,31 +292,9 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       startScrollMomentum(currentScrollVelocity)
     }
 
-    handleExperienceLogoSpinCue = (event: Event) => {
-      const { detail } = event as CustomEvent<{ ready?: boolean }>
-      const ready = detail?.ready === true
-
-      if (!ready) {
-        isExperienceSpinArmed = true
-        return
-      }
-
-      if (route.path !== '/experience' || !textMesh || !isExperienceSpinArmed || isExperienceSpinActive) {
-        return
-      }
-
-      isExperienceSpinArmed = false
-      isExperienceSpinActive = true
-      rotationSyncMode = 'animated'
-      shouldReturnFromMomentum = false
-      syncRotationTargetWithScroll(logoGroup.rotation.y)
-      requestRender()
-    }
-
     window.addEventListener('resize', handleResize)
     window.addEventListener('scroll', handleScroll, { passive: true })
     window.addEventListener('wheel', handleWheel, { passive: true })
-    window.addEventListener('experience-logo-spin-cue', handleExperienceLogoSpinCue as EventListener)
     updateScrollRotation()
 
     stopRouteWatch = watch(
@@ -331,8 +311,6 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
         await nextTick()
 
         if (toPath === '/') {
-          isExperienceSpinActive = false
-          isExperienceSpinArmed = true
           rotationSyncMode = 'scroll'
           currentRotationTargetY = baseRotationY
           scrollRotationTargetY = baseRotationY
@@ -343,18 +321,19 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
           return
         }
 
-        if (toPath !== '/experience') {
-          isExperienceSpinActive = false
-          isExperienceSpinArmed = true
-        }
-
         if (shouldAnimateRouteTransition) {
           rotationSyncMode = 'animated'
           const direction = toIndex > fromIndex ? 1 : -1
           const desiredTopAngle = getContinuousAngle(baseRotationY, currentRotationTargetY)
           currentRotationTargetY = desiredTopAngle + direction * fullRotation
         } else {
-          updateScrollRotation()
+          currentRotationTargetY = getContinuousAngle(baseRotationY, currentRotationTargetY)
+          scrollRotationTargetY = currentRotationTargetY
+          rotationSyncMode = isScrollDrivenRoute(toPath) ? 'scroll' : 'animated'
+          if (textMesh) {
+            logoGroup.rotation.x = baseRotationX
+            logoGroup.rotation.y = currentRotationTargetY
+          }
         }
 
         requestRender()
@@ -389,14 +368,6 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
 
         logoGroup.rotation.x = nextRotationX
         logoGroup.rotation.y = nextRotationY
-
-        if (isExperienceSpinActive && !isAnimating) {
-          isExperienceSpinActive = false
-          rotationSyncMode = 'scroll'
-          currentRotationTargetY = scrollRotationTargetY
-          logoGroup.rotation.x = baseRotationX
-          logoGroup.rotation.y = scrollRotationTargetY
-        }
       }
 
       if (textMesh && rotationSyncMode === 'scrollMomentum') {
@@ -457,11 +428,6 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     if (handleWheel) {
       window.removeEventListener('wheel', handleWheel)
       handleWheel = null
-    }
-
-    if (handleExperienceLogoSpinCue) {
-      window.removeEventListener('experience-logo-spin-cue', handleExperienceLogoSpinCue as EventListener)
-      handleExperienceLogoSpinCue = null
     }
 
     if (scrollStopTimer !== null) {

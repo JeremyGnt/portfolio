@@ -5,8 +5,6 @@ import { scrollWindowToTopInstantly } from '../utils/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const logoSpinTriggerThreshold = 0.82
-const logoSpinResetThreshold = 0.68
 const mobileExperienceBreakpoint = '(max-width: 720px)'
 const mobileFirstCardOffset = 24
 const mobileCardHeaderGap = 10
@@ -111,11 +109,6 @@ export function useExperienceSceneAnimation() {
   let context: gsap.Context | null = null
   let resizeTimeout: ReturnType<typeof setTimeout> | null = null
   let isHeaderCompacted = false
-  let isLogoSpinReady = false
-
-  const dispatchLogoSpinCue = (ready: boolean) => {
-    window.dispatchEvent(new CustomEvent('experience-logo-spin-cue', { detail: { ready } }))
-  }
 
   const setCardRef = (element: Element | null, index: number) => {
     if (!element) {
@@ -139,9 +132,7 @@ export function useExperienceSceneAnimation() {
     }
 
     isHeaderCompacted = false
-    isLogoSpinReady = false
     window.dispatchEvent(new CustomEvent('experience-menu-compact-change', { detail: { compact: false } }))
-    dispatchLogoSpinCue(false)
   }
 
   const buildScene = () => {
@@ -200,13 +191,6 @@ export function useExperienceSceneAnimation() {
               }
             }
 
-            if (!isLogoSpinReady && progress >= logoSpinTriggerThreshold) {
-              isLogoSpinReady = true
-              dispatchLogoSpinCue(true)
-            } else if (isLogoSpinReady && progress <= logoSpinResetThreshold) {
-              isLogoSpinReady = false
-              dispatchLogoSpinCue(false)
-            }
           },
         },
       })

@@ -1,5 +1,17 @@
 # Todo
 
+## Static 3D Logo On Internal Scroll
+
+- [completed] Auditer `src/composables/useLogoThreeScene.ts` pour identifier toutes les rotations pilotées par le scroll sur `/experience`, `/projects` et `/contact`.
+- [completed] Retirer proprement le pilotage par scroll, inertie et overscroll sur ces trois pages tout en conservant les transitions de route utiles.
+- [completed] Vérifier le changement avec `npm run build` et consigner le résultat.
+
+### Outcome
+
+- Le logo 3D du header ne suit désormais le scroll, l'inertie et l'overscroll que sur `/`; sur `/experience`, `/projects` et `/contact`, les lettres restent fixes pendant le défilement.
+- Le cue spécifique de rotation déclenché par la progression scrollée de `/experience` a été supprimé pour éviter toute rotation résiduelle liée à cette page.
+- `npm run build` passe après ce nettoyage.
+
 ## SEO Technique Vercel
 
 - [completed] Auditer le stack, les routes publiques et le fallback Vercel pour choisir une implementation SEO native a la SPA Vue/Vite.
