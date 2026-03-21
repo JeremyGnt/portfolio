@@ -9,9 +9,12 @@ const hero = experiencesPageData.hero
 const cards = experiencesPageData.cards
 const cardSlots = ['left', 'center', 'right'] as const
 const mobileStackOffsets = ['-5rem', '-2.5rem', '0rem']
+const mobileInitialStackOffsets = ['-5rem', '-2.15rem', '0.35rem']
 const mobileStackScales = ['1', '1', '1']
 const mobilePeekScales = ['1', '1']
 const firstMobileCardId = cards[0]?.id ?? null
+const secondMobileCardId = cards[1]?.id ?? null
+const thirdMobileCardId = cards[2]?.id ?? null
 
 const { scrollTrackRef, cardsStageRef, mainTitleRef, scrollHintRef, scrollToCardsStage, setCardRef } =
   useExperienceSceneAnimation()
@@ -54,14 +57,47 @@ const getCardShellStyle = (cardId: string, cardIndex: number) => {
   }
 
   const isActiveCard = mobileActiveCardId.value === cardId
-  const shouldLowerPeekCards = !isActiveCard && mobileActiveCardId.value === firstMobileCardId
+  const isFirstCardFocused = mobileActiveCardId.value === firstMobileCardId
+  const isSecondCardFocused = mobileActiveCardId.value === secondMobileCardId
+  const isThirdCardFocused = mobileActiveCardId.value === thirdMobileCardId
+  const resolvedActiveOffset =
+    isActiveCard && (isSecondCardFocused || isThirdCardFocused)
+      ? mobileStackOffsets[0]
+      : (mobileStackOffsets[cardIndex] ?? '0px')
+
+  let resolvedPeekOffset = mobileStackOffsets[cardIndex] ?? '0px'
+
+  if (!isActiveCard && isSecondCardFocused) {
+    if (cardId === firstMobileCardId) {
+      resolvedPeekOffset = mobileStackOffsets[1] ?? resolvedPeekOffset
+    } else if (cardId === thirdMobileCardId) {
+      resolvedPeekOffset = mobileStackOffsets[2] ?? resolvedPeekOffset
+    }
+  }
+
+  if (!isActiveCard && isThirdCardFocused) {
+    if (cardId === firstMobileCardId) {
+      resolvedPeekOffset = mobileStackOffsets[1] ?? resolvedPeekOffset
+    } else if (cardId === secondMobileCardId) {
+      resolvedPeekOffset = mobileStackOffsets[2] ?? resolvedPeekOffset
+    }
+  }
+
+  const resolvedPeekExtraShift = isFirstCardFocused
+    ? 'clamp(4.18rem, 7.85vh, 4.84rem)'
+    : isSecondCardFocused || isThirdCardFocused
+      ? 'clamp(4.5rem, 8vh, 5.15rem)'
+      : '0px'
 
   return {
     zIndex: isActiveCard ? '30' : `${10 + cardIndex}`,
     '--mobile-stack-offset': mobileStackOffsets[cardIndex] ?? '0px',
+    '--mobile-stack-initial-offset': mobileInitialStackOffsets[cardIndex] ?? (mobileStackOffsets[cardIndex] ?? '0px'),
+    '--mobile-active-offset': resolvedActiveOffset,
+    '--mobile-peek-offset': resolvedPeekOffset,
     '--mobile-stack-scale': mobileStackScales[cardIndex] ?? '1',
     '--mobile-peek-scale': mobilePeekScales[Math.min(cardIndex, mobilePeekScales.length - 1)] ?? mobilePeekScales[0],
-    '--mobile-peek-extra-shift': shouldLowerPeekCards ? 'clamp(3.55rem, 6.8vh, 4.2rem)' : '0px',
+    '--mobile-peek-extra-shift': !isActiveCard ? resolvedPeekExtraShift : '0px',
   }
 }
 
@@ -450,21 +486,21 @@ onUnmounted(() => {
   }
 
   .experience-card-shell--mobile-stack {
-    top: calc(var(--wallet-stack-top) + var(--mobile-stack-offset, 0px));
+    top: calc(var(--wallet-stack-top) + var(--mobile-stack-initial-offset, var(--mobile-stack-offset, 0px)));
     bottom: auto;
     transform: translate3d(-50%, 0, 0) scale(var(--mobile-stack-scale, 1));
     filter: saturate(0.96);
   }
 
   .experience-card-shell--mobile-active {
-    top: calc(var(--wallet-stack-top) + var(--mobile-stack-offset, 0px) + var(--wallet-active-shift));
+    top: calc(var(--wallet-stack-top) + var(--mobile-active-offset, var(--mobile-stack-offset, 0px)) + var(--wallet-active-shift));
     bottom: auto;
     transform: translate3d(-50%, 0, 0) scale(1);
     filter: none;
   }
 
   .experience-card-shell--mobile-peek {
-    top: calc(var(--wallet-dock-top) + var(--mobile-stack-offset, 0px) + var(--mobile-peek-extra-shift, 0px));
+    top: calc(var(--wallet-dock-top) + var(--mobile-peek-offset, var(--mobile-stack-offset, 0px)) + var(--mobile-peek-extra-shift, 0px));
     bottom: auto;
     transform: translate3d(-50%, 0, 0) scale(var(--mobile-peek-scale, 0.98));
     filter: saturate(0.88) brightness(0.92);

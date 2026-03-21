@@ -21,6 +21,7 @@ const maxMomentumAngle = Math.PI * 0.4
 const bottomScrollTolerance = 2
 const overscrollVelocityFactor = 7
 const lineScrollPixels = 16
+const mobileBreakpoint = 768
 
 export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: string) {
   const route = useRoute()
@@ -93,15 +94,18 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     let lastScrollSampleTop = 0
     let currentScrollVelocity = 0
     let shouldReturnFromMomentum = false
-    let rotationSyncMode: 'scroll' | 'scrollMomentum' | 'animated' =
-      scrollDrivenRoutes.has(route.path) ? 'scroll' : 'animated'
 
     const getRouteIndex = (path: string) => {
       const index = routeOrder.indexOf(path)
       return index === -1 ? 0 : index
     }
 
-    const isScrollDrivenRoute = (path: string) => scrollDrivenRoutes.has(path)
+    const isMobileViewport = () => window.innerWidth <= mobileBreakpoint
+
+    const isScrollDrivenRoute = (path: string) => scrollDrivenRoutes.has(path) && !isMobileViewport()
+
+    let rotationSyncMode: 'scroll' | 'scrollMomentum' | 'animated' =
+      isScrollDrivenRoute(route.path) ? 'scroll' : 'animated'
 
     const getContinuousAngle = (desiredAngle: number, referenceAngle: number) => {
       const turns = Math.round((referenceAngle - desiredAngle) / fullRotation)
@@ -130,6 +134,18 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
 
     const syncRotationTargetWithScroll = (referenceAngle: number) => {
       currentRotationTargetY = getContinuousAngle(scrollRotationTargetY, referenceAngle)
+    }
+
+    const syncStaticRotationAtTop = () => {
+      shouldReturnFromMomentum = false
+      currentRotationTargetY = baseRotationY
+      scrollRotationTargetY = baseRotationY
+      rotationSyncMode = 'animated'
+
+      if (textMesh) {
+        logoGroup.rotation.x = baseRotationX
+        logoGroup.rotation.y = baseRotationY
+      }
     }
 
     const startScrollMomentum = (velocityOverride?: number) => {
@@ -245,7 +261,9 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       localRenderer.domElement.style.width = '100%'
       localRenderer.domElement.style.height = '100%'
       localRenderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio))
-      if (isScrollDrivenRoute(route.path)) {
+      if (route.path === '/' && !isScrollDrivenRoute(route.path)) {
+        syncStaticRotationAtTop()
+      } else if (isScrollDrivenRoute(route.path)) {
         updateScrollRotation()
       }
       requestRender()
@@ -311,11 +329,15 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
         await nextTick()
 
         if (toPath === '/') {
-          rotationSyncMode = 'scroll'
-          currentRotationTargetY = baseRotationY
-          scrollRotationTargetY = baseRotationY
-          logoGroup.rotation.x = baseRotationX
-          logoGroup.rotation.y = baseRotationY
+          if (isScrollDrivenRoute(toPath)) {
+            rotationSyncMode = 'scroll'
+            currentRotationTargetY = baseRotationY
+            scrollRotationTargetY = baseRotationY
+            logoGroup.rotation.x = baseRotationX
+            logoGroup.rotation.y = baseRotationY
+          } else {
+            syncStaticRotationAtTop()
+          }
           requestRender()
           previousRoutePath = toPath
           return

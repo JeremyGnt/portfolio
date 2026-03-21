@@ -16,6 +16,7 @@ const isScrollTopClicked = ref(false)
 const isAppReady = ref(import.meta.env.SSR || hasPrerenderedMarkup)
 const scrollProgress = ref(0)
 const isMiniScrollbarVisible = ref(false)
+const mobileBreakpoint = 768
 const route = useRoute()
 const router = useRouter()
 let scrollTopClickTimeout: number | null = null
@@ -42,8 +43,9 @@ function setHeaderLogoVisibility(path: string) {
   const logoBg = document.getElementById('header-logo-bg')
   if (!logoJ || !logoG || !logoBg) return
 
-  const opacity = path === '/' ? 0 : 1
-  const visibility = path === '/' ? 'hidden' : 'visible'
+  const showLogo = path !== '/' || window.innerWidth <= mobileBreakpoint
+  const opacity = showLogo ? 1 : 0
+  const visibility = showLogo ? 'visible' : 'hidden'
   logoJ.style.opacity = String(opacity)
   logoG.style.opacity = String(opacity)
   logoJ.style.visibility = visibility

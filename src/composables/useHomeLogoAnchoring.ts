@@ -43,11 +43,19 @@ export function useHomeLogoAnchoring() {
       if (targetJ && targetG) {
         gsap.set([targetJ, targetG], { clearProps: 'all' })
       }
-      if (logoJ && logoG) {
-        gsap.set([logoJ, logoG], { clearProps: 'all' })
-      }
-      if (logoBg) {
-        gsap.set(logoBg, { clearProps: 'all' })
+
+      if (window.innerWidth <= mobileBreakpoint && logoJ && logoG && logoBg) {
+        gsap.set([logoJ, logoG], { clearProps: 'x,y,scale,transformOrigin' })
+        syncLogoVisibility(logoJ)
+        syncLogoVisibility(logoG)
+        gsap.set(logoBg, { clearProps: 'all', opacity: 1 })
+      } else {
+        if (logoJ && logoG) {
+          gsap.set([logoJ, logoG], { clearProps: 'all' })
+        }
+        if (logoBg) {
+          gsap.set(logoBg, { clearProps: 'all' })
+        }
       }
       return
     }

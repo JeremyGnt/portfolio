@@ -45,3 +45,12 @@
 - Quand l'objectif visuel mentionne une position cible concrete comme "juste au-dessus du menu", calibrer l'offset conditionnel par rapport a ce repere d'ecran plutot que par petits ajustements abstraits.
 - Si l'utilisateur continue a demander "encore" sur un mouvement mobile deja isole, augmenter la valeur de facon plus nette au prochain palier pour converger plus vite vers la cible visuelle.
 - Quand l'utilisateur demande ensuite "encore un peu", rester sur un palier plus fin sans changer de logique ni de variable; ajuster seulement l'amplitude du meme offset.
+- Sur une serie d'ajustements visuels repetes, conserver un seul point de controle CSS/JS et le faire evoluer par paliers, au lieu de disperser plusieurs compensations dans le layout.
+- Quand plusieurs cartes mobiles doivent changer différemment selon la carte active, expliciter des offsets par état ciblé plutôt que de réutiliser aveuglément les offsets de stack d'origine.
+- Quand l'utilisateur précise un ordre vertical exact entre deux cartes d'un dock mobile, respecter cet ordre explicitement dans le mapping des offsets au lieu de l'inferer depuis l'ordre éditorial ou le z-index.
+- Pour un micro-ajustement visuel sur un état mobile déjà correct, modifier d'abord l'offset partagé de cet état avant de retoucher l'ordre ou les positions individuelles.
+- Si plusieurs cartes actives doivent partager le meme slot haut en mobile, centraliser cette regle dans le calcul de l'offset actif plutot que dupliquer des variantes CSS.
+- Pour harmoniser plusieurs focus mobiles déjà validés, ajuster par micro-palier l'offset spécifique de l'état qui diffère au lieu de retoucher tous les états.
+- Quand l'utilisateur demande "encore tres legerement", rester sur une variation fine de la meme valeur plutot que de changer de strategie ou de toucher aux autres focus mobiles.
+- Si un numero parait decale par rapport aux autres avec la meme position CSS, verifier d'abord la largeur proportionnelle des glyphes et activer des chiffres tabulaires avant de bricoler les offsets.
+- Si l'utilisateur veut ajuster seulement le stack initial mobile, introduire un offset dedié a cet etat au lieu de reutiliser les offsets des etats focus.

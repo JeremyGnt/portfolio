@@ -152,6 +152,8 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   font-size: clamp(6.8rem, 10vw, 10rem);
   line-height: 1;
   font-weight: 900;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: 'lnum' 1, 'tnum' 1;
   color: rgba(255, 255, 255, 0.035);
   pointer-events: none;
   user-select: none;

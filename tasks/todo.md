@@ -612,6 +612,100 @@
 - Quand la card `1` est active, les cards `2` et `3` descendent maintenant encore legerement plus bas que dans le palier precedent, sans changer les autres etats mobiles.
 - Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
 
+## Experience Mobile First Card 1 Lowering Tune V6
+
+- [completed] Descendre encore un peu les cards `2` et `3` uniquement quand la card `1` est active.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `1` est active, les cards `2` et `3` descendent maintenant encore un peu plus bas, sans toucher aux autres etats mobiles.
+- Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
+
+## Experience Mobile Card 2 Focus Alignment
+
+- [completed] Donner a la card `2` la meme position active que la card `1` en focus mobile.
+- [completed] Recaler le dock de `1` et `3` plus bas quand la card `2` est active, avec la card `3` un peu plus remontee que la `1`.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `2` est active en mobile, elle reprend maintenant le meme slot haut que la card `1` en focus.
+- Les cards `1` et `3` descendent plus bas dans le dock, et la `3` reste placee plus haut que la `1` pour conserver une lecture visuelle proche du cas `1` active.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
+## Experience Mobile Card 2 Dock Order Fix
+
+- [completed] Corriger l'ordre vertical du dock quand la card `2` est active pour que la card `1` reste plus haute que la `3`.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `2` est active, la card `1` conserve maintenant une position plus haute que la `3` dans le dock mobile.
+- Verification effectuee: `npm run build` passe apres ce correctif.
+
+## Experience Mobile Card 2 Dock Lift Tune
+
+- [completed] Remonter tres legerement les deux cards reduites quand la card `2` est active.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `2` est active, les deux cards reduites remontent maintenant tres legerement tout en gardant le meme ordre vertical.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
+## Experience Mobile Card 3 Focus Alignment
+
+- [completed] Donner a la card `3` le meme slot haut que la card `1` en focus mobile.
+- [completed] Faire descendre les cards `1` et `2` dans le dock quand la card `3` est active.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `3` est active, elle utilise maintenant le meme slot haut que la card `1`.
+- Les cards `1` et `2` descendent dans le dock mobile sur ce focus.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
+## Experience Mobile Card 1 Dock Lower Tune
+
+- [completed] Descendre tres legerement les cards `2` et `3` quand la card `1` est active pour harmoniser avec les autres focus mobiles.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `1` est active, les cards `2` et `3` descendent maintenant tres legerement plus bas pour mieux s'aligner avec les autres etats de focus mobile.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
+## Experience Mobile Card 1 Dock Lower Tune V2
+
+- [completed] Descendre encore tres legerement les cards `2` et `3` quand la card `1` est active.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Quand la card `1` est active, les cards `2` et `3` descendent maintenant encore tres legerement plus bas que dans le palier precedent.
+- Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
+
+## Experience Card Number Alignment
+
+- [completed] Aligner visuellement le numero `01.` avec `02.` et `03.` sur les cards d'experience.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Le numero `01.` utilise maintenant des chiffres tabulaires, ce qui l'aligne visuellement avec `02.` et `03.` sans ajustement de position specifique.
+- Verification effectuee: `npm run build` passe apres ce correctif.
+
+## Experience Mobile Initial Stack Title Clearance
+
+- [completed] Descendre legerement les cards `2` et `3` uniquement a l'etat initial mobile pour laisser leurs titres entierement visibles.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- A l'etat initial mobile, les cards `2` et `3` descendent maintenant legerement plus bas, ce qui laisse leurs titres mieux visibles sans changer les positions de focus.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
 # Review
 
 - La page `/projects` a ete refondue en hover reveal list minimaliste, avec une liste editoriale plein format a la place de la grille de cards.
@@ -690,3 +784,39 @@
 - [completed] Forcer le snap de la bulle draggable mobile du `LiquidMenu` sur l'un des 4 slots, y compris quand le relache se fait sur l'index deja actif.
 - `src/components/LiquidMenu.vue` recalcule maintenant l'index au `pointerup` avec la position finale du doigt, puis recentre toujours la bulle sur la position exacte de l'onglet vise.
 - Le cas de relache sur l'onglet deja selectionne ne laisse plus la bulle entre deux positions: un resnap court la recale explicitement sur son slot.
+
+## Landing Mobile Header 3D Logo
+
+- [completed] Auditer la logique qui masque le logo 3D du header sur `/`.
+- [completed] Afficher le header avec ses lettres 3D sur la landing uniquement sous `768px`, sans changer le desktop.
+- [completed] Vérifier le correctif avec `npm run build`.
+
+### Outcome
+
+- Sur `/`, le header 3D reste masqué en desktop comme avant, mais il est maintenant visible en mobile dès le haut de page comme sur les autres routes.
+- La règle de visibilité reste centralisée dans `src/App.vue`, ce qui évite de toucher aux animations desktop de la landing.
+- `npm run build` passe après ce correctif.
+
+## Landing Mobile Logo Scroll Rotation
+
+- [completed] Identifier le pilotage de rotation des lettres 3D lié au scroll sur `/`.
+- [completed] Désactiver cette rotation uniquement en mobile en conservant le comportement desktop et les transitions de route.
+- [completed] Vérifier le correctif avec `npm run build`.
+
+### Outcome
+
+- En mobile, les lettres 3D du header restent maintenant fixes pendant le scroll sur la landing au lieu de tourner avec la progression ou l'inertie.
+- Le desktop conserve le pilotage par scroll existant sur `/`, et les spins de navigation entre pages restent inchangés.
+- `npm run build` passe après ce correctif.
+
+## Landing Mobile Logo Return Visibility
+
+- [completed] Tracer la disparition des lettres 3D au retour vers `/` en mobile.
+- [completed] Empêcher `useHomeLogoAnchoring` d'effacer l'état visible du header 3D sur la landing mobile.
+- [completed] Vérifier le correctif avec `npm run build`.
+
+### Outcome
+
+- En mobile, un retour depuis une page interne vers `/` conserve maintenant les lettres 3D visibles en haut de la landing.
+- Le composable de la home ne supprime plus l'état de visibilité du header 3D en mobile; il ne nettoie plus que les transforms desktop inutiles.
+- `npm run build` passe après ce correctif.
