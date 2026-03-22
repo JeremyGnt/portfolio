@@ -1,5 +1,17 @@
 # Todo
 
+## Landing Mobile Hero Offset Name
+
+- [completed] Inspecter le hero home mobile et isoler un changement strictement reserve au titre mobile.
+- [completed] Recomposer le nom sur mobile avec un effet prenom / nom decale en conservant la police actuelle et le point jaune final.
+- [completed] Verifier le rendu via `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Le hero de `src/components/home/HomeHero.vue` conserve exactement le markup desktop existant; seul le rendu sous `768px` change pour passer le titre en pile verticale avec un nom de famille decale vers la droite.
+- La police actuelle est conservee, ainsi que le point jaune final via `home-hero-last-name::after`; le changement reste purement mobile et ne touche ni la version PC ni la logique du logo 3D.
+- Verification effectuee: `npm run build` passe apres cette retouche.
+
 ## Landing Desktop Header Logo Visibility After Loading
 
 - [completed] Auditer le conflit de pilotage entre `App.vue` et `useHomeLogoAnchoring` sur la landing desktop apres la loading page.

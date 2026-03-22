@@ -20,10 +20,10 @@ function scrollToCardsSection() {
         <span class="home-hero-word home-hero-word-desktop" aria-hidden="true">
           <span id="target-g" class="target-letter" aria-hidden="true">G</span><span class="fade-text home-hero-last-name">onnet</span>
         </span>
-        <span class="home-hero-word home-hero-word-mobile" aria-hidden="true">
+        <span class="home-hero-word home-hero-word-mobile home-hero-word-mobile-first" aria-hidden="true">
           <span class="fade-text">Jérémy</span>
         </span>
-        <span class="home-hero-word home-hero-word-mobile" aria-hidden="true">
+        <span class="home-hero-word home-hero-word-mobile home-hero-word-mobile-last" aria-hidden="true">
           <span class="fade-text home-hero-last-name">Gonnet</span>
         </span>
       </h1>
@@ -265,6 +265,46 @@ function scrollToCardsSection() {
 @media (max-width: 768px) {
   .hero-kicker-top {
     font-size: 0.90rem;
+    transform: translateY(-50px);
+  }
+
+  .kicker-grid {
+    display: flex;
+    justify-content: center;
+    gap: 0.55rem;
+    max-width: none;
+  }
+
+  .kicker-col-left,
+  .kicker-col-right,
+  .kicker-left,
+  .kicker-right {
+    justify-self: auto;
+    text-align: center;
+  }
+
+  .kicker-col-dot {
+    padding: 0;
+    transform: translateY(-1px);
+  }
+
+  .hero-dot.subtitle-dot {
+    margin: 0;
+  }
+
+  .home-hero-title {
+    flex-direction: column;
+    align-items: flex-start;
+    width: fit-content;
+    max-width: 100%;
+    gap: 0;
+    margin: 1.25rem auto 1.5rem;
+    font-size: clamp(4rem, 18vw, 5.35rem);
+    line-height: 0.88;
+  }
+
+  .home-hero-word {
+    width: 100%;
   }
 
   .home-hero-word-desktop {
@@ -273,14 +313,25 @@ function scrollToCardsSection() {
 
   .home-hero-word-mobile {
     display: flex;
+    justify-content: flex-start;
+  }
+
+  .home-hero-word-mobile-first {
+    transform: translateX(-0.55em);
+  }
+
+  .home-hero-word-mobile-last {
+    transform: translate(0.54em, -0.08em);
+  }
+
+  .home-hero-word-mobile .home-hero-last-name::after {
+    bottom: 0.02em;
   }
 }
 
 @media (max-width: 640px) {
   .home-hero-title {
-    flex-direction: column;
-    gap: 0;
-    font-size: 4rem;
+    font-size: clamp(3.8rem, 19vw, 4.9rem);
   }
 }
 </style>
