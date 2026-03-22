@@ -1,4 +1,20 @@
 <style scoped>
+.skill-card {
+  padding: 1.5rem;
+}
+
+.skill-card-title {
+  margin-bottom: 1rem;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
 .skill-tags .tag {
   background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%) !important;
   color: rgba(255,255,255,0.7) !important;
@@ -7,6 +23,26 @@
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   transition: border-color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@media (max-width: 768px) {
+  .skill-card {
+    padding: 1.15rem;
+  }
+
+  .skill-card-title {
+    margin-bottom: 0.8rem;
+  }
+
+  .skill-tags {
+    gap: 0.4rem;
+    padding: 0.2rem 0 0;
+  }
+
+  .skill-tags .tag {
+    padding: 0.3rem 0.72rem;
+    font-size: 0.76rem;
+  }
 }
 
 </style>
@@ -33,13 +69,12 @@ const {
 
 <template>
   <div class="card glass skill-card bento-hover-card">
-    <h2 class="section-title" style="margin-bottom: 1rem;">
+    <h2 class="section-title skill-card-title">
       <span class="section-icon"><Settings :size="20" /></span> Compétences techniques
     </h2>
     <div
       ref="skillContainer"
       class="skill-tags"
-      style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; padding: 0.5rem 0;"
       @mouseenter="scheduleSkillMetricsRefresh"
       @mousemove="handleSkillMouseMove"
       @mouseleave="handleSkillMouseLeave"

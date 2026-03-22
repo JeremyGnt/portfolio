@@ -5,6 +5,8 @@ import LoadingScreen from './components/LoadingScreen.vue'
 import AppShell from './components/AppShell.vue'
 import { scrollWindowToTopInstantly, waitForNextAnimationFrame } from './utils/scroll'
 
+const fullRotation = Math.PI * 2
+const routeOrder = ['/', '/experience', '/projects', '/contact']
 const hasPrerenderedMarkup =
   !import.meta.env.SSR
   && typeof document !== 'undefined'
@@ -24,6 +26,13 @@ const router = useRouter()
 let scrollTopClickTimeout: number | null = null
 let miniScrollbarTimeout: number | null = null
 let homeScrollResetToken = 0
+let mobileHeaderLogoRouteAngle = 0
+let mobileHeaderLogoSpinSequence = 0
+
+function getRouteIndex(path: string) {
+  const index = routeOrder.indexOf(path)
+  return index === -1 ? 0 : index
+}
 
 function isDesktopHomeAnchoringActive(path: string) {
   if (typeof document === 'undefined' || path !== '/' || window.innerWidth <= mobileBreakpoint) {
@@ -111,6 +120,37 @@ function handleWindowResize() {
   setHeaderLogoVisibility(route.path)
 }
 
+function dispatchMobileHeaderLogoRouteSpin(fromPath: string | undefined, toPath: string) {
+  if (typeof window === 'undefined' || window.innerWidth > mobileBreakpoint || !fromPath || fromPath === toPath) {
+    return
+  }
+
+  const fromIndex = getRouteIndex(fromPath)
+  const toIndex = getRouteIndex(toPath)
+
+  if (fromIndex === toIndex) {
+    return
+  }
+
+  const direction = toIndex > fromIndex ? 1 : -1
+  const startAngle = mobileHeaderLogoRouteAngle
+  const targetAngle = startAngle + direction * fullRotation
+
+  mobileHeaderLogoRouteAngle = targetAngle
+  mobileHeaderLogoSpinSequence += 1
+
+  window.dispatchEvent(new CustomEvent('mobile-header-logo-route-spin', {
+    detail: {
+      direction,
+      fromPath,
+      sequence: mobileHeaderLogoSpinSequence,
+      startAngle,
+      targetAngle,
+      toPath,
+    },
+  }))
+}
+
 function scrollToTop() {
   if (scrollTopClickTimeout !== null) {
     globalThis.clearTimeout(scrollTopClickTimeout)
@@ -143,7 +183,8 @@ onMounted(() => {
 
 watch(
   () => route.path,
-  async (path) => {
+  async (path, previousPath) => {
+    dispatchMobileHeaderLogoRouteSpin(previousPath, path)
     setHeaderLogoVisibility(path)
 
     if (path !== '/') {

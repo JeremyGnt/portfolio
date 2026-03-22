@@ -13,6 +13,7 @@ interface ContactItem {
   href: string
   icon: Component
   label: string
+  mobileLabel: string
   value: string
   target?: string
 }
@@ -23,6 +24,7 @@ const contacts: ContactItem[] = [
     href: 'mailto:jeremy.gonnet31@gmail.com',
     icon: Mail,
     label: 'Email',
+    mobileLabel: 'Email',
     value: 'jeremy.gonnet31@gmail.com',
   },
   {
@@ -30,6 +32,7 @@ const contacts: ContactItem[] = [
     href: LINKEDIN_PROFILE_URL,
     icon: Linkedin,
     label: 'LinkedIn',
+    mobileLabel: 'LinkedIn',
     value: 'linkedin.com/in/jeremygonnet',
     target: '_blank',
   },
@@ -38,6 +41,7 @@ const contacts: ContactItem[] = [
     href: GITHUB_PROFILE_URL,
     icon: Github,
     label: 'GitHub',
+    mobileLabel: 'GitHub',
     value: 'github.com/JeremyGnt',
     target: '_blank',
   },
@@ -46,6 +50,7 @@ const contacts: ContactItem[] = [
     href: 'tel:+33782846856',
     icon: Phone,
     label: 'Telephone',
+    mobileLabel: 'Téléphone',
     value: '+33 7 82 84 68 56',
   },
 ]
@@ -54,6 +59,8 @@ const sectionRef = ref<HTMLElement | null>(null)
 const cardsViewportRef = ref<HTMLElement | null>(null)
 const cardsTrackRef = ref<HTMLElement | null>(null)
 const cardRefs = ref<HTMLElement[]>([])
+const mobilePanelRef = ref<HTMLElement | null>(null)
+const mobileCardRefs = ref<HTMLElement[]>([])
 
 let animationContext: gsap.Context | null = null
 let mediaQueries: gsap.MatchMedia | null = null
@@ -68,6 +75,18 @@ function setCardRef(element: Element | null, index: number) {
 
 function resetCardRefs() {
   cardRefs.value = []
+}
+
+function setMobileCardRef(element: Element | null, index: number) {
+  if (!element) {
+    return
+  }
+
+  mobileCardRefs.value[index] = element as HTMLElement
+}
+
+function resetMobileCardRefs() {
+  mobileCardRefs.value = []
 }
 
 function getTrackMetrics() {
@@ -96,7 +115,10 @@ function getTrackMetrics() {
   }
 }
 
-onBeforeUpdate(resetCardRefs)
+onBeforeUpdate(() => {
+  resetCardRefs()
+  resetMobileCardRefs()
+})
 
 onMounted(() => {
   scrollWindowToTopInstantly()
@@ -172,7 +194,7 @@ onMounted(() => {
       )
     })
 
-    mediaQueries.add('(max-width: 980px), (prefers-reduced-motion: reduce)', () => {
+    mediaQueries.add('(min-width: 981px) and (prefers-reduced-motion: reduce)', () => {
       const section = sectionRef.value
       const cards = cardRefs.value.filter(Boolean)
 
@@ -192,6 +214,43 @@ onMounted(() => {
         },
       })
     })
+
+    mediaQueries.add('(max-width: 980px) and (prefers-reduced-motion: no-preference)', () => {
+      const section = sectionRef.value
+      const mobilePanel = mobilePanelRef.value
+      const mobileCards = mobileCardRefs.value.filter(Boolean)
+
+      if (!section || !mobilePanel || mobileCards.length === 0) {
+        return
+      }
+
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 78%',
+          once: true,
+        },
+      })
+
+      timeline.from(mobilePanel, {
+        autoAlpha: 0,
+        y: 24,
+        duration: 0.5,
+        ease: 'power2.out',
+      })
+
+      timeline.from(
+        mobileCards,
+        {
+          autoAlpha: 0,
+          y: 16,
+          duration: 0.42,
+          stagger: 0.06,
+          ease: 'power2.out',
+        },
+        0.12,
+      )
+    })
   }, sectionRef)
 })
 
@@ -210,12 +269,39 @@ onUnmounted(() => {
         <section ref="sectionRef" class="contact-horizontal-section">
           <div class="contact-shell">
             <div class="contact-intro">
-              <p class="contact-kicker" data-contact-intro>Contact</p>
+              <p class="contact-kicker contact-kicker-desktop" data-contact-intro>Contact</p>
               <h1 class="contact-title" data-contact-intro>
                 Restons en
                 <span class="gradient-text">contact</span><span class="hero-dot">.</span>
               </h1>
-              <p class="contact-meta" data-contact-intro>Mail · LinkedIn · GitHub · Tel</p>
+              <p class="contact-meta contact-meta-desktop" data-contact-intro>Mail · LinkedIn · GitHub · Tel</p>
+            </div>
+
+            <div ref="mobilePanelRef" class="contact-mobile-panel card glass">
+              <p class="contact-kicker contact-kicker-mobile">Contact</p>
+              <a
+                v-for="(contact, index) in contacts"
+                :key="`${contact.id}-mobile`"
+                :ref="(element) => setMobileCardRef(element, index)"
+                :href="contact.href"
+                :target="contact.target"
+                :rel="contact.target ? 'noopener noreferrer' : undefined"
+                class="contact-mobile-item"
+                :aria-label="`${contact.label} : ${contact.value}`"
+              >
+                <span class="contact-mobile-item-icon" aria-hidden="true">
+                  <component :is="contact.icon" :size="18" />
+                </span>
+
+                <span class="contact-mobile-item-copy">
+                  <span class="contact-mobile-item-label">{{ contact.mobileLabel }}</span>
+                  <span class="contact-mobile-item-value">{{ contact.value }}</span>
+                </span>
+
+                <span class="contact-mobile-item-arrow" aria-hidden="true">
+                  <ArrowUpRight :size="16" />
+                </span>
+              </a>
             </div>
 
             <div class="contact-rail">
@@ -320,6 +406,10 @@ onUnmounted(() => {
 
 .contact-rail {
   min-width: 0;
+}
+
+.contact-mobile-panel {
+  display: none;
 }
 
 .contact-cards-viewport {
@@ -463,13 +553,108 @@ onUnmounted(() => {
     grid-template-columns: 1fr;
     align-items: start;
     gap: 1.75rem;
-    padding: 5.25rem 0 0;
+    padding: 5.25rem 0 0.6rem;
+  }
+
+  .contact-mobile-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 1rem;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.018) 100%),
+      #111318;
+    border-color: rgba(255, 255, 255, 0.07);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.075),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.018),
+      0 16px 28px rgba(0, 0, 0, 0.24);
+  }
+
+  .contact-kicker-desktop {
+    display: none;
+  }
+
+  .contact-kicker-mobile {
+    margin: 0 0 0.1rem;
+    padding: 0 1rem;
+  }
+
+  .contact-mobile-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.92);
+    border-radius: 1.45rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.015) 100%),
+      rgba(10, 12, 15, 0.84);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 10px 22px rgba(0, 0, 0, 0.18);
+  }
+
+  .contact-mobile-item-icon {
+    width: 2.9rem;
+    height: 2.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 1.1rem;
+    color: #ebb207;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .contact-mobile-item-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .contact-mobile-item-label {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.42);
+  }
+
+  .contact-mobile-item-value {
+    min-width: 0;
+    font-size: 0.96rem;
+    line-height: 1.35;
+    letter-spacing: -0.03em;
+    word-break: break-word;
+  }
+
+  .contact-mobile-item-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ebb207;
+    opacity: 0.9;
+  }
+
+  .contact-rail {
+    display: none;
   }
 
   .contact-cards-viewport {
     overflow: visible;
     mask-image: none;
     -webkit-mask-image: none;
+  }
+
+  .contact-meta-desktop {
+    display: none;
   }
 
   .contact-cards-track {
@@ -492,6 +677,33 @@ onUnmounted(() => {
   .contact-meta {
     font-size: 0.68rem;
     line-height: 1.6;
+  }
+
+  .contact-mobile-panel {
+    padding: 0.9rem;
+    gap: 0.75rem;
+  }
+
+  .contact-kicker-mobile {
+    padding: 0 0.9rem;
+  }
+
+  .contact-mobile-item {
+    gap: 0.8rem;
+    padding: 0.9rem;
+  }
+
+  .contact-mobile-item-icon {
+    width: 2.7rem;
+    height: 2.7rem;
+  }
+
+  .contact-mobile-item-label {
+    font-size: 0.68rem;
+  }
+
+  .contact-mobile-item-value {
+    font-size: 0.9rem;
   }
 
   .contact-card {

@@ -1,5 +1,19 @@
 # Todo
 
+## Mobile Header Logo Directional Route Spin
+
+- [completed] Auditer le pilotage de rotation du logo 3D du header pendant les changements de route en mobile.
+- [completed] Centraliser un signal unique de transition de route mobile pour imposer aux deux lettres la meme direction et la meme cible de rotation.
+- [completed] Adoucir legerement la rotation mobile pour garder un spin fluide, non brusque, sans modifier le desktop.
+- [completed] Verifier le correctif avec `npm run build` et consigner le resultat.
+
+### Outcome
+
+- `src/App.vue` emet maintenant un evenement unique `mobile-header-logo-route-spin` a chaque navigation mobile entre routes distinctes, avec un angle de depart et une cible communs a `J` et `G`.
+- `src/composables/useLogoThreeScene.ts` ecoute cet evenement en mobile et aligne les deux lettres sur la meme trajectoire, ce qui force une rotation coherente dans le sens de navigation au lieu de laisser chaque instance recalculer sa cible seule.
+- Le damping mobile a ete legerement baisse pour un mouvement plus fluide et moins sec; la logique desktop existante reste separee et n'est pas modifiee.
+- Verification effectuee: `npm run build` passe apres ce correctif.
+
 ## Landing Mobile Hero Offset Name
 
 - [completed] Inspecter le hero home mobile et isoler un changement strictement reserve au titre mobile.
@@ -914,3 +928,16 @@
 - En mobile, un retour depuis une page interne vers `/` conserve maintenant les lettres 3D visibles en haut de la landing.
 - Le composable de la home ne supprime plus l'état de visibilité du header 3D en mobile; il ne nettoie plus que les transforms desktop inutiles.
 - `npm run build` passe après ce correctif.
+
+## Contact Mobile Nested Cards
+
+- [completed] Auditer `src/views/ContactView.vue` pour isoler un rendu strictement reserve au mobile sur `/contact`.
+- [completed] Regrouper les 4 moyens de contact dans une card principale mobile avec 4 sous-cards cliquables, sans modifier le desktop.
+- [completed] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- `src/views/ContactView.vue` conserve le rail horizontal et les 4 cards desktop existants; ce bloc est simplement masque sous `980px`, donc le rendu ordi ne change pas.
+- En mobile, la page affiche maintenant une card principale `glass` contenant 4 sous-cards cliquables, chacune avec son icone, un label court (`email`, `linkedin`, `github`, `phone`) et la valeur de contact associee.
+- L'animation GSAP mobile cible desormais ce nouveau panneau et ses sous-cards, tandis que le desktop garde sa logique actuelle, y compris le mode `prefers-reduced-motion`.
+- Verification effectuee: `npm run build` passe apres cette retouche.
