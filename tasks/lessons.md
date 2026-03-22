@@ -54,3 +54,5 @@
 - Quand l'utilisateur demande "encore tres legerement", rester sur une variation fine de la meme valeur plutot que de changer de strategie ou de toucher aux autres focus mobiles.
 - Si un numero parait decale par rapport aux autres avec la meme position CSS, verifier d'abord la largeur proportionnelle des glyphes et activer des chiffres tabulaires avant de bricoler les offsets.
 - Si l'utilisateur veut ajuster seulement le stack initial mobile, introduire un offset dedié a cet etat au lieu de reutiliser les offsets des etats focus.
+- Si l'utilisateur affine ensuite une seule card dans le stack initial mobile, retoucher uniquement son entree dans l'offset initial dedie au lieu de recalculer tout le stack.
+- Quand l'utilisateur demande "encore un peu" sur une seule card du stack initial, garder un micro-palier sur cette seule valeur au lieu de reprendre le layout global.

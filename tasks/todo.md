@@ -706,6 +706,26 @@
 - A l'etat initial mobile, les cards `2` et `3` descendent maintenant legerement plus bas, ce qui laisse leurs titres mieux visibles sans changer les positions de focus.
 - Verification effectuee: `npm run build` passe apres cet ajustement.
 
+## Experience Mobile Initial Card 3 Lower Tune
+
+- [completed] Descendre encore legerement la card `3` uniquement dans l'etat initial mobile.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Dans l'etat initial mobile, la card `3` descend maintenant encore legerement plus bas qu'avant, sans changer la logique de focus.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
+## Experience Mobile Initial Card 3 Lower Tune V2
+
+- [completed] Descendre encore legerement la card `3` uniquement dans l'etat initial mobile.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Dans l'etat initial mobile, la card `3` descend maintenant encore un peu plus bas que dans le palier precedent, sans toucher aux etats focus.
+- Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
+
 # Review
 
 - La page `/projects` a ete refondue en hover reveal list minimaliste, avec une liste editoriale plein format a la place de la grille de cards.
