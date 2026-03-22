@@ -12,7 +12,6 @@ const ssrOutDir = path.resolve(rootDir, '.ssr')
 const seoBlockPattern =
   /<!--app-seo:start-->[\s\S]*?<!--app-seo:end-->|<title>[\s\S]*?<script type="application\/ld\+json" data-seo-structured-data="route">[\s\S]*?<\/script>/
 const appPlaceholderPattern = /<div id="app"><\/div>/
-const bootLoaderToAppPattern = /<div id="boot-loader"[\s\S]*?<div id="app">/
 
 async function buildClientAndServerBundles() {
   await rm(clientOutDir, { recursive: true, force: true })
@@ -48,7 +47,6 @@ async function getServerRenderer() {
 function injectPrerenderedMarkup(template, appHtml, headTags) {
   return template
     .replace(seoBlockPattern, `<!--app-seo:start-->\n${headTags}\n  <!--app-seo:end-->`)
-    .replace(bootLoaderToAppPattern, '<div id="app">')
     .replace(appPlaceholderPattern, `<div id="app">${appHtml}</div>`)
 }
 

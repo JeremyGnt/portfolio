@@ -13,7 +13,9 @@ const useShellTransition = !import.meta.env.SSR && !hasPrerenderedMarkup
 
 const showScrollTop = ref(false)
 const isScrollTopClicked = ref(false)
-const isAppReady = ref(import.meta.env.SSR || hasPrerenderedMarkup)
+const isShellReady = ref(import.meta.env.SSR || hasPrerenderedMarkup)
+const isLoadingScreenVisible = ref(!import.meta.env.SSR && !hasPrerenderedMarkup)
+const isBootLoaderVisible = ref(!import.meta.env.SSR)
 const scrollProgress = ref(0)
 const isMiniScrollbarVisible = ref(false)
 const mobileBreakpoint = 768
@@ -23,6 +25,15 @@ let scrollTopClickTimeout: number | null = null
 let miniScrollbarTimeout: number | null = null
 let homeScrollResetToken = 0
 
+function dismissBootLoader() {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  document.getElementById('boot-loader')?.remove()
+  isBootLoaderVisible.value = false
+}
+
 function goToHomeFromHeaderLogo() {
   if (route.path !== '/') {
     router.push('/')
@@ -30,7 +41,8 @@ function goToHomeFromHeaderLogo() {
 }
 
 async function handleLoaderComplete() {
-  isAppReady.value = true
+  isLoadingScreenVisible.value = false
+  isShellReady.value = true
 
   await nextTick()
   updateScrollTopVisibility()
@@ -106,6 +118,15 @@ onMounted(() => {
   setHeaderLogoVisibility(route.path)
   window.addEventListener('scroll', handleWindowScroll, { passive: true })
   window.addEventListener('resize', handleWindowResize)
+
+  if (hasPrerenderedMarkup) {
+    isLoadingScreenVisible.value = true
+    return
+  }
+
+  if (!isLoadingScreenVisible.value) {
+    dismissBootLoader()
+  }
 })
 
 watch(
@@ -133,13 +154,13 @@ watch(
 )
 
 watch(
-  isAppReady,
-  (ready) => {
+  () => isBootLoaderVisible.value || isLoadingScreenVisible.value || !isShellReady.value,
+  (isIntroBlocking) => {
     if (typeof document === 'undefined') {
       return
     }
 
-    document.body.style.overflow = ready ? '' : 'hidden'
+    document.body.style.overflow = isIntroBlocking ? 'hidden' : ''
   },
   { immediate: true },
 )
@@ -165,11 +186,15 @@ onUnmounted(() => {
     <div class="mesh-bg"></div>
   </div>
 
-  <LoadingScreen v-if="!isAppReady" @complete="handleLoaderComplete" />
+  <LoadingScreen
+    v-if="isLoadingScreenVisible"
+    @ready="dismissBootLoader"
+    @complete="handleLoaderComplete"
+  />
 
   <Transition v-if="useShellTransition" name="page-fade" appear>
     <AppShell
-      v-if="isAppReady"
+      v-if="isShellReady"
       :is-mini-scrollbar-visible="isMiniScrollbarVisible"
       :is-scroll-top-clicked="isScrollTopClicked"
       :scroll-progress="scrollProgress"
@@ -180,7 +205,7 @@ onUnmounted(() => {
   </Transition>
 
   <AppShell
-    v-else-if="isAppReady"
+    v-else-if="isShellReady"
     :is-mini-scrollbar-visible="isMiniScrollbarVisible"
     :is-scroll-top-clicked="isScrollTopClicked"
     :scroll-progress="scrollProgress"

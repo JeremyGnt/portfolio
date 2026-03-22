@@ -8,9 +8,4 @@ const { app, router } = createPortfolioApp()
 void router.isReady().then(() => {
   applyRouteSeo(router.currentRoute.value)
   app.mount('#app')
-
-  const bootLoader = document.getElementById('boot-loader')
-  if (bootLoader) {
-    bootLoader.remove()
-  }
 })

@@ -1,5 +1,19 @@
 # Todo
 
+## Production Intro Sequence Reliability
+
+- [completed] Auditer la sequence `preload -> loading -> landing` entre le local et la production pour isoler pourquoi la prod tombait directement sur la landing.
+- [completed] Conserver le `boot-loader` dans le HTML prerenderise et remettre une orchestration d'intro compatible SSR/hydratation.
+- [completed] Verifier le correctif avec `npm run build`, controler `dist/index.html` et confirmer que la sequence d'intro reste coherente en prod.
+
+### Outcome
+
+- La cause etait double: `scripts/prerender.mjs` supprimait `#boot-loader` du HTML de production, et `src/App.vue` considerait toute page prerenderisee comme deja prete, ce qui court-circuitait aussi `LoadingScreen`.
+- Le prerender conserve maintenant `#boot-loader` sur `/`, `/experience`, `/projects` et `/contact`, donc le premier paint de la prod retrouve bien le placeholder de preload avant l'hydratation.
+- `src/App.vue` orchestre desormais proprement le relais SSR: la shell prerenderisee s'hydrate en dessous, `LoadingScreen` apparait ensuite sans mismatch, puis retire le `boot-loader` seulement quand il est monte, avant de liberer la page a la fin de l'intro.
+- `src/main.ts` ne supprime plus le `boot-loader` trop tot; cette responsabilite est centralisee dans l'orchestration de `App.vue`.
+- Verification effectuee: `npm run build` passe; `dist/index.html`, `dist/contact/index.html`, `dist/experience/index.html` et `dist/projects/index.html` contiennent tous `id=\"boot-loader\"` suivi du markup prerenderise `#app`, ce qui retablit la sequence de production attendue au refresh.
+
 ## Favicon Production Reliability
 
 - [completed] Auditer le build prerender et la reponse live du domaine pour comprendre pourquoi le favicon disparait en production.

@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 
 const emit = defineEmits<{
+  ready: []
   complete: []
 }>()
 
@@ -46,6 +47,7 @@ function simulateLoading() {
 }
 
 onMounted(() => {
+  emit('ready')
   startTimeout = globalThis.setTimeout(simulateLoading, 300)
 })
 
