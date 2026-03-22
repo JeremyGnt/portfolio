@@ -726,6 +726,28 @@
 - Dans l'etat initial mobile, la card `3` descend maintenant encore un peu plus bas que dans le palier precedent, sans toucher aux etats focus.
 - Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
 
+## Experience Mobile Initial Full-Height Stack
+
+- [completed] Donner au stack initial mobile une hauteur plus grande pour que la card visible remplisse mieux l'ecran.
+- [completed] Equilibrer la marge haute et la marge basse du stack initial sans changer les etats focus.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Le stack initial mobile utilise maintenant une hauteur dediee plus grande, ce qui etire davantage la card visible vers le bas.
+- La marge basse du stack initial est maintenant recalee sur la meme logique que la marge haute, sans modifier les etats focus.
+- Verification effectuee: `npm run build` passe apres cet ajustement.
+
+## Experience Mobile Initial Card 3 Lower Tune V3
+
+- [completed] Descendre encore legerement la card `3` uniquement dans l'etat initial mobile.
+- [completed] Verifier le resultat avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- Dans l'etat initial mobile, la card `3` descend maintenant encore legerement plus bas que dans le palier precedent, sans modifier les focus.
+- Verification effectuee: `npm run build` passe apres ce nouvel ajustement.
+
 # Review
 
 - La page `/projects` a ete refondue en hover reveal list minimaliste, avec une liste editoriale plein format a la place de la grille de cards.

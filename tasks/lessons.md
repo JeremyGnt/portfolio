@@ -56,3 +56,5 @@
 - Si l'utilisateur veut ajuster seulement le stack initial mobile, introduire un offset dedié a cet etat au lieu de reutiliser les offsets des etats focus.
 - Si l'utilisateur affine ensuite une seule card dans le stack initial mobile, retoucher uniquement son entree dans l'offset initial dedie au lieu de recalculer tout le stack.
 - Quand l'utilisateur demande "encore un peu" sur une seule card du stack initial, garder un micro-palier sur cette seule valeur au lieu de reprendre le layout global.
+- Si l'utilisateur veut que le stack initial mobile "prenne tout l'ecran", separer la hauteur du stack initial de la hauteur des etats focus au lieu d'essayer de faire tenir tous les cas dans une seule variable.
+- Quand une card du stack initial est deja pilotee par un offset dedie et que l'utilisateur redemande "legerement", ajuster cette meme valeur par petit palier plutot que d'ajouter une nouvelle regle.

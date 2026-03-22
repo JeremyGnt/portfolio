@@ -9,7 +9,8 @@ const hero = experiencesPageData.hero
 const cards = experiencesPageData.cards
 const cardSlots = ['left', 'center', 'right'] as const
 const mobileStackOffsets = ['-5rem', '-2.5rem', '0rem']
-const mobileInitialStackOffsets = ['-5rem', '-2.15rem', '0.55rem']
+const mobileInitialStackOffsets = ['-5rem', '-2.15rem', '0.7rem']
+const mobileInitialFrontCardOffset = mobileInitialStackOffsets[mobileInitialStackOffsets.length - 1] ?? '0px'
 const mobileStackScales = ['1', '1', '1']
 const mobilePeekScales = ['1', '1']
 const firstMobileCardId = cards[0]?.id ?? null
@@ -93,6 +94,7 @@ const getCardShellStyle = (cardId: string, cardIndex: number) => {
     zIndex: isActiveCard ? '30' : `${10 + cardIndex}`,
     '--mobile-stack-offset': mobileStackOffsets[cardIndex] ?? '0px',
     '--mobile-stack-initial-offset': mobileInitialStackOffsets[cardIndex] ?? (mobileStackOffsets[cardIndex] ?? '0px'),
+    '--mobile-stack-front-offset': mobileInitialFrontCardOffset,
     '--mobile-active-offset': resolvedActiveOffset,
     '--mobile-peek-offset': resolvedPeekOffset,
     '--mobile-stack-scale': mobileStackScales[cardIndex] ?? '1',
@@ -440,12 +442,15 @@ onUnmounted(() => {
     min-height: 0;
     isolation: isolate;
     --wallet-main-top: clamp(4.9rem, 9vh, 6.1rem);
-    --wallet-stack-top: calc(var(--wallet-main-top) + clamp(0.45rem, 1.2vh, 0.7rem));
+    --wallet-stack-gap: clamp(0.45rem, 1.2vh, 0.7rem);
+    --wallet-stack-top: calc(var(--wallet-main-top) + var(--wallet-stack-gap));
+    --wallet-stack-bottom-gap: calc(var(--wallet-stack-gap) + var(--mobile-stack-front-offset, 0px));
     --wallet-active-shift: clamp(0.9rem, 2.6vh, 1.3rem);
     --wallet-peek-height: clamp(3rem, 8vw, 3.45rem);
     --wallet-focus-gap: clamp(0.45rem, 1.8vh, 0.8rem);
     --wallet-dock-base-bottom: clamp(4.15rem, 9vw, 4.55rem);
     --wallet-dock-top: calc(100% - var(--wallet-peek-height) - var(--wallet-dock-base-bottom));
+    --wallet-stack-card-height: min(34.75rem, calc(100% - var(--wallet-stack-top) - var(--wallet-stack-bottom-gap)));
     --wallet-card-height:
       min(31.5rem, calc(100% - var(--wallet-main-top) - var(--wallet-peek-height) - var(--wallet-focus-gap)));
   }
@@ -487,6 +492,7 @@ onUnmounted(() => {
 
   .experience-card-shell--mobile-stack {
     top: calc(var(--wallet-stack-top) + var(--mobile-stack-initial-offset, var(--mobile-stack-offset, 0px)));
+    height: var(--wallet-stack-card-height, var(--wallet-card-height));
     bottom: auto;
     transform: translate3d(-50%, 0, 0) scale(var(--mobile-stack-scale, 1));
     filter: saturate(0.96);
@@ -544,12 +550,15 @@ onUnmounted(() => {
 
   .cards-stage {
     --wallet-main-top: clamp(4.35rem, 8vh, 5.35rem);
-    --wallet-stack-top: calc(var(--wallet-main-top) + clamp(0.4rem, 1vh, 0.6rem));
+    --wallet-stack-gap: clamp(0.4rem, 1vh, 0.6rem);
+    --wallet-stack-top: calc(var(--wallet-main-top) + var(--wallet-stack-gap));
+    --wallet-stack-bottom-gap: calc(var(--wallet-stack-gap) + var(--mobile-stack-front-offset, 0px));
     --wallet-active-shift: clamp(0.75rem, 2.3vh, 1.1rem);
     --wallet-peek-height: clamp(2.95rem, 9vw, 3.4rem);
     --wallet-focus-gap: clamp(0.4rem, 1.6vh, 0.65rem);
     --wallet-dock-base-bottom: clamp(3.95rem, 9vw, 4.3rem);
     --wallet-dock-top: calc(100% - var(--wallet-peek-height) - var(--wallet-dock-base-bottom));
+    --wallet-stack-card-height: min(33.25rem, calc(100% - var(--wallet-stack-top) - var(--wallet-stack-bottom-gap)));
     --wallet-card-height:
       min(30rem, calc(100% - var(--wallet-main-top) - var(--wallet-peek-height) - var(--wallet-focus-gap)));
   }
