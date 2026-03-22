@@ -46,6 +46,16 @@
   <!--app-seo:end-->
   <link rel="preload" href="/fonts/inter-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin />
   <style>
+    :root {
+      --intro-surface:
+        radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.045), transparent 18%),
+        radial-gradient(circle at 78% 14%, rgba(255, 255, 255, 0.03), transparent 16%),
+        radial-gradient(circle at 58% 70%, rgba(255, 255, 255, 0.035), transparent 22%),
+        linear-gradient(180deg, #000 0%, #111 100%);
+      --intro-grid-opacity: 0.16;
+      --intro-grid-size: 140px;
+    }
+
     @font-face {
       font-family: 'InterLocal';
       src: url('/fonts/inter-latin-800-normal.woff2') format('woff2');
@@ -69,14 +79,39 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: transparent;
-      backdrop-filter: blur(2px);
+      isolation: isolate;
+      background: var(--intro-surface);
       overflow: hidden;
+    }
+
+    #boot-loader::before,
+    #boot-loader::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #boot-loader::before {
+      opacity: var(--intro-grid-opacity);
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: var(--intro-grid-size) var(--intro-grid-size);
+      mask-image: radial-gradient(circle at center, black 34%, transparent 88%);
+      -webkit-mask-image: radial-gradient(circle at center, black 34%, transparent 88%);
+    }
+
+    #boot-loader::after {
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.24) 100%);
     }
 
     .boot-loader__logo {
       display: flex;
       align-items: flex-end;
+      position: relative;
+      z-index: 1;
       color: rgba(255, 255, 255, 0.95);
       font-family: 'InterLocal', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 2rem;
@@ -93,6 +128,7 @@
 
     .boot-loader__track {
       position: relative;
+      z-index: 1;
       width: 140px;
       height: 1px;
       overflow: hidden;

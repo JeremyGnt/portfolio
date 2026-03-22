@@ -1,5 +1,18 @@
 # Todo
 
+## Intro Overlay Opaque Background
+
+- [completed] Inspecter pourquoi le vrai site laissait voir la landing derriere le preloader et la loading page alors que la sequence fonctionnait.
+- [completed] Remplacer la transparence du `boot-loader` HTML et de `LoadingScreen` par un backdrop d'intro opaque et coherent.
+- [completed] Verifier le correctif avec `npm run build` et controler le HTML genere.
+
+### Outcome
+
+- Le probleme venait des deux couches d'intro, `#boot-loader` dans `index.html` et `LoadingScreen.vue`, qui utilisaient encore un fond transparent avec blur, ce qui laissait voir le markup prerenderise de la landing en production.
+- Les deux couches utilisent maintenant un vrai fond opaque, base sur le meme gradient sombre et la meme trame subtile, pour garder une transition visuelle propre sans transparence parasite.
+- Le rendu du placeholder HTML et du composant Vue est de nouveau aligne, donc le passage `preload -> loading -> landing` reste coherent du premier paint jusqu'a la fin de l'intro.
+- Verification effectuee: `npm run build` passe apres ce correctif.
+
 ## Production Intro Sequence Reliability
 
 - [completed] Auditer la sequence `preload -> loading -> landing` entre le local et la production pour isoler pourquoi la prod tombait directement sur la landing.

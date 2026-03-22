@@ -85,10 +85,42 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: transparent;
-  backdrop-filter: blur(2px);
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.045), transparent 18%),
+    radial-gradient(circle at 78% 14%, rgba(255, 255, 255, 0.03), transparent 16%),
+    radial-gradient(circle at 58% 70%, rgba(255, 255, 255, 0.035), transparent 22%),
+    linear-gradient(180deg, #000 0%, #111 100%);
   overflow: hidden;
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.loader-container::before,
+.loader-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.loader-container::before {
+  opacity: 0.16;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 140px 140px;
+  mask-image: radial-gradient(circle at center, black 34%, transparent 88%);
+  -webkit-mask-image: radial-gradient(circle at center, black 34%, transparent 88%);
+}
+
+.loader-container::after {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.24) 100%);
+}
+
+.loader-container > * {
+  position: relative;
+  z-index: 1;
 }
 
 .loader-container.fade-out {
