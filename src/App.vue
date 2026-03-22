@@ -25,6 +25,14 @@ let scrollTopClickTimeout: number | null = null
 let miniScrollbarTimeout: number | null = null
 let homeScrollResetToken = 0
 
+function isDesktopHomeAnchoringActive(path: string) {
+  if (typeof document === 'undefined' || path !== '/' || window.innerWidth <= mobileBreakpoint) {
+    return false
+  }
+
+  return Boolean(document.getElementById('target-j') && document.getElementById('target-g'))
+}
+
 function dismissBootLoader() {
   if (typeof document === 'undefined') {
     return
@@ -54,6 +62,10 @@ function setHeaderLogoVisibility(path: string) {
   const logoG = document.getElementById('logo-g')
   const logoBg = document.getElementById('header-logo-bg')
   if (!logoJ || !logoG || !logoBg) return
+
+  if (isDesktopHomeAnchoringActive(path)) {
+    return
+  }
 
   const showLogo = path !== '/' || window.innerWidth <= mobileBreakpoint
   const opacity = showLogo ? 1 : 0

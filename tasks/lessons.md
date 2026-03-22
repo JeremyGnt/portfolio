@@ -1,5 +1,6 @@
 # Lessons
 
+- Si un composable de page pilote deja la visibilite d'un element global anime, le shell global ne doit plus reappliquer un etat inline concurrent une fois cette page montee, sinon on cree des clignotements post-loader ou post-navigation.
 - Quand une sequence d'intro doit masquer une page prerenderisee, verifier le rendu en production avec le vrai HTML sous-jacent: un fond `transparent` ou un simple `backdrop-filter` ne suffit pas, il faut une surface opaque sur toutes les couches de loader.
 - Pour une section GSAP `ScrollTrigger` avec `pin: true`, ne pas cumuler une grande `height` CSS sur le trigger avec une grande distance `end`, sinon on crée un vide après l'animation.
 - Quand le rendu attendu est "animation puis footer immédiatement", laisser `ScrollTrigger` gérer l'espace de pinning et garder le wrapper de la scène à une hauteur proche du viewport.

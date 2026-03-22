@@ -1,5 +1,18 @@
 # Todo
 
+## Landing Desktop Header Logo Visibility After Loading
+
+- [completed] Auditer le conflit de pilotage entre `App.vue` et `useHomeLogoAnchoring` sur la landing desktop apres la loading page.
+- [completed] Eviter que le shell global re-masque les lettres 3D quand la home desktop est deja montee et gere elle-meme son ancrage.
+- [completed] Verifier le correctif avec `npm run build` et consigner le resultat.
+
+### Outcome
+
+- Le clignotement venait d'un conflit entre deux pilotes: `useHomeLogoAnchoring` rendait les lettres 3D visibles sur la home desktop, puis `App.vue` reappliquait ensuite un `opacity: 0` / `visibility: hidden` global juste apres la loading.
+- `App.vue` detecte maintenant quand la landing desktop est deja montee avec ses cibles `target-j` et `target-g`; dans ce cas, le shell global n'ecrase plus la visibilite du logo et laisse la home gerer son propre ancrage.
+- Le comportement des autres pages et du mode mobile reste inchange: hors landing desktop, `App.vue` continue de piloter la visibilite du logo comme avant.
+- Verification effectuee: `npm run build` passe apres ce correctif.
+
 ## Intro Overlay Opaque Background
 
 - [completed] Inspecter pourquoi le vrai site laissait voir la landing derriere le preloader et la loading page alors que la sequence fonctionnait.
