@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { ChevronDown } from 'lucide-vue-next'
 import gsap from 'gsap'
 import ProjectPreviewCard from '../components/projects/ProjectPreviewCard.vue'
 import { useRevealAnimation } from '../composables/useRevealAnimation'
@@ -31,7 +32,9 @@ const projectsByYear = computed(() => {
 
 const activeProject = ref<ProjectData>(sortedProjects.value[0])
 const hoveredProjectId = ref<string | null>(null)
+const expandedProjectId = ref<string | null>(null)
 const canUseCursorCard = ref(false)
+const isInlinePreviewMode = ref(false)
 const cursorCardRef = ref<HTMLElement | null>(null)
 const cursorCardInnerRef = ref<HTMLElement | null>(null)
 
@@ -51,11 +54,17 @@ const CURSOR_CARD_VIEWPORT_MARGIN = 16
 useRevealAnimation(100, '.projects-reveal')
 
 function syncHoverCapability() {
-  canUseCursorCard.value = hoverMediaQuery?.matches ?? false
+  const shouldUseCursorCard = hoverMediaQuery?.matches ?? false
 
-  if (!canUseCursorCard.value) {
-    hideCursorCard()
+  canUseCursorCard.value = shouldUseCursorCard
+  isInlinePreviewMode.value = !shouldUseCursorCard
+
+  if (shouldUseCursorCard) {
+    expandedProjectId.value = null
+    return
   }
+
+  hideCursorCard()
 }
 
 function moveCursorCard(clientX: number, clientY: number) {
@@ -183,8 +192,95 @@ function handleProjectFocus(project: ProjectData) {
   activeProject.value = project
 }
 
+function getProjectPreviewId(projectId: string) {
+  return `project-inline-preview-${projectId}`
+}
+
+function isInlinePreviewVisible(project: ProjectData) {
+  return isInlinePreviewMode.value && expandedProjectId.value === project.id
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+function revealInlinePreview(projectId: string) {
+  const previewElement = document.getElementById(getProjectPreviewId(projectId))
+
+  if (!previewElement) {
+    return
+  }
+
+  previewElement.scrollIntoView({
+    behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    block: 'nearest',
+    inline: 'nearest',
+  })
+}
+
+function handleInlinePreviewEnter(element: Element, done: () => void) {
+  const previewElement = element as HTMLElement
+  const duration = prefersReducedMotion() ? 0 : 0.34
+
+  gsap.killTweensOf(previewElement)
+  previewElement.style.willChange = 'height, opacity, transform'
+
+  gsap.fromTo(
+    previewElement,
+    { height: 0, autoAlpha: 0, y: -14 },
+    {
+      height: previewElement.scrollHeight,
+      autoAlpha: 1,
+      y: 0,
+      duration,
+      ease: 'power2.out',
+      onComplete: () => {
+        previewElement.style.height = 'auto'
+        previewElement.style.willChange = ''
+        done()
+      },
+    },
+  )
+}
+
+function handleInlinePreviewLeave(element: Element, done: () => void) {
+  const previewElement = element as HTMLElement
+  const duration = prefersReducedMotion() ? 0 : 0.26
+
+  gsap.killTweensOf(previewElement)
+  previewElement.style.willChange = 'height, opacity, transform'
+
+  gsap.fromTo(
+    previewElement,
+    { height: previewElement.offsetHeight, autoAlpha: 1, y: 0 },
+    {
+      height: 0,
+      autoAlpha: 0,
+      y: -12,
+      duration,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        previewElement.style.willChange = ''
+        done()
+      },
+    },
+  )
+}
+
 function handleProjectClick(project: ProjectData) {
   activeProject.value = project
+
+  if (isInlinePreviewMode.value) {
+    expandedProjectId.value = expandedProjectId.value === project.id ? null : project.id
+
+    if (expandedProjectId.value === project.id) {
+      void nextTick(() => {
+        revealInlinePreview(project.id)
+      })
+    }
+
+    return
+  }
 
   if (project.externalUrl) {
     window.open(project.externalUrl, '_blank', 'noopener,noreferrer')
@@ -192,7 +288,7 @@ function handleProjectClick(project: ProjectData) {
 }
 
 function isProjectActive(project: ProjectData) {
-  return hoveredProjectId.value === project.id
+  return hoveredProjectId.value === project.id || expandedProjectId.value === project.id
 }
 
 watch(
@@ -225,7 +321,9 @@ watch(
 )
 
 onMounted(async () => {
-  hoverMediaQuery = window.matchMedia('(any-hover: hover) and (any-pointer: fine)')
+  document.body.classList.add('route-projects')
+
+  hoverMediaQuery = window.matchMedia('(min-width: 1025px) and (any-hover: hover) and (any-pointer: fine)')
   syncHoverCapability()
   lastPointerX = window.innerWidth * 0.5
   lastPointerY = window.innerHeight * 0.5
@@ -265,6 +363,8 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  document.body.classList.remove('route-projects')
+
   if (hoverMediaQuery && hoverMediaListener) {
     if ('removeEventListener' in hoverMediaQuery) {
       hoverMediaQuery.removeEventListener('change', hoverMediaListener)
@@ -299,40 +399,75 @@ onUnmounted(() => {
                 </header>
 
                 <div class="project-year-group__rows">
-                  <button
+                  <div
                     v-for="project in yearGroup.projects"
                     :key="project.id"
-                    type="button"
-                    :class="['project-row', { 'is-active': isProjectActive(project) }]"
-                    :aria-pressed="activeProject.id === project.id"
-                    @mouseenter="showCursorCard(project, $event)"
-                    @mouseleave="hideCursorCard"
-                    @focus="handleProjectFocus(project)"
-                    @click="handleProjectClick(project)"
+                    class="project-row-stack"
                   >
-                    <span class="project-row__edge project-row__edge--left" aria-hidden="true">►</span>
+                    <button
+                      type="button"
+                      :class="[
+                        'project-row',
+                        {
+                          'is-active': isProjectActive(project),
+                          'is-inline-expanded': isInlinePreviewVisible(project),
+                        },
+                      ]"
+                      :aria-expanded="isInlinePreviewMode ? isInlinePreviewVisible(project) : undefined"
+                      :aria-controls="isInlinePreviewMode ? getProjectPreviewId(project.id) : undefined"
+                      @mouseenter="showCursorCard(project, $event)"
+                      @mouseleave="hideCursorCard"
+                      @focus="handleProjectFocus(project)"
+                      @click="handleProjectClick(project)"
+                    >
+                      <span class="project-row__edge project-row__edge--left" aria-hidden="true">►</span>
 
-                    <div class="project-row__content">
-                      <div class="min-w-0">
-                        <h3 class="project-row__title">
-                          <span>{{ project.title }}</span>
-                          <span class="project-row__dot" aria-hidden="true"></span>
-                        </h3>
+                      <div class="project-row__content">
+                        <div class="min-w-0">
+                          <h3 class="project-row__title">
+                            <span>{{ project.title }}</span>
+                            <span class="project-row__dot" aria-hidden="true"></span>
+                          </h3>
+                        </div>
+
+                        <div class="project-row__meta">
+                          <div class="project-row__tags">
+                            <span
+                              v-for="tag in project.listTags"
+                              :key="tag"
+                              class="font-display text-[0.68rem] uppercase tracking-[0.24em] text-white/48"
+                            >
+                              {{ tag }}
+                            </span>
+                          </div>
+
+                          <span v-if="isInlinePreviewMode" class="project-row__action" aria-hidden="true">
+                            <span>{{ isInlinePreviewVisible(project) ? 'Masquer' : 'Apercu' }}</span>
+                            <ChevronDown :size="16" />
+                          </span>
+                        </div>
                       </div>
 
-                      <div class="project-row__tags">
-                        <span
-                          v-for="tag in project.listTags"
-                          :key="tag"
-                          class="font-display text-[0.68rem] uppercase tracking-[0.24em] text-white/48"
-                        >
-                          {{ tag }}
-                        </span>
-                      </div>
-                    </div>
+                      <span class="project-row__edge project-row__edge--right" aria-hidden="true">◄</span>
+                    </button>
 
-                    <span class="project-row__edge project-row__edge--right" aria-hidden="true">◄</span>
-                  </button>
+                    <Transition
+                      @enter="handleInlinePreviewEnter"
+                      @leave="handleInlinePreviewLeave"
+                    >
+                      <div
+                        v-if="isInlinePreviewVisible(project)"
+                        :id="getProjectPreviewId(project.id)"
+                        class="project-inline-preview"
+                        role="region"
+                        :aria-label="`Apercu du projet ${project.title}`"
+                      >
+                        <div class="project-inline-preview__inner">
+                          <ProjectPreviewCard :project="project" mode="inline" />
+                        </div>
+                      </div>
+                    </Transition>
+                  </div>
                 </div>
               </section>
             </div>
@@ -412,6 +547,10 @@ onUnmounted(() => {
   min-width: 0;
 }
 
+.project-row-stack {
+  position: relative;
+}
+
 .projects-list::before {
   content: '';
   position: absolute;
@@ -486,6 +625,14 @@ onUnmounted(() => {
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.project-row__meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 1rem;
+  min-width: 0;
+}
+
 .project-row__edge {
   position: absolute;
   top: 50%;
@@ -552,6 +699,29 @@ onUnmounted(() => {
   padding-bottom: 0.45rem;
 }
 
+.project-row__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+  padding: 0.38rem 0.78rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.64);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.project-row__action :deep(svg) {
+  transition: transform 0.28s ease;
+}
+
 .project-row.is-active {
   transform: translateX(20px);
   z-index: 60;
@@ -588,6 +758,32 @@ onUnmounted(() => {
   color: #ebb207;
 }
 
+.project-row.is-inline-expanded {
+  transform: none;
+}
+
+.project-row.is-inline-expanded .project-row__action {
+  background: rgba(235, 178, 7, 0.12);
+  color: #ebb207;
+}
+
+.project-row.is-inline-expanded .project-row__action :deep(svg) {
+  transform: rotate(180deg);
+}
+
+.project-row.is-inline-expanded .project-row__edge {
+  display: none;
+}
+
+.project-inline-preview {
+  overflow: hidden;
+  padding: 0 1.25rem 1.35rem;
+}
+
+.project-inline-preview__inner {
+  padding-top: 0.1rem;
+}
+
 .project-cursor-card {
   position: fixed;
   top: 0;
@@ -621,12 +817,22 @@ onUnmounted(() => {
   .project-row {
     grid-template-columns: 1fr;
     gap: 0.8rem;
-    padding: 1.1rem 1.4rem 1.25rem;
+    padding: 1.1rem 1.25rem 1.2rem;
+    border-radius: 1.35rem;
   }
 
   .project-row__content {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.95rem;
+  }
+
+  .project-row__meta {
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.85rem;
+    flex-wrap: wrap;
   }
 
   .project-row__tags {
@@ -634,11 +840,34 @@ onUnmounted(() => {
     max-width: none;
     padding-bottom: 0;
   }
+
+  .project-row.is-active {
+    transform: none;
+  }
+
+  .project-row__edge {
+    display: none;
+  }
 }
 
 @media (max-width: 640px) {
   .project-row__title {
     font-size: clamp(1.7rem, 9vw, 2.9rem);
+  }
+
+  .project-inline-preview {
+    padding: 0 1rem 1.15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-row,
+  .project-row__content,
+  .project-row__edge,
+  .project-row__title,
+  .project-row__action,
+  .project-row__action :deep(svg) {
+    transition: none;
   }
 }
 </style>

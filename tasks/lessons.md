@@ -60,3 +60,8 @@
 - Quand l'utilisateur demande "encore un peu" sur une seule card du stack initial, garder un micro-palier sur cette seule valeur au lieu de reprendre le layout global.
 - Si l'utilisateur veut que le stack initial mobile "prenne tout l'ecran", separer la hauteur du stack initial de la hauteur des etats focus au lieu d'essayer de faire tenir tous les cas dans une seule variable.
 - Quand une card du stack initial est deja pilotee par un offset dedie et que l'utilisateur redemande "legerement", ajuster cette meme valeur par petit palier plutot que d'ajouter une nouvelle regle.
+- Avant de retoucher un override CSS base sur `body.route-*`, verifier d'abord que la classe de route est effectivement posee et nettoyee dans le cycle de vie de la page; sinon le changement visuel ne peut pas apparaitre.
+- Quand un motif de fond doit rester visible apres attenuation, verifier aussi les proprietes heritees qui le masquent (`mask-image`, `opacity`) avant de conclure que la couleur ou le gradient ne fonctionne pas.
+- Si l'utilisateur demande de reprendre "comme sur desktop" un affordance de card mobile, reutiliser le meme marqueur visuel et supprimer le CTA textuel ajoute ensuite; ne pas inventer un bouton secondaire sans validation.
+- Quand une preview inline s'ouvre sous une ligne de liste, ne pas ajouter automatiquement une seconde surface de card sur la ligne elle-meme si le brief veut seulement la card detail dessous; conserver le titre sur son fond editorial d'origine.
+- Pour une retouche typographique mobile sur une card detail, cibler d'abord les breakpoints locaux du composant et ne pas retoucher les tailles desktop si le brief demande explicitement "mode mobile uniquement".

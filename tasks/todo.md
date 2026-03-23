@@ -981,3 +981,16 @@
 - Les dossiers feature existants (`src/components/home`, `src/components/experience`, `src/components/projects`, `src/views`, `src/composables`, `src/data`, `src/constants`, `src/router`, `src/utils`) restent en place pour eviter une refonte inutile et limiter le risque.
 - `scripts/prerender.mjs` pointe maintenant vers `src/app/entry-server.ts`, donc le build SSR/prerender reste aligne avec la nouvelle structure.
 - Verification effectuee: `npm run build` passe apres ce rangement. Le seul signal restant est l'avertissement Vite habituel sur la taille du chunk principal, sans echec de build.
+
+## Projects Mobile Tap Preview UX
+
+- [completed] Formaliser un comportement mobile sans curseur sur `/projects`, avec ouverture de card au tap sur la ligne projet.
+- [completed] Conserver la floating card desktop et introduire une card inline mobile avec CTA externe dedie, etats accessibles et feedback visuel propre.
+- [completed] Verifier le resultat avec `npm run build` puis consigner l'outcome.
+
+### Outcome
+
+- La page `/projects` garde la floating card pilotée au curseur sur desktop large, mais bascule désormais en mode inline sur les contextes sans hover ou sous `1025px`.
+- En mode inline, un tap sur la ligne ouvre ou referme la card juste dessous, avec un indicateur `Apercu` / `Masquer`, une animation d'expansion GSAP et un scroll d'ajustement pour garder le contenu visible dans le viewport.
+- Les projets avec URL externe n'ouvrent plus le lien au premier tap mobile: l'ouverture se fait via un CTA dédié dans la card inline, ce qui supprime le conflit UX entre consultation et navigation externe.
+- Verification effectuee: `npm run build` passe apres ce correctif.

@@ -167,6 +167,14 @@ body.route-experience .mesh-bg::after {
   -webkit-mask-image: none;
 }
 
+body.route-projects .mesh-bg::after {
+  opacity: 0.135;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+  background-size: 140px 140px;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
 body.route-experience .footer {
   background: transparent;
   border-top-color: transparent;

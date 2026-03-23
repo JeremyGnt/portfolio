@@ -2,14 +2,17 @@
 import { ArrowUpRight, Github } from 'lucide-vue-next'
 import type { ProjectData } from '../../data/projectsData'
 
-defineProps<{
+withDefaults(defineProps<{
   project: ProjectData
-}>()
+  mode?: 'floating' | 'inline'
+}>(), {
+  mode: 'floating',
+})
 </script>
 
 <template>
   <article
-    class="project-preview-card group"
+    :class="['project-preview-card', 'group', `project-preview-card--${mode}`]"
   >
     <div
       class="project-preview-card__year-ghost"
@@ -29,13 +32,24 @@ defineProps<{
           </h2>
         </div>
         <span
-          v-if="project.externalUrl"
+          v-if="project.externalUrl && mode === 'floating'"
           class="project-preview-card__link-indicator"
           aria-hidden="true"
         >
           <Github :size="20" />
           <ArrowUpRight :size="20" />
         </span>
+        <a
+          v-else-if="project.externalUrl"
+          :href="project.externalUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-preview-card__link-indicator project-preview-card__link-indicator--link"
+          :aria-label="`Ouvrir ${project.title}`"
+        >
+          <Github :size="20" />
+          <ArrowUpRight :size="20" />
+        </a>
       </header>
 
       <p class="project-preview-card__description">
@@ -165,6 +179,24 @@ defineProps<{
   color: #ebb207;
 }
 
+.project-preview-card__link-indicator--link {
+  padding: 0.15rem;
+  margin: -0.15rem;
+  border-radius: 999px;
+  text-decoration: none;
+  transition:
+    color 0.22s ease,
+    transform 0.22s ease,
+    opacity 0.22s ease;
+}
+
+.project-preview-card__link-indicator--link:hover,
+.project-preview-card__link-indicator--link:focus-visible {
+  color: #ffffff;
+  outline: none;
+  transform: translateY(-1px);
+}
+
 .project-preview-card__description {
   width: 100%;
   max-width: none;
@@ -272,10 +304,46 @@ defineProps<{
     0 10px 40px rgba(0, 0, 0, 0.8);
 }
 
+.project-preview-card--inline {
+  border-radius: 1.7rem;
+}
+
+.project-preview-card--inline .project-preview-card__title {
+  max-width: 12ch;
+}
+
 @media (max-width: 640px) {
   .project-preview-card {
     --project-card-padding: 1.5rem;
     --project-card-media-inset: 0.5rem;
+  }
+
+  .project-preview-card__title {
+    font-size: clamp(1.7rem, 7.4vw, 2.15rem);
+  }
+
+  .project-preview-card__description {
+    font-size: 0.88rem;
+    line-height: 1.65;
+  }
+
+  .project-preview-card__badge-list {
+    gap: 0.42rem;
+  }
+
+  .project-preview-card__badge-list--media {
+    padding: 0 0.82rem;
+  }
+
+  .project-preview-card__badge {
+    padding: 0.38rem 0.68rem;
+    font-size: 0.68rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-preview-card__link-indicator--link {
+    transition: none;
   }
 }
 </style>
