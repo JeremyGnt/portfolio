@@ -1,5 +1,5 @@
 import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router'
-import { applyRouteSeo } from '../seo'
+import { applyRouteSeo } from '../app/seo'
 import { appRoutes } from './routes'
 
 export function createPortfolioRouter() {

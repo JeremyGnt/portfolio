@@ -26,7 +26,7 @@ async function buildClientAndServerBundles() {
     root: rootDir,
     logLevel: 'info',
     build: {
-      ssr: path.resolve(rootDir, 'src/entry-server.ts'),
+      ssr: path.resolve(rootDir, 'src/app/entry-server.ts'),
       outDir: ssrOutDir,
       emptyOutDir: true,
     },

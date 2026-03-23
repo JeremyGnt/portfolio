@@ -1,7 +1,7 @@
 import { renderToString } from '@vue/server-renderer'
-import { createPortfolioApp } from './app'
+import { createPortfolioApp } from './createPortfolioApp'
 import { renderHeadTags } from './seo'
-import { prerenderRoutes } from './router/routes'
+import { prerenderRoutes } from '../router/routes'
 
 export { prerenderRoutes }
 

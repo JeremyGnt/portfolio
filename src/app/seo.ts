@@ -1,5 +1,5 @@
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
-import { GITHUB_PROFILE_URL, LINKEDIN_PROFILE_URL } from './constants/externalLinks'
+import { GITHUB_PROFILE_URL, LINKEDIN_PROFILE_URL } from '../constants/externalLinks'
 
 export const SITE_NAME = 'Jérémy Gonnet'
 export const SITE_URL = 'https://jeremygonnet.com'

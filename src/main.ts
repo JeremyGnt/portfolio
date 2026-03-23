@@ -1,7 +1,7 @@
-import './style.css'
-import './tailwind.css'
-import { createPortfolioApp } from './app'
-import { applyRouteSeo } from './seo'
+import './styles/base.css'
+import './styles/tailwind.css'
+import { createPortfolioApp } from './app/createPortfolioApp'
+import { applyRouteSeo } from './app/seo'
 
 const { app, router } = createPortfolioApp()
 

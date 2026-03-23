@@ -1,6 +1,6 @@
 import { createSSRApp } from 'vue'
 import App from './App.vue'
-import { createPortfolioRouter } from './router'
+import { createPortfolioRouter } from '../router'
 
 export function createPortfolioApp() {
   const app = createSSRApp(App)

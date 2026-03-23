@@ -967,3 +967,17 @@
 - En mobile, la page affiche maintenant une card principale `glass` contenant 4 sous-cards cliquables, chacune avec son icone, un label court (`email`, `linkedin`, `github`, `phone`) et la valeur de contact associee.
 - L'animation GSAP mobile cible desormais ce nouveau panneau et ses sous-cards, tandis que le desktop garde sa logique actuelle, y compris le mode `prefers-reduced-motion`.
 - Verification effectuee: `npm run build` passe apres cette retouche.
+
+## Project Structure Cleanup
+
+- [completed] Definir une structure cible prudente pour les fichiers transverses (`app`, `shell`, `styles`, `types`) sans toucher aux dossiers feature deja coherents.
+- [completed] Deplacer les fichiers concernes et mettre a jour les imports ainsi que la configuration SSR/build liee.
+- [completed] Verifier que le rangement ne casse rien avec `npm run build`.
+- [completed] Ajouter un outcome court avec les dossiers finaux et le resultat de verification.
+
+### Outcome
+
+- Les fichiers transverses au fonctionnement global ne sont plus melanges a la racine de `src`: `App.vue`, le bootstrap SSR/app et le SEO sont regroupes dans `src/app`, les composants de shell global dans `src/shell`, les feuilles globales dans `src/styles` et les declarations TypeScript dans `src/types`.
+- Les dossiers feature existants (`src/components/home`, `src/components/experience`, `src/components/projects`, `src/views`, `src/composables`, `src/data`, `src/constants`, `src/router`, `src/utils`) restent en place pour eviter une refonte inutile et limiter le risque.
+- `scripts/prerender.mjs` pointe maintenant vers `src/app/entry-server.ts`, donc le build SSR/prerender reste aligne avec la nouvelle structure.
+- Verification effectuee: `npm run build` passe apres ce rangement. Le seul signal restant est l'avertissement Vite habituel sur la taille du chunk principal, sans echec de build.

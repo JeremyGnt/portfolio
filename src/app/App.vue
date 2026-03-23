@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import LoadingScreen from './components/LoadingScreen.vue'
-import AppShell from './components/AppShell.vue'
-import { scrollWindowToTopInstantly, waitForNextAnimationFrame } from './utils/scroll'
+import AppShell from '../shell/AppShell.vue'
+import LoadingScreen from '../shell/LoadingScreen.vue'
+import { scrollWindowToTopInstantly, waitForNextAnimationFrame } from '../utils/scroll'
 
 const fullRotation = Math.PI * 2
 const routeOrder = ['/', '/experience', '/projects', '/contact']
