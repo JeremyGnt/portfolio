@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { ChevronDown } from 'lucide-vue-next'
+import { Eye, EyeOff } from 'lucide-vue-next'
 import gsap from 'gsap'
 import ProjectPreviewCard from '../components/projects/ProjectPreviewCard.vue'
 import { useRevealAnimation } from '../composables/useRevealAnimation'
@@ -506,8 +506,9 @@ onUnmounted(() => {
                           </div>
 
                           <span v-if="isInlinePreviewMode" class="project-row__action" aria-hidden="true">
-                            <span>{{ isInlinePreviewVisible(project) ? 'Masquer' : 'Apercu' }}</span>
-                            <ChevronDown :size="16" />
+                            <span class="project-row__action-lens">
+                              <component :is="isInlinePreviewVisible(project) ? EyeOff : Eye" :size="14" />
+                            </span>
                           </span>
                         </div>
                       </div>
@@ -781,26 +782,36 @@ onUnmounted(() => {
 }
 
 .project-row__action {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  justify-content: center;
   margin-left: auto;
-  padding: 0.38rem 0.78rem;
+  width: 2.7rem;
+  height: 2rem;
+  padding: 0;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: transparent;
   color: rgba(255, 255, 255, 0.64);
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 0.64rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  box-shadow: none;
   transition:
+    border-color 0.25s ease,
     background-color 0.25s ease,
+    box-shadow 0.25s ease,
     color 0.25s ease;
 }
 
+.project-row__action-lens {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .project-row__action :deep(svg) {
-  transition: transform 0.28s ease;
+  transition:
+    transform 0.28s ease,
+    opacity 0.28s ease;
 }
 
 .project-row.is-active {
@@ -844,12 +855,14 @@ onUnmounted(() => {
 }
 
 .project-row.is-inline-expanded .project-row__action {
-  background: rgba(235, 178, 7, 0.12);
+  border-color: rgba(235, 178, 7, 0.18);
+  background: transparent;
   color: #ebb207;
+  box-shadow: none;
 }
 
 .project-row.is-inline-expanded .project-row__action :deep(svg) {
-  transform: rotate(180deg);
+  transform: scale(0.94);
 }
 
 .project-row.is-inline-expanded .project-row__edge {
@@ -975,6 +988,7 @@ onUnmounted(() => {
   .project-row__edge,
   .project-row__title,
   .project-row__action,
+  .project-row__action-lens,
   .project-row__action :deep(svg) {
     transition: none;
   }

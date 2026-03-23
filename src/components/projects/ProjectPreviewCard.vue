@@ -55,14 +55,16 @@ withDefaults(defineProps<{
         {{ project.description }}
       </p>
 
-      <div class="project-preview-card__badge-list project-preview-card__badge-list--media">
-        <span
-          v-for="badge in project.badges"
-          :key="badge"
-          class="project-preview-card__badge"
-        >
-          {{ badge }}
-        </span>
+      <div class="project-preview-card__badge-slot">
+        <div class="project-preview-card__badge-list project-preview-card__badge-list--media">
+          <span
+            v-for="badge in project.badges"
+            :key="badge"
+            class="project-preview-card__badge"
+          >
+            {{ badge }}
+          </span>
+        </div>
       </div>
 
       <div class="project-preview-card__media">
@@ -286,6 +288,10 @@ withDefaults(defineProps<{
   gap: 0.5rem;
 }
 
+.project-preview-card__badge-slot {
+  position: relative;
+}
+
 .project-preview-card__badge-list--media {
   position: absolute;
   top: 50%;
@@ -340,25 +346,38 @@ withDefaults(defineProps<{
     line-height: 1.65;
   }
 
-  .project-preview-card__badge-list {
-    gap: 0.28rem;
-  }
-
   .project-preview-card--inline .project-preview-card__content {
     gap: 1rem;
+  }
+
+  .project-preview-card__badge-list {
+    gap: 0.28rem;
   }
 
   .project-preview-card--inline .project-preview-card__badge-list--media {
     position: relative;
     top: auto;
     left: auto;
+    width: fit-content;
+    max-width: 100%;
+    padding: 0;
+    transform: translateY(0.24rem);
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    margin: 0 auto;
+  }
+
+  .project-preview-card--inline .project-preview-card__badge-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     min-height: 2.05rem;
-    padding: 0;
-    transform: none;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-items: center;
+    margin-bottom: -2.05rem;
+    pointer-events: none;
+    z-index: 3;
   }
 
   .project-preview-card--inline .project-preview-card__badge {

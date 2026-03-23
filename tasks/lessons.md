@@ -76,3 +76,16 @@
 - Si l'utilisateur veut ensuite centrer verticalement une rangee de badges inline deja remise dans le flux, reserver une petite hauteur de ligne et centrer via `align-items` avant de retoucher de nouveau les positions globales.
 - Quand l'utilisateur demande d'aligner l'espacement d'une page mobile sur une autre page de reference, recopier la meme structure de top spacing (reset de `.page`, reset du `page-inner`, padding du shell) au lieu de bricoler seulement un `margin-top`.
 - Quand un top spacing mobile semble deja aligne au niveau du shell mais reste visuellement trop grand, verifier aussi le `padding-top` du premier bloc de contenu; c'est souvent lui qui cree l'ecart residuel.
+- Si un libelle d'action mobile parait lourd dans une liste editoriale, remplacer le texte par un marqueur d'etat iconique et coherent avec l'usage (`voir` / `masquer`) au lieu de forcer un CTA verbal.
+- Pour centrer visuellement une rangee de tags mobiles, ne pas se contenter de `align-items: center`; donner aussi une hauteur explicite a la rangee et aux pills pour stabiliser le centrage optique.
+- Si le centrage vertical d'une rangee mobile parait encore faux apres un simple `align-items`, creer un vrai slot de layout dedie a cette rangee et appliquer au besoin un leger offset optique sur le groupe complet.
+- Si l'utilisateur demande des badges "centres sur la card", centrer le groupe entier dans la largeur disponible (`justify-content` du slot + largeur du groupe en `fit-content`) au lieu de laisser une rangee `width: 100%` ancree a gauche.
+- Si l'utilisateur veut ensuite ces badges mobiles "par-dessus la photo", conserver le centrage du groupe et creer un overlap controle via le slot des badges; ne pas rebasculer brutalement sur le layout desktop si cela casse l'equilibre mobile.
+- Si une capsule mobile iconique parait trop chargee avec deux fonds imbriques, supprimer d'abord la couche interne decorative et garder un seul support visuel lisible.
+- Si des badges mobiles doivent absolument tenir sur une seule ligne, ne pas figer une seule taille pour tous; faire varier typo, padding et gap selon la longueur des labels et la densite du groupe.
+- Si l'utilisateur precise que la taille doit varier avec la largeur d'ecran, ne pas renvoyer seulement des `rem` fixes depuis le script; combiner une base CSS en `vw`/`clamp()` avec des offsets calcules selon le contenu.
+- Si des badges mobiles adaptatifs deviennent trop petits, remonter d'abord la base `clamp()` et reduire la penalite minimale avant de rajouter de nouvelles compensations.
+- Si une serie de micro-ajustements sur un meme sous-composant devient contradictoire, revenir d'abord a une base simple et stable avant de repartir sur une nouvelle direction validee.
+- Si le besoin final sur des badges mobiles est simplement "centres et en chevauchement sur l'image", preferer un slot de layout minimal dedie a ce groupe plutot qu'une logique adaptative supplementaire.
+- Si un chevauchement mobile doit etre visible sur toutes les cards, ne pas se contenter d'un overlap quasi nul; l'offset negatif doit depasser clairement le gap du layout pour rester perceptible sur tous les cas.
+- Si l'utilisateur veut les badges mobile "carrement sur la photo", assumer un overlap plus profond au lieu d'un simple bord-a-bord; le groupe doit entrer franchement dans l'image.
