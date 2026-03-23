@@ -11,8 +11,18 @@ withDefaults(defineProps<{
 </script>
 
 <template>
-  <article
-    :class="['project-preview-card', 'group', `project-preview-card--${mode}`]"
+  <component
+    :is="mode === 'inline' && project.externalUrl ? 'a' : 'article'"
+    :href="mode === 'inline' && project.externalUrl ? project.externalUrl : undefined"
+    :target="mode === 'inline' && project.externalUrl ? '_blank' : undefined"
+    :rel="mode === 'inline' && project.externalUrl ? 'noopener noreferrer' : undefined"
+    :aria-label="mode === 'inline' && project.externalUrl ? `Ouvrir ${project.title}` : undefined"
+    :class="[
+      'project-preview-card',
+      'group',
+      `project-preview-card--${mode}`,
+      { 'project-preview-card--interactive': mode === 'inline' && project.externalUrl },
+    ]"
   >
     <div
       class="project-preview-card__year-ghost"
@@ -32,24 +42,13 @@ withDefaults(defineProps<{
           </h2>
         </div>
         <span
-          v-if="project.externalUrl && mode === 'floating'"
+          v-if="project.externalUrl"
           class="project-preview-card__link-indicator"
           aria-hidden="true"
         >
           <Github :size="20" />
           <ArrowUpRight :size="20" />
         </span>
-        <a
-          v-else-if="project.externalUrl"
-          :href="project.externalUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-preview-card__link-indicator project-preview-card__link-indicator--link"
-          :aria-label="`Ouvrir ${project.title}`"
-        >
-          <Github :size="20" />
-          <ArrowUpRight :size="20" />
-        </a>
       </header>
 
       <p class="project-preview-card__description">
@@ -79,7 +78,7 @@ withDefaults(defineProps<{
         </div>
       </div>
     </div>
-  </article>
+  </component>
 </template>
 
 <style scoped>
@@ -104,6 +103,38 @@ withDefaults(defineProps<{
     0 24px 48px rgba(0, 0, 0, 0.56);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+}
+
+.project-preview-card--interactive {
+  display: block;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease,
+    background 0.24s ease;
+}
+
+.project-preview-card--interactive:hover,
+.project-preview-card--interactive:focus-visible {
+  border-color: rgba(235, 178, 7, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02),
+    0 30px 58px rgba(0, 0, 0, 0.62);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.project-preview-card--interactive:active {
+  transform: scale(0.988);
+  border-color: rgba(235, 178, 7, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02),
+    0 18px 38px rgba(0, 0, 0, 0.56);
 }
 
 .project-preview-card__year-ghost {
@@ -177,24 +208,6 @@ withDefaults(defineProps<{
   flex: 0 0 auto;
   align-self: flex-start;
   color: #ebb207;
-}
-
-.project-preview-card__link-indicator--link {
-  padding: 0.15rem;
-  margin: -0.15rem;
-  border-radius: 999px;
-  text-decoration: none;
-  transition:
-    color 0.22s ease,
-    transform 0.22s ease,
-    opacity 0.22s ease;
-}
-
-.project-preview-card__link-indicator--link:hover,
-.project-preview-card__link-indicator--link:focus-visible {
-  color: #ffffff;
-  outline: none;
-  transform: translateY(-1px);
 }
 
 .project-preview-card__description {
@@ -328,28 +341,37 @@ withDefaults(defineProps<{
   }
 
   .project-preview-card__badge-list {
-    gap: 0.3rem;
+    gap: 0.28rem;
   }
 
-  .project-preview-card__badge-list--media {
-    top: 55%;
-    bottom: auto;
-    padding: 0 0.68rem;
-    transform: translateY(-50%);
+  .project-preview-card--inline .project-preview-card__content {
+    gap: 1rem;
+  }
+
+  .project-preview-card--inline .project-preview-card__badge-list--media {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    min-height: 2.05rem;
+    padding: 0;
+    transform: none;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: center;
   }
 
-  .project-preview-card__badge {
-    padding: 0.32rem 0.5rem;
-    font-size: 0.56rem;
+  .project-preview-card--inline .project-preview-card__badge {
+    padding: 0.3rem 0.48rem;
+    font-size: 0.54rem;
+    line-height: 1;
     white-space: nowrap;
     letter-spacing: 0.01em;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-preview-card__link-indicator--link {
+  .project-preview-card--interactive {
     transition: none;
   }
 }

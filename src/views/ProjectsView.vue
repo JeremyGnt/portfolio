@@ -885,6 +885,22 @@ onUnmounted(() => {
 }
 
 @media (max-width: 1024px) {
+  .page {
+    padding-top: 0;
+  }
+
+  .projects-page {
+    padding-top: 0;
+  }
+
+  .projects-hover-shell {
+    padding-top: 5.25rem;
+  }
+
+  .projects-list {
+    margin-top: 0;
+  }
+
   .project-year-group {
     grid-template-columns: 1fr;
     gap: 0;
@@ -893,6 +909,10 @@ onUnmounted(() => {
   .project-year-group__header {
     position: static;
     padding-bottom: 0.4rem;
+  }
+
+  .project-year-group:first-child .project-year-group__header {
+    padding-top: 0;
   }
 
   .project-row {
