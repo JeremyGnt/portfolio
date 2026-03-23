@@ -30,6 +30,7 @@ const projectsByYear = computed(() => {
   }))
 })
 
+const isInlinePreviewing = computed(() => isInlinePreviewMode.value && expandedProjectId.value !== null)
 const activeProject = ref<ProjectData>(sortedProjects.value[0])
 const hoveredProjectId = ref<string | null>(null)
 const expandedProjectId = ref<string | null>(null)
@@ -43,6 +44,8 @@ let hoverMediaListener: ((event: MediaQueryListEvent) => void) | null = null
 let setCardX: ((value: number) => void) | null = null
 let setCardY: ((value: number) => void) | null = null
 let cursorCardAnchorY = 0
+let inlinePreviewRestoreScrollY: number | null = null
+let shouldRestoreInlinePreviewScroll = false
 let lastPointerX = 0
 let lastPointerY = 0
 
@@ -58,9 +61,12 @@ function syncHoverCapability() {
 
   canUseCursorCard.value = shouldUseCursorCard
   isInlinePreviewMode.value = !shouldUseCursorCard
+  hoveredProjectId.value = null
 
   if (shouldUseCursorCard) {
     expandedProjectId.value = null
+    inlinePreviewRestoreScrollY = null
+    shouldRestoreInlinePreviewScroll = false
     return
   }
 
@@ -132,12 +138,12 @@ function syncCursorCardAnchor() {
 }
 
 function showCursorCard(project: ProjectData, event: MouseEvent) {
-  activeProject.value = project
-  hoveredProjectId.value = project.id
-
-  if (!canUseCursorCard.value || !cursorCardRef.value) {
+  if (!canUseCursorCard.value || isInlinePreviewMode.value || !cursorCardRef.value) {
     return
   }
+
+  activeProject.value = project
+  hoveredProjectId.value = project.id
 
   moveCursorCard(event.clientX, event.clientY)
 
@@ -190,6 +196,23 @@ function handleWindowResize() {
 
 function handleProjectFocus(project: ProjectData) {
   activeProject.value = project
+}
+
+function getProjectTitleParts(title: string) {
+  const trimmedTitle = title.trim()
+  const splitIndex = trimmedTitle.lastIndexOf(' ')
+
+  if (splitIndex === -1) {
+    return {
+      lead: '',
+      tail: trimmedTitle,
+    }
+  }
+
+  return {
+    lead: trimmedTitle.slice(0, splitIndex),
+    tail: trimmedTitle.slice(splitIndex + 1),
+  }
 }
 
 function getProjectPreviewId(projectId: string) {
@@ -246,9 +269,29 @@ function handleInlinePreviewEnter(element: Element, done: () => void) {
 function handleInlinePreviewLeave(element: Element, done: () => void) {
   const previewElement = element as HTMLElement
   const duration = prefersReducedMotion() ? 0 : 0.26
+  const shouldRestoreScroll = shouldRestoreInlinePreviewScroll && inlinePreviewRestoreScrollY !== null
+  const scrollState = {
+    y: window.scrollY || document.documentElement.scrollTop,
+  }
 
   gsap.killTweensOf(previewElement)
   previewElement.style.willChange = 'height, opacity, transform'
+
+  if (shouldRestoreScroll) {
+    if (duration === 0) {
+      window.scrollTo({ top: inlinePreviewRestoreScrollY, left: 0, behavior: 'auto' })
+    } else {
+      gsap.to(scrollState, {
+        y: inlinePreviewRestoreScrollY,
+        duration,
+        ease: 'power2.inOut',
+        overwrite: true,
+        onUpdate: () => {
+          window.scrollTo({ top: scrollState.y, left: 0, behavior: 'auto' })
+        },
+      })
+    }
+  }
 
   gsap.fromTo(
     previewElement,
@@ -261,19 +304,35 @@ function handleInlinePreviewLeave(element: Element, done: () => void) {
       ease: 'power2.inOut',
       onComplete: () => {
         previewElement.style.willChange = ''
+        hoveredProjectId.value = null
+        inlinePreviewRestoreScrollY = null
+        shouldRestoreInlinePreviewScroll = false
         done()
       },
     },
   )
 }
 
-function handleProjectClick(project: ProjectData) {
+function handleProjectClick(project: ProjectData, event?: MouseEvent) {
   activeProject.value = project
 
   if (isInlinePreviewMode.value) {
-    expandedProjectId.value = expandedProjectId.value === project.id ? null : project.id
+    hoveredProjectId.value = null
 
-    if (expandedProjectId.value === project.id) {
+    const previousExpandedProjectId = expandedProjectId.value
+    const isClosingCurrentPreview = previousExpandedProjectId === project.id
+
+    shouldRestoreInlinePreviewScroll = isClosingCurrentPreview
+
+    if (!isClosingCurrentPreview) {
+      inlinePreviewRestoreScrollY = window.scrollY || document.documentElement.scrollTop
+    }
+
+    expandedProjectId.value = isClosingCurrentPreview ? null : project.id
+
+    ;(event?.currentTarget as HTMLButtonElement | null)?.blur()
+
+    if (!isClosingCurrentPreview && expandedProjectId.value === project.id) {
       void nextTick(() => {
         revealInlinePreview(project.id)
       })
@@ -387,7 +446,7 @@ onUnmounted(() => {
       <div class="page-inner projects-page">
         <div class="projects-reveal reveal">
           <div class="projects-hover-shell relative">
-            <div :class="['projects-list', { 'is-hovering': hoveredProjectId !== null }]">
+            <div :class="['projects-list', { 'is-hovering': hoveredProjectId !== null, 'is-inline-previewing': isInlinePreviewing }]">
               <section
                 v-for="yearGroup in projectsByYear"
                 :key="yearGroup.year"
@@ -418,15 +477,20 @@ onUnmounted(() => {
                       @mouseenter="showCursorCard(project, $event)"
                       @mouseleave="hideCursorCard"
                       @focus="handleProjectFocus(project)"
-                      @click="handleProjectClick(project)"
+                      @click="handleProjectClick(project, $event)"
                     >
                       <span class="project-row__edge project-row__edge--left" aria-hidden="true">►</span>
 
                       <div class="project-row__content">
                         <div class="min-w-0">
                           <h3 class="project-row__title">
-                            <span>{{ project.title }}</span>
-                            <span class="project-row__dot" aria-hidden="true"></span>
+                            <span v-if="getProjectTitleParts(project.title).lead" class="project-row__title-lead">
+                              {{ getProjectTitleParts(project.title).lead }}
+                            </span>
+                            <span class="project-row__title-tail">
+                              <span>{{ getProjectTitleParts(project.title).tail }}</span>
+                              <span class="project-row__dot" aria-hidden="true"></span>
+                            </span>
                           </h3>
                         </div>
 
@@ -577,6 +641,14 @@ onUnmounted(() => {
   opacity: 1;
 }
 
+.projects-list.is-inline-previewing .project-row {
+  opacity: 0.26;
+}
+
+.projects-list.is-inline-previewing .project-row.is-active {
+  opacity: 1;
+}
+
 .project-row {
   width: 100%;
   display: grid;
@@ -665,9 +737,7 @@ onUnmounted(() => {
 }
 
 .project-row__title {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.08em;
+  display: block;
   margin: 0.65rem 0 0;
   font-size: clamp(1.9rem, 4.9vw, 4.4rem);
   font-weight: 600;
@@ -678,6 +748,17 @@ onUnmounted(() => {
     color 0.4s ease,
     text-shadow 0.4s ease,
     -webkit-text-stroke-color 0.4s ease;
+}
+
+.project-row__title-lead {
+  margin-right: 0.18em;
+}
+
+.project-row__title-tail {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.08em;
+  white-space: nowrap;
 }
 
 .project-row__dot {
@@ -843,6 +924,14 @@ onUnmounted(() => {
 
   .project-row.is-active {
     transform: none;
+  }
+
+  .projects-list.is-inline-previewing .project-row {
+    opacity: 0.34;
+  }
+
+  .projects-list.is-inline-previewing .project-row.is-active {
+    opacity: 1;
   }
 
   .project-row__edge {

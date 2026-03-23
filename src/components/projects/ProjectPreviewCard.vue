@@ -328,16 +328,23 @@ withDefaults(defineProps<{
   }
 
   .project-preview-card__badge-list {
-    gap: 0.42rem;
+    gap: 0.3rem;
   }
 
   .project-preview-card__badge-list--media {
-    padding: 0 0.82rem;
+    top: 55%;
+    bottom: auto;
+    padding: 0 0.68rem;
+    transform: translateY(-50%);
+    flex-wrap: nowrap;
+    justify-content: center;
   }
 
   .project-preview-card__badge {
-    padding: 0.38rem 0.68rem;
-    font-size: 0.68rem;
+    padding: 0.32rem 0.5rem;
+    font-size: 0.56rem;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
   }
 }
 
