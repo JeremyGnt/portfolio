@@ -6,7 +6,6 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 
 const baseRotationX = 0
 const baseRotationY = 0
-const desktopRouteRotationDamping = 7
 const mobileRouteRotationDamping = 5.6
 const fullRotation = Math.PI * 2
 const topNavigationThreshold = 24
@@ -24,13 +23,17 @@ const overscrollVelocityFactor = 7
 const lineScrollPixels = 16
 const mobileBreakpoint = 768
 
-type MobileHeaderLogoRouteSpinDetail = {
+type HeaderLogoRouteSpinDetail = {
   direction: 1 | -1
   fromPath: string
   sequence: number
   startAngle: number
   targetAngle: number
   toPath: string
+}
+
+type HeaderLogoRouteSpinWindow = Window & {
+  __headerLogoRouteSpin?: HeaderLogoRouteSpinDetail
 }
 
 export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: string) {
@@ -40,7 +43,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
   let handleResize: (() => void) | null = null
   let handleScroll: (() => void) | null = null
   let handleWheel: ((event: WheelEvent) => void) | null = null
-  let handleMobileRouteSpin: ((event: Event) => void) | null = null
+  let handleRouteSpin: ((event: Event) => void) | null = null
   let stopRouteWatch: (() => void) | null = null
   let textGeometry: TextGeometry | null = null
   let renderer: THREE.WebGLRenderer | null = null
@@ -105,7 +108,8 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     let lastScrollSampleTop = 0
     let currentScrollVelocity = 0
     let shouldReturnFromMomentum = false
-    let pendingMobileRouteSpin: MobileHeaderLogoRouteSpinDetail | null = null
+    let pendingRouteSpin: HeaderLogoRouteSpinDetail | null = null
+    let lastAppliedRouteSpinSequence = 0
 
     const getRouteIndex = (path: string) => {
       const index = routeOrder.indexOf(path)
@@ -113,7 +117,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     }
 
     const isMobileViewport = () => window.innerWidth <= mobileBreakpoint
-    const getRouteRotationDamping = () => (isMobileViewport() ? mobileRouteRotationDamping : desktopRouteRotationDamping)
+    const getRouteRotationDamping = () => mobileRouteRotationDamping
 
     const isScrollDrivenRoute = (path: string) => scrollDrivenRoutes.has(path) && !isMobileViewport()
 
@@ -161,9 +165,18 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       }
     }
 
-    const applyMobileRouteSpin = (detail: MobileHeaderLogoRouteSpinDetail) => {
+    const getSharedRouteSpin = () => {
+      if (typeof window === 'undefined') {
+        return null
+      }
+
+      return (window as HeaderLogoRouteSpinWindow).__headerLogoRouteSpin ?? null
+    }
+
+    const applyRouteSpin = (detail: HeaderLogoRouteSpinDetail) => {
       shouldReturnFromMomentum = false
-      pendingMobileRouteSpin = detail
+      pendingRouteSpin = detail
+      lastAppliedRouteSpinSequence = Math.max(lastAppliedRouteSpinSequence, detail.sequence)
       scrollRotationTargetY = detail.targetAngle
       currentRotationTargetY = detail.targetAngle
       rotationSyncMode = 'animated'
@@ -171,7 +184,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       if (textMesh) {
         logoGroup.rotation.x = baseRotationX
         logoGroup.rotation.y = detail.startAngle
-        pendingMobileRouteSpin = null
+        pendingRouteSpin = null
       }
 
       requestRender()
@@ -248,11 +261,11 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       logoGroup.rotation.y = baseRotationY
       currentRotationTargetY = baseRotationY
 
-      if (pendingMobileRouteSpin) {
-        logoGroup.rotation.y = pendingMobileRouteSpin.startAngle
-        currentRotationTargetY = pendingMobileRouteSpin.targetAngle
-        scrollRotationTargetY = pendingMobileRouteSpin.targetAngle
-        pendingMobileRouteSpin = null
+      if (pendingRouteSpin) {
+        logoGroup.rotation.y = pendingRouteSpin.startAngle
+        currentRotationTargetY = pendingRouteSpin.targetAngle
+        scrollRotationTargetY = pendingRouteSpin.targetAngle
+        pendingRouteSpin = null
       }
 
       // Force one deterministic frame with loaded geometry before revealing wrappers.
@@ -349,19 +362,15 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     window.addEventListener('resize', handleResize)
     window.addEventListener('scroll', handleScroll, { passive: true })
     window.addEventListener('wheel', handleWheel, { passive: true })
-    handleMobileRouteSpin = (event: Event) => {
-      if (!isMobileViewport()) {
-        return
-      }
-
-      const detail = (event as CustomEvent<MobileHeaderLogoRouteSpinDetail>).detail
+    handleRouteSpin = (event: Event) => {
+      const detail = (event as CustomEvent<HeaderLogoRouteSpinDetail>).detail
       if (!detail) {
         return
       }
 
-      applyMobileRouteSpin(detail)
+      applyRouteSpin(detail)
     }
-    window.addEventListener('mobile-header-logo-route-spin', handleMobileRouteSpin as EventListener)
+    window.addEventListener('header-logo-route-spin', handleRouteSpin as EventListener)
     updateScrollRotation()
 
     stopRouteWatch = watch(
@@ -376,6 +385,19 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
           fromIndex !== toIndex && (wasNearTop || fromPath === '/')
 
         await nextTick()
+
+        const sharedRouteSpin = getSharedRouteSpin()
+        const shouldApplySharedRouteSpin =
+          sharedRouteSpin
+          && sharedRouteSpin.fromPath === fromPath
+          && sharedRouteSpin.toPath === toPath
+          && sharedRouteSpin.sequence > lastAppliedRouteSpinSequence
+
+        if (shouldApplySharedRouteSpin) {
+          applyRouteSpin(sharedRouteSpin)
+          previousRoutePath = toPath
+          return
+        }
 
         if (isMobileViewport()) {
           previousRoutePath = toPath
@@ -399,10 +421,10 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
         }
 
         if (shouldAnimateRouteTransition) {
-          rotationSyncMode = 'animated'
-          const direction = toIndex > fromIndex ? 1 : -1
           const desiredTopAngle = getContinuousAngle(baseRotationY, currentRotationTargetY)
-          currentRotationTargetY = desiredTopAngle + direction * fullRotation
+          scrollRotationTargetY = desiredTopAngle
+          currentRotationTargetY = desiredTopAngle
+          rotationSyncMode = 'animated'
         } else {
           currentRotationTargetY = getContinuousAngle(baseRotationY, currentRotationTargetY)
           scrollRotationTargetY = currentRotationTargetY
@@ -507,9 +529,9 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       handleWheel = null
     }
 
-    if (handleMobileRouteSpin) {
-      window.removeEventListener('mobile-header-logo-route-spin', handleMobileRouteSpin as EventListener)
-      handleMobileRouteSpin = null
+    if (handleRouteSpin) {
+      window.removeEventListener('header-logo-route-spin', handleRouteSpin as EventListener)
+      handleRouteSpin = null
     }
 
     if (scrollStopTimer !== null) {

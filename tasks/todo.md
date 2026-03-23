@@ -1,5 +1,31 @@
 # Todo
 
+## Header Logo Route Spin Speed Parity
+
+- [completed] Confirmer la constante qui pilote la vitesse de rotation de transition desktop/mobile du logo 3D.
+- [completed] Aligner la vitesse desktop sur la valeur mobile sans toucher aux autres comportements du logo.
+- [completed] Verifier le correctif avec `npm run build` et consigner le resultat.
+
+### Outcome
+
+- `src/composables/useLogoThreeScene.ts` utilise maintenant la meme valeur de damping pour la rotation de transition du logo 3D sur desktop et mobile.
+- La vitesse percue du spin pendant les changements de page sur ordi est donc alignee sur celle deja validee en mobile, sans retoucher la logique de direction ni le signal partage introduit precedemment.
+- Verification effectuee: `npm run build` passe apres ce correctif.
+
+## Desktop Header Logo Route Spin Parity
+
+- [completed] Auditer l'ecart de pilotage entre mobile et desktop pendant les changements de route du logo 3D du header.
+- [completed] Emettre aussi en desktop un signal unique de rotation partage par `J` et `G` pour imposer le meme angle de depart et la meme cible.
+- [completed] Adapter `useLogoThreeScene` pour consommer ce signal commun sans casser la logique scroll specifique de `/`.
+- [completed] Verifier le correctif avec `npm run build` et consigner le resultat.
+
+### Outcome
+
+- `src/App.vue` centralise maintenant le spin de transition du logo 3D pour mobile et desktop via un evenement unique `header-logo-route-spin`, avec un angle de depart et une cible communs aux deux lettres.
+- Sur desktop, le point de depart est derive de l'etat reel de la home quand la navigation part de `/`, ce qui evite que `J` et `G` repartent avec des vitesses percues differentes apres un scroll.
+- `src/composables/useLogoThreeScene.ts` consomme ce signal partage et garde un fallback local propre pour la home scroll-driven, sans casser le reset ou l'inertie propres a `/`.
+- Verification effectuee: `npm run build` passe apres ce correctif.
+
 ## Mobile Header Logo Directional Route Spin
 
 - [completed] Auditer le pilotage de rotation du logo 3D du header pendant les changements de route en mobile.
@@ -9,7 +35,7 @@
 
 ### Outcome
 
-- `src/App.vue` emet maintenant un evenement unique `mobile-header-logo-route-spin` a chaque navigation mobile entre routes distinctes, avec un angle de depart et une cible communs a `J` et `G`.
+- `src/App.vue` emet maintenant un evenement unique `header-logo-route-spin` a chaque navigation mobile entre routes distinctes, avec un angle de depart et une cible communs a `J` et `G`.
 - `src/composables/useLogoThreeScene.ts` ecoute cet evenement en mobile et aligne les deux lettres sur la meme trajectoire, ce qui force une rotation coherente dans le sens de navigation au lieu de laisser chaque instance recalculer sa cible seule.
 - Le damping mobile a ete legerement baisse pour un mouvement plus fluide et moins sec; la logique desktop existante reste separee et n'est pas modifiee.
 - Verification effectuee: `npm run build` passe apres ce correctif.

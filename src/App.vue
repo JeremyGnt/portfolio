@@ -7,6 +7,7 @@ import { scrollWindowToTopInstantly, waitForNextAnimationFrame } from './utils/s
 
 const fullRotation = Math.PI * 2
 const routeOrder = ['/', '/experience', '/projects', '/contact']
+const topNavigationThreshold = 24
 const hasPrerenderedMarkup =
   !import.meta.env.SSR
   && typeof document !== 'undefined'
@@ -23,11 +24,24 @@ const isMiniScrollbarVisible = ref(false)
 const mobileBreakpoint = 768
 const route = useRoute()
 const router = useRouter()
+type HeaderLogoRouteSpinDetail = {
+  direction: 1 | -1
+  fromPath: string
+  sequence: number
+  startAngle: number
+  targetAngle: number
+  toPath: string
+}
+
+type HeaderLogoRouteSpinWindow = Window & {
+  __headerLogoRouteSpin?: HeaderLogoRouteSpinDetail
+}
+
 let scrollTopClickTimeout: number | null = null
 let miniScrollbarTimeout: number | null = null
 let homeScrollResetToken = 0
-let mobileHeaderLogoRouteAngle = 0
-let mobileHeaderLogoSpinSequence = 0
+let headerLogoRouteAngle = 0
+let headerLogoSpinSequence = 0
 
 function getRouteIndex(path: string) {
   const index = routeOrder.indexOf(path)
@@ -120,35 +134,65 @@ function handleWindowResize() {
   setHeaderLogoVisibility(route.path)
 }
 
-function dispatchMobileHeaderLogoRouteSpin(fromPath: string | undefined, toPath: string) {
-  if (typeof window === 'undefined' || window.innerWidth > mobileBreakpoint || !fromPath || fromPath === toPath) {
+function getHeaderLogoRouteStartAngle(path: string, fallbackAngle: number) {
+  if (typeof window === 'undefined' || path !== '/' || window.innerWidth <= mobileBreakpoint) {
+    return fallbackAngle
+  }
+
+  const scrollTop = window.scrollY || document.documentElement.scrollTop
+  const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0)
+  const progress = maxScroll === 0 ? 1 : Math.min(Math.max(scrollTop / maxScroll, 0), 1)
+
+  return progress * fullRotation
+}
+
+function dispatchHeaderLogoRouteSpin(fromPath: string | undefined, toPath: string) {
+  if (typeof window === 'undefined' || !fromPath || fromPath === toPath) {
     return
   }
 
   const fromIndex = getRouteIndex(fromPath)
   const toIndex = getRouteIndex(toPath)
+  const isMobileViewport = window.innerWidth <= mobileBreakpoint
+  const scrollTop = window.scrollY || document.documentElement.scrollTop
+  const wasNearTop = scrollTop <= topNavigationThreshold
 
   if (fromIndex === toIndex) {
     return
   }
 
+  const shouldAnimateRouteTransition = isMobileViewport || wasNearTop || fromPath === '/'
+
+  if (!shouldAnimateRouteTransition) {
+    if (!isMobileViewport) {
+      headerLogoRouteAngle = 0
+    }
+    return
+  }
+
+  if (!isMobileViewport && toPath === '/') {
+    headerLogoRouteAngle = 0
+    return
+  }
+
   const direction = toIndex > fromIndex ? 1 : -1
-  const startAngle = mobileHeaderLogoRouteAngle
+  const startAngle = getHeaderLogoRouteStartAngle(fromPath, headerLogoRouteAngle)
   const targetAngle = startAngle + direction * fullRotation
 
-  mobileHeaderLogoRouteAngle = targetAngle
-  mobileHeaderLogoSpinSequence += 1
+  headerLogoRouteAngle = targetAngle
+  headerLogoSpinSequence += 1
 
-  window.dispatchEvent(new CustomEvent('mobile-header-logo-route-spin', {
-    detail: {
-      direction,
-      fromPath,
-      sequence: mobileHeaderLogoSpinSequence,
-      startAngle,
-      targetAngle,
-      toPath,
-    },
-  }))
+  const detail: HeaderLogoRouteSpinDetail = {
+    direction,
+    fromPath,
+    sequence: headerLogoSpinSequence,
+    startAngle,
+    targetAngle,
+    toPath,
+  }
+
+  ;(window as HeaderLogoRouteSpinWindow).__headerLogoRouteSpin = detail
+  window.dispatchEvent(new CustomEvent<HeaderLogoRouteSpinDetail>('header-logo-route-spin', { detail }))
 }
 
 function scrollToTop() {
@@ -184,7 +228,7 @@ onMounted(() => {
 watch(
   () => route.path,
   async (path, previousPath) => {
-    dispatchMobileHeaderLogoRouteSpin(previousPath, path)
+    dispatchHeaderLogoRouteSpin(previousPath, path)
     setHeaderLogoVisibility(path)
 
     if (path !== '/') {

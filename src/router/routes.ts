@@ -11,7 +11,7 @@ export const appRoutes: RouteRecordRaw[] = [
     component: HomeView,
     meta: {
       seo: {
-        title: 'Jérémy Gonnet | Portfolio ingénieur, data et développement',
+        title: 'Jérémy Gonnet',
         description:
           'Portfolio de Jérémy Gonnet, élève ingénieur. Projets en développement web, data, robotique et systèmes embarqués.',
       },
