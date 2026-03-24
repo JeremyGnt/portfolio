@@ -38,7 +38,7 @@ export type SeoRouteLike = {
 const DEFAULT_SEO: SeoDefinition = {
   title: 'Jérémy Gonnet',
   description:
-    'Portfolio de Jérémy Gonnet, étudiant ingénieur.',
+    'Portfolio de Jérémy Gonnet, étudiant ingénieur en Data & IA.',
 }
 
 function normalizePath(path: string) {

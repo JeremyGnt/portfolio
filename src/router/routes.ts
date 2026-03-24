@@ -13,7 +13,7 @@ export const appRoutes: RouteRecordRaw[] = [
       seo: {
         title: 'Jérémy Gonnet',
         description:
-          'Portfolio de Jérémy Gonnet, étudiant ingénieur.',
+          'Portfolio de Jérémy Gonnet, étudiant ingénieur en Data & IA.',
       },
     },
   },
