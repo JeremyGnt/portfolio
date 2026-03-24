@@ -1006,3 +1006,16 @@
 - La home n'emploie plus la formule faible `eleve ingenieur` dans ses metadonnees SEO, Open Graph, Twitter, JSON-LD, config route et manifest.
 - La baseline est maintenant `Portfolio de Jérémy Gonnet, étudiant ingénieur en informatique. Projets en développement logiciel, data, robotique et systèmes embarqués.`, avec un resume personne assorti dans les donnees structurees.
 - Verification effectuee: `npm run build` passe. Les seuls avertissements restants sont ceux deja connus sur le temps passe dans les plugins Vite et la taille du chunk principal.
+
+## Mobile Header 3D Logo Render Stability
+
+- [completed] Auditer le sizing et le premier rendu du canvas du logo 3D sur mobile pour isoler une cause probable de deformation intermittente.
+- [completed] Renforcer le pipeline de resize/rerender du logo 3D avec un correctif strictement cible au header, sans modifier les animations desktop validees.
+- [completed] Verifier le correctif avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- La cause la plus probable etait un canvas WebGL du header mesure ou compose trop tot sur mobile, puis rarement resynchronise quand Safari/Chrome mobile finissaient d'ajuster le viewport ou la couche GPU; cela pouvait etirer/deformer ponctuellement les lettres jusqu'a quelques rerenders ulterieurs.
+- `src/composables/useLogoThreeScene.ts` resynchronise maintenant la taille reelle du canvas du logo via un cycle de stabilisation sur plusieurs frames, un `ResizeObserver`, `pageshow`, `visibilitychange` et `visualViewport.resize`, ce qui force un rerender propre quand le viewport mobile ou le compositing bougent.
+- `src/shell/Logo3D.vue` force en plus une couche de compositing propre sur le conteneur et le canvas du logo (`translateZ(0)` + `backface-visibility`) pour reduire les glitches visuels mobiles sans toucher au comportement desktop.
+- Verification effectuee: `npm run build` passe apres ce correctif.

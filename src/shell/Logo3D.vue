@@ -20,6 +20,21 @@ useLogoThreeScene(container, props.text)
   height: 100%;
   min-width: 108px;
   min-height: 42px;
+  contain: paint;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.logo-3d :deep(canvas) {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 </style>
 

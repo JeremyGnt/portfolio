@@ -22,6 +22,7 @@ const bottomScrollTolerance = 2
 const overscrollVelocityFactor = 7
 const lineScrollPixels = 16
 const mobileBreakpoint = 768
+const sizeStabilizationFrames = 4
 
 type HeaderLogoRouteSpinDetail = {
   direction: 1 | -1
@@ -44,14 +45,19 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
   let handleScroll: (() => void) | null = null
   let handleWheel: ((event: WheelEvent) => void) | null = null
   let handleRouteSpin: ((event: Event) => void) | null = null
+  let handlePageShow: (() => void) | null = null
+  let handleVisibilityChange: (() => void) | null = null
+  let handleViewportResize: (() => void) | null = null
   let stopRouteWatch: (() => void) | null = null
   let textGeometry: TextGeometry | null = null
   let renderer: THREE.WebGLRenderer | null = null
   let scene: THREE.Scene | null = null
   let glassMat: THREE.MeshBasicMaterial | null = null
   let rendererElement: HTMLCanvasElement | null = null
+  let resizeObserver: ResizeObserver | null = null
   let hasDispatchedReady = false
   let scrollStopTimer: number | null = null
+  let sizeStabilizationFrameId: number | null = null
 
   onMounted(() => {
     if (!container.value) return
@@ -110,6 +116,9 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     let shouldReturnFromMomentum = false
     let pendingRouteSpin: HeaderLogoRouteSpinDetail | null = null
     let lastAppliedRouteSpinSequence = 0
+    let lastSyncedRendererWidth = 0
+    let lastSyncedRendererHeight = 0
+    let remainingSizeStabilizationFrames = 0
 
     const getRouteIndex = (path: string) => {
       const index = routeOrder.indexOf(path)
@@ -118,6 +127,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
 
     const isMobileViewport = () => window.innerWidth <= mobileBreakpoint
     const getRouteRotationDamping = () => mobileRouteRotationDamping
+    const getRendererPixelRatio = () => Math.min(window.devicePixelRatio || 1, maxPixelRatio)
 
     const isScrollDrivenRoute = (path: string) => scrollDrivenRoutes.has(path) && !isMobileViewport()
 
@@ -223,12 +233,74 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       requestRender()
     }
 
-    const requestRender = () => {
+    function requestRender() {
       needsRender = true
       if (reqId !== null) return
 
       lastFrameTime = performance.now()
       reqId = requestAnimationFrame(animate)
+    }
+
+    const syncRendererSize = (force = false) => {
+      if (!container.value) {
+        return false
+      }
+
+      const nextWidth = container.value.clientWidth
+      const nextHeight = container.value.clientHeight
+
+      if (nextWidth <= 0 || nextHeight <= 0) {
+        return false
+      }
+
+      const shouldSync =
+        force
+        || nextWidth !== lastSyncedRendererWidth
+        || nextHeight !== lastSyncedRendererHeight
+
+      if (!shouldSync) {
+        return false
+      }
+
+      lastSyncedRendererWidth = nextWidth
+      lastSyncedRendererHeight = nextHeight
+
+      camera.aspect = nextWidth / nextHeight
+      camera.updateProjectionMatrix()
+      localRenderer.setPixelRatio(getRendererPixelRatio())
+      localRenderer.setSize(nextWidth * heroScaleFactor, nextHeight * heroScaleFactor, false)
+      localRenderer.domElement.style.width = '100%'
+      localRenderer.domElement.style.height = '100%'
+
+      requestRender()
+      return true
+    }
+
+    const scheduleSizeStabilization = (force = false) => {
+      if (force) {
+        syncRendererSize(true)
+      }
+
+      remainingSizeStabilizationFrames = sizeStabilizationFrames
+
+      if (sizeStabilizationFrameId !== null) {
+        return
+      }
+
+      const stabilize = () => {
+        sizeStabilizationFrameId = null
+        syncRendererSize()
+        requestRender()
+
+        if (remainingSizeStabilizationFrames <= 0) {
+          return
+        }
+
+        remainingSizeStabilizationFrames -= 1
+        sizeStabilizationFrameId = requestAnimationFrame(stabilize)
+      }
+
+      sizeStabilizationFrameId = requestAnimationFrame(stabilize)
     }
 
     const dispatchReady = () => {
@@ -272,6 +344,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       localRenderer.render(localScene, camera)
       needsRender = false
       dispatchReady()
+      scheduleSizeStabilization(true)
     })
 
     const updateScrollRotation = () => {
@@ -302,19 +375,15 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
 
     handleResize = () => {
       if (!container.value) return
-      const newW = container.value.clientWidth
-      const newH = container.value.clientHeight
-      camera.aspect = newW / newH
-      camera.updateProjectionMatrix()
-      localRenderer.setSize(newW * heroScaleFactor, newH * heroScaleFactor, false)
-      localRenderer.domElement.style.width = '100%'
-      localRenderer.domElement.style.height = '100%'
-      localRenderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio))
+
+      syncRendererSize(true)
+
       if (route.path === '/' && !isScrollDrivenRoute(route.path)) {
         syncStaticRotationAtTop()
       } else if (isScrollDrivenRoute(route.path)) {
         updateScrollRotation()
       }
+
       requestRender()
     }
 
@@ -362,6 +431,24 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     window.addEventListener('resize', handleResize)
     window.addEventListener('scroll', handleScroll, { passive: true })
     window.addEventListener('wheel', handleWheel, { passive: true })
+    handlePageShow = () => {
+      scheduleSizeStabilization(true)
+    }
+    window.addEventListener('pageshow', handlePageShow)
+    handleVisibilityChange = () => {
+      if (document.visibilityState !== 'visible') {
+        return
+      }
+
+      scheduleSizeStabilization(true)
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    if (window.visualViewport) {
+      handleViewportResize = () => {
+        scheduleSizeStabilization(true)
+      }
+      window.visualViewport.addEventListener('resize', handleViewportResize)
+    }
     handleRouteSpin = (event: Event) => {
       const detail = (event as CustomEvent<HeaderLogoRouteSpinDetail>).detail
       if (!detail) {
@@ -371,6 +458,14 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       applyRouteSpin(detail)
     }
     window.addEventListener('header-logo-route-spin', handleRouteSpin as EventListener)
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        scheduleSizeStabilization(true)
+      })
+      resizeObserver.observe(container.value)
+    }
+
+    scheduleSizeStabilization(true)
     updateScrollRotation()
 
     stopRouteWatch = watch(
@@ -395,11 +490,15 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
 
         if (shouldApplySharedRouteSpin) {
           applyRouteSpin(sharedRouteSpin)
+          if (isMobileViewport()) {
+            scheduleSizeStabilization(true)
+          }
           previousRoutePath = toPath
           return
         }
 
         if (isMobileViewport()) {
+          scheduleSizeStabilization(true)
           previousRoutePath = toPath
           requestRender()
           return
@@ -436,6 +535,9 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
         }
 
         requestRender()
+        if (isMobileViewport()) {
+          scheduleSizeStabilization(true)
+        }
         previousRoutePath = toPath
       },
     )
@@ -534,9 +636,34 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       handleRouteSpin = null
     }
 
+    if (handlePageShow) {
+      window.removeEventListener('pageshow', handlePageShow)
+      handlePageShow = null
+    }
+
+    if (handleVisibilityChange) {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      handleVisibilityChange = null
+    }
+
+    if (window.visualViewport && handleViewportResize) {
+      window.visualViewport.removeEventListener('resize', handleViewportResize)
+      handleViewportResize = null
+    }
+
+    if (resizeObserver) {
+      resizeObserver.disconnect()
+      resizeObserver = null
+    }
+
     if (scrollStopTimer !== null) {
       globalThis.clearTimeout(scrollStopTimer)
       scrollStopTimer = null
+    }
+
+    if (sizeStabilizationFrameId !== null) {
+      cancelAnimationFrame(sizeStabilizationFrameId)
+      sizeStabilizationFrameId = null
     }
 
     if (reqId !== null) {
