@@ -7,7 +7,7 @@ export const SITE_LANGUAGE = 'fr-FR'
 export const DEFAULT_OG_IMAGE_URL = `${SITE_URL}/og-image.svg`
 export const DEFAULT_ROBOTS_CONTENT = 'index,follow,max-image-preview:large'
 export const PERSON_SUMMARY =
-  'Étudiant ingénieur en développement, data, robotique et systèmes embarqués.'
+  'Étudiant ingénieur en informatique, orienté développement logiciel, data, robotique et systèmes embarqués.'
 
 const GOOGLE_SITE_VERIFICATION = import.meta.env.VITE_GOOGLE_SITE_VERIFICATION?.trim() ?? ''
 const GOOGLE_ANALYTICS_ID = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ?? ''
@@ -38,7 +38,7 @@ export type SeoRouteLike = {
 const DEFAULT_SEO: SeoDefinition = {
   title: 'Jérémy Gonnet',
   description:
-    'Portfolio de Jérémy Gonnet, élève ingénieur. Projets en développement web, data, robotique et systèmes embarqués.',
+    'Portfolio de Jérémy Gonnet, étudiant ingénieur.',
 }
 
 function normalizePath(path: string) {

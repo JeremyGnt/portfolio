@@ -132,7 +132,7 @@ withDefaults(defineProps<{
 
 .project-preview-card--interactive:active {
   transform: scale(0.988);
-  border-color: rgba(235, 178, 7, 0.28);
+  border-color: rgba(255, 255, 255, 0.08);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 0 -1px 0 rgba(255, 255, 255, 0.02),

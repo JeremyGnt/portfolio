@@ -994,3 +994,15 @@
 - En mode inline, un tap sur la ligne ouvre ou referme la card juste dessous, avec un indicateur `Apercu` / `Masquer`, une animation d'expansion GSAP et un scroll d'ajustement pour garder le contenu visible dans le viewport.
 - Les projets avec URL externe n'ouvrent plus le lien au premier tap mobile: l'ouverture se fait via un CTA dédié dans la card inline, ce qui supprime le conflit UX entre consultation et navigation externe.
 - Verification effectuee: `npm run build` passe apres ce correctif.
+
+## Home SEO Description Refresh
+
+- [completed] Reperer toutes les sources qui definissent la description SEO de la home et du site.
+- [completed] Remplacer la baseline `eleve ingenieur` par une formulation plus professionnelle et coherente dans le HTML prerendu, la config SEO et le manifest.
+- [completed] Verifier le rendu final avec `npm run build` et consigner l'outcome.
+
+### Outcome
+
+- La home n'emploie plus la formule faible `eleve ingenieur` dans ses metadonnees SEO, Open Graph, Twitter, JSON-LD, config route et manifest.
+- La baseline est maintenant `Portfolio de Jérémy Gonnet, étudiant ingénieur en informatique. Projets en développement logiciel, data, robotique et systèmes embarqués.`, avec un resume personne assorti dans les donnees structurees.
+- Verification effectuee: `npm run build` passe. Les seuls avertissements restants sont ceux deja connus sur le temps passe dans les plugins Vite et la taille du chunk principal.
