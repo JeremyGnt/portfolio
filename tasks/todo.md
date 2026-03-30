@@ -1155,3 +1155,15 @@
 - La vignette image Google potentielle est bien pilotee par `public/og-image.svg`, qui affiche maintenant `Jérémy Gonnet` en titre visuel et `Étudiant ingénieur, Big Data & IA, ECE Paris` comme baseline.
 - Le SVG embarque aussi des balises internes `<title>` et `<desc>` avec ces memes libelles, en plus du texte visible dans l'image.
 - Verification effectuee: `npm run build` passe; `dist/og-image.svg` contient bien les nouveaux textes et sera donc servi apres deploiement.
+
+## Apex Domain Canonicalization
+
+- [completed] Verifier les signaux d'URL canonique exposes par le projet (`SITE_URL`, `sitemap.xml`, metadata) et confirmer l'objectif `https://jeremygonnet.com`.
+- [completed] Ajouter dans `vercel.json` un redirect explicite `www.jeremygonnet.com -> jeremygonnet.com` pour la racine et les sous-pages.
+- [completed] Verifier localement la validite de `vercel.json` et le build; noter qu'un controle final reste a faire apres deploiement sur la plateforme.
+
+### Outcome
+
+- Le projet continue d'annoncer `https://jeremygonnet.com` comme URL canonique dans les metadata, le JSON-LD et le sitemap.
+- `vercel.json` contient maintenant deux redirects host-based pour forcer `https://www.jeremygonnet.com/*` vers `https://jeremygonnet.com/*`.
+- Verification effectuee: `vercel.json` est un JSON valide et `npm run build` passe. Le dernier point restant n'est plus dans le repo mais dans le dashboard Vercel: l'apex doit etre defini comme domaine principal pour eviter que la plateforme continue de rediriger dans l'autre sens.

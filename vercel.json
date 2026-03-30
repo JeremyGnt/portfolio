@@ -1,4 +1,28 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.jeremygonnet.com"
+        }
+      ],
+      "destination": "https://jeremygonnet.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.jeremygonnet.com"
+        }
+      ],
+      "destination": "https://jeremygonnet.com/:path*",
+      "permanent": true
+    }
+  ]
 }
