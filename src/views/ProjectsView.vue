@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { Eye, EyeOff } from 'lucide-vue-next'
 import gsap from 'gsap'
 import ProjectPreviewCard from '../components/projects/ProjectPreviewCard.vue'
+import { DESKTOP_MEDIA_QUERY } from '../constants/responsive'
 import { useRevealAnimation } from '../composables/useRevealAnimation'
 import { projectsData, type ProjectData } from '../data/projectsData'
 
@@ -382,7 +383,7 @@ watch(
 onMounted(async () => {
   document.body.classList.add('route-projects')
 
-  hoverMediaQuery = window.matchMedia('(min-width: 1025px) and (any-hover: hover) and (any-pointer: fine)')
+  hoverMediaQuery = window.matchMedia(`${DESKTOP_MEDIA_QUERY} and (any-hover: hover) and (any-pointer: fine)`)
   syncHoverCapability()
   lastPointerX = window.innerWidth * 0.5
   lastPointerY = window.innerHeight * 0.5
@@ -897,7 +898,7 @@ onUnmounted(() => {
   height: auto;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1023px) {
   .page {
     padding-top: 0;
   }

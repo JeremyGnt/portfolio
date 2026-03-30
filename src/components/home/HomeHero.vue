@@ -262,7 +262,7 @@ function scrollToCardsSection() {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .hero-kicker-top {
     font-size: 0.90rem;
     transform: translateY(-50px);

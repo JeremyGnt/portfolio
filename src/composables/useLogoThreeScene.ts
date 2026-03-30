@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router'
 import * as THREE from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
+import { MOBILE_BREAKPOINT } from '../constants/responsive'
 
 const baseRotationX = 0
 const baseRotationY = 0
@@ -22,7 +23,6 @@ const maxMomentumAngle = Math.PI * 0.4
 const bottomScrollTolerance = 2
 const overscrollVelocityFactor = 7
 const lineScrollPixels = 16
-const mobileBreakpoint = 768
 const sizeStabilizationFrames = 4
 
 type HeaderLogoRouteSpinDetail = {
@@ -142,7 +142,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       return index === -1 ? 0 : index
     }
 
-    const isMobileViewport = () => window.innerWidth <= mobileBreakpoint
+    const isMobileViewport = () => window.innerWidth < MOBILE_BREAKPOINT
     const getRouteRotationDamping = () => mobileRouteRotationDamping
     const getRendererPixelRatio = () => Math.min(window.devicePixelRatio || 1, maxPixelRatio)
 

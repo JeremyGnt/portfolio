@@ -1,11 +1,12 @@
 import { onBeforeUpdate, onMounted, onUnmounted, ref } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { MOBILE_MEDIA_QUERY } from '../constants/responsive'
 import { scrollWindowToTopInstantly } from '../utils/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const mobileExperienceBreakpoint = '(max-width: 720px)'
+const mobileExperienceBreakpoint = MOBILE_MEDIA_QUERY
 const cardsReadyProgress = 0.94
 const desktopSceneMinScrollPercent = 220
 const desktopSceneScrollPerCardPercent = 78

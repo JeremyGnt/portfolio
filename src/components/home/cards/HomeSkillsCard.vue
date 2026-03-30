@@ -25,7 +25,7 @@
   transition: border-color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .skill-card {
     padding: 1.15rem;
   }

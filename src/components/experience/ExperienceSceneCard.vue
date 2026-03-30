@@ -335,7 +335,7 @@ const resolveCertificationIcon = (icon: CertificationIcon) => certificationIconM
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 1023px) {
   .experience-card--mobile-interactive {
     overflow: hidden;
   }

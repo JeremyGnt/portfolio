@@ -3,6 +3,7 @@ import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppShell from '../shell/AppShell.vue'
 import LoadingScreen from '../shell/LoadingScreen.vue'
+import { MOBILE_BREAKPOINT } from '../constants/responsive'
 import { scrollWindowToTopInstantly, waitForNextAnimationFrame } from '../utils/scroll'
 
 const fullRotation = Math.PI * 2
@@ -21,7 +22,6 @@ const isLoadingScreenVisible = ref(!import.meta.env.SSR && !hasPrerenderedMarkup
 const isBootLoaderVisible = ref(!import.meta.env.SSR)
 const scrollProgress = ref(0)
 const isMiniScrollbarVisible = ref(false)
-const mobileBreakpoint = 768
 const route = useRoute()
 const router = useRouter()
 type HeaderLogoRouteSpinDetail = {
@@ -49,7 +49,7 @@ function getRouteIndex(path: string) {
 }
 
 function isDesktopHomeAnchoringActive(path: string) {
-  if (typeof document === 'undefined' || path !== '/' || window.innerWidth <= mobileBreakpoint) {
+  if (typeof document === 'undefined' || path !== '/' || window.innerWidth < MOBILE_BREAKPOINT) {
     return false
   }
 
@@ -90,7 +90,7 @@ function setHeaderLogoVisibility(path: string) {
     return
   }
 
-  const showLogo = path !== '/' || window.innerWidth <= mobileBreakpoint
+  const showLogo = path !== '/' || window.innerWidth < MOBILE_BREAKPOINT
   const opacity = showLogo ? 1 : 0
   const visibility = showLogo ? 'visible' : 'hidden'
   logoJ.style.opacity = String(opacity)
@@ -135,7 +135,7 @@ function handleWindowResize() {
 }
 
 function getHeaderLogoRouteStartAngle(path: string, fallbackAngle: number) {
-  if (typeof window === 'undefined' || path !== '/' || window.innerWidth <= mobileBreakpoint) {
+  if (typeof window === 'undefined' || path !== '/' || window.innerWidth < MOBILE_BREAKPOINT) {
     return fallbackAngle
   }
 
@@ -153,7 +153,7 @@ function dispatchHeaderLogoRouteSpin(fromPath: string | undefined, toPath: strin
 
   const fromIndex = getRouteIndex(fromPath)
   const toIndex = getRouteIndex(toPath)
-  const isMobileViewport = window.innerWidth <= mobileBreakpoint
+  const isMobileViewport = window.innerWidth < MOBILE_BREAKPOINT
   const scrollTop = window.scrollY || document.documentElement.scrollTop
   const wasNearTop = scrollTop <= topNavigationThreshold
 

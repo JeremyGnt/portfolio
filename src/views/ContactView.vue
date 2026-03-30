@@ -3,6 +3,7 @@ import { onBeforeUpdate, onMounted, onUnmounted, ref, type Component } from 'vue
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ArrowUpRight, Github, Linkedin, Mail, Phone } from 'lucide-vue-next'
+import { DESKTOP_MEDIA_QUERY, MOBILE_MEDIA_QUERY } from '../constants/responsive'
 import { GITHUB_PROFILE_URL, LINKEDIN_PROFILE_URL } from '../constants/externalLinks'
 import { scrollWindowToTopInstantly } from '../utils/scroll'
 
@@ -61,6 +62,9 @@ const cardsTrackRef = ref<HTMLElement | null>(null)
 const cardRefs = ref<HTMLElement[]>([])
 const mobilePanelRef = ref<HTMLElement | null>(null)
 const mobileCardRefs = ref<HTMLElement[]>([])
+const desktopContactMotionMediaQuery = `${DESKTOP_MEDIA_QUERY} and (prefers-reduced-motion: no-preference)`
+const desktopContactReducedMotionMediaQuery = `${DESKTOP_MEDIA_QUERY} and (prefers-reduced-motion: reduce)`
+const mobileContactMotionMediaQuery = `${MOBILE_MEDIA_QUERY} and (prefers-reduced-motion: no-preference)`
 
 let animationContext: gsap.Context | null = null
 let mediaQueries: gsap.MatchMedia | null = null
@@ -138,7 +142,7 @@ onMounted(() => {
 
     mediaQueries = gsap.matchMedia()
 
-    mediaQueries.add('(min-width: 981px) and (prefers-reduced-motion: no-preference)', () => {
+    mediaQueries.add(desktopContactMotionMediaQuery, () => {
       const section = sectionRef.value
       const track = cardsTrackRef.value
       const cards = cardRefs.value.filter(Boolean)
@@ -178,12 +182,22 @@ onMounted(() => {
         track,
         {
           x: () => getTrackMetrics().endX,
+          duration: 1,
         },
         0,
       )
+
+      timeline.to(
+        cards,
+        {
+          opacity: 0.3,
+          duration: 0.25,
+        },
+        0.75,
+      )
     })
 
-    mediaQueries.add('(min-width: 981px) and (prefers-reduced-motion: reduce)', () => {
+    mediaQueries.add(desktopContactReducedMotionMediaQuery, () => {
       const section = sectionRef.value
       const cards = cardRefs.value.filter(Boolean)
 
@@ -204,7 +218,7 @@ onMounted(() => {
       })
     })
 
-    mediaQueries.add('(max-width: 980px) and (prefers-reduced-motion: no-preference)', () => {
+    mediaQueries.add(mobileContactMotionMediaQuery, () => {
       const section = sectionRef.value
       const mobilePanel = mobilePanelRef.value
       const mobileCards = mobileCardRefs.value.filter(Boolean)
@@ -406,8 +420,8 @@ onUnmounted(() => {
   width: 100%;
   overflow: hidden;
   background: transparent;
-  mask-image: none;
-  -webkit-mask-image: none;
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
 .contact-cards-track {
@@ -533,7 +547,7 @@ onUnmounted(() => {
   color: #ebb207;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1023px) {
   .contact-horizontal-section {
     min-height: auto;
   }

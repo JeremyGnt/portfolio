@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import ExperienceSceneCard from '../components/experience/ExperienceSceneCard.vue'
+import { MOBILE_MEDIA_QUERY } from '../constants/responsive'
 import { useExperienceSceneAnimation } from '../composables/useExperienceSceneAnimation'
 import { experiencesPageData } from '../data/experiencesData'
 
-const mobileExperienceBreakpoint = '(max-width: 720px)'
+const mobileExperienceBreakpoint = MOBILE_MEDIA_QUERY
 const hero = experiencesPageData.hero
 const cards = experiencesPageData.cards
 const cardSlots = ['left', 'center', 'right'] as const
@@ -392,7 +393,7 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 1023px) {
   .experience-page__inner {
     padding-bottom: calc(7rem + env(safe-area-inset-bottom));
   }

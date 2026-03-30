@@ -26,7 +26,7 @@ useHomeLogoAnchoring()
   padding-bottom: 2.5rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .home-page-inner {
     padding-bottom: 2rem;
   }

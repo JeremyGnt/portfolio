@@ -4,6 +4,7 @@ import { Ellipsis } from 'lucide-vue-next'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getNavigationIndexByPath, navigationItems } from '../constants/navigation'
+import { MOBILE_BREAKPOINT } from '../constants/responsive'
 
 type CompactMenuEvent = CustomEvent<{ compact?: boolean }>
 type ItemMetric = {
@@ -18,8 +19,6 @@ const route = useRoute()
 const router = useRouter()
 const compactSize = 58
 const menuShellExpandDurationMs = 520
-const mobileBreakpoint = 768
-
 const items = navigationItems
 
 function getActiveIndexFromRoute() {
@@ -90,7 +89,7 @@ const setItemRef = (element: Element | null, index: number) => {
   }
 }
 
-const isMobileViewport = () => window.innerWidth <= mobileBreakpoint
+const isMobileViewport = () => window.innerWidth < MOBILE_BREAKPOINT
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
 const dragStartThreshold = 8
@@ -884,7 +883,7 @@ onBeforeUnmount(() => {
     0 10px 28px rgba(0, 0, 0, 0.14);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .liquid-menu {
     --compact-size: 74px;
     width: 100%;

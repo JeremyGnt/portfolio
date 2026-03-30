@@ -575,7 +575,7 @@ p {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
 
   .bento-span-4,
   .bento-span-5,
@@ -1166,7 +1166,7 @@ h1 {
 /* ============================================================
    Responsive
    ============================================================ */
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   :root {
     --nav-height: 60px;
   }

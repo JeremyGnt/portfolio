@@ -1,5 +1,30 @@
 # Todo
 
+## Landing Desktop Faster Scroll Feel
+
+- [completed] Auditer le point qui etale la progression de la landing desktop pendant le scroll sur `/`.
+- [completed] Resserer uniquement le rythme de scroll percu sur la landing desktop sans toucher au mobile ni aux autres pages.
+- [completed] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- La landing desktop utilise maintenant une distance de scroll plus courte pour l'ancrage du hero/logo, ce qui fait descendre la page plus vite sur `/` sans toucher aux autres routes.
+- Le suivi de l'animation au scroll a aussi ete un peu resserre pour que la sensation soit plus directe sur ordinateur, tandis que le mobile garde son comportement actuel.
+- Verification effectuee: `npm run build` passe; les avertissements restants sont ceux deja connus sur le temps plugin Vite et la taille du chunk principal.
+
+## Global Mobile Mode Under 1024px
+
+- [completed] Auditer les breakpoints qui pilotent le vrai basculement desktop/mobile dans le shell global et les vues principales.
+- [completed] Aligner la logique JS et les media queries pour que le mode mobile s'active sous `1024px`.
+- [completed] Verifier le changement avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Le breakpoint mobile partage est maintenant centralise dans `src/constants/responsive.ts` et utilise par le shell, le logo 3D, la vue projects, la vue contact et la scene experience.
+- Les comportements auparavant limites a `768px` ou `720px` basculent desormais en mode mobile sous `1024px`, ce qui couvre aussi la tranche tablette et petits laptops.
+- Les media queries principales du header, de la home et des cartes d'experience/contact ont ete alignees sur `1023px` pour respecter le seuil strict `<1024px`.
+- Verification effectuee: `npm run build` passe; les avertissements restants sont ceux deja connus sur le temps plugin Vite et la taille du chunk principal.
+
 ## Landing Logo Fast Scroll Smoothing
 
 - [completed] Auditer le pipeline de scroll des lettres 3D sur `/` pour identifier les causes probables des saccades en scroll tres rapide.

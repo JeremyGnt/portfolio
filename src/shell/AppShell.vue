@@ -327,7 +327,7 @@ const emit = defineEmits<{
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .app-ready-shell {
     padding-bottom: calc(5.6rem + env(safe-area-inset-bottom));
   }

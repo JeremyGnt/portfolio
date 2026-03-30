@@ -1,14 +1,14 @@
 import { nextTick, onMounted, onUnmounted } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { MOBILE_BREAKPOINT } from '../constants/responsive'
 import { scrollWindowToTopInstantly, waitForNextAnimationFrame } from '../utils/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const anchorScrollDistanceFactor = 2.45
-const anchorScrub = 0.72
+const anchorScrollDistanceFactor = 1.95
+const anchorScrub = 0.56
 const anchorDockingProgressThreshold = 0.41
-const mobileBreakpoint = 768
 const dockStateThresholdEpsilon = 0.5
 const defaultDockState = {
   dockingScrollThreshold: 0,
@@ -71,14 +71,14 @@ export function useHomeLogoAnchoring() {
     const fadeTexts = [...titleFadeTexts, ...otherFadeTexts]
     const logoBg = document.getElementById('header-logo-bg')
 
-    if (window.innerWidth <= mobileBreakpoint || !logoJ || !logoG || !targetJ || !targetG || !logoBg) {
+    if (window.innerWidth < MOBILE_BREAKPOINT || !logoJ || !logoG || !targetJ || !targetG || !logoBg) {
       destroyAnchoring()
       gsap.set(fadeTexts, { clearProps: 'all' })
       if (targetJ && targetG) {
         gsap.set([targetJ, targetG], { clearProps: 'all' })
       }
 
-      if (window.innerWidth <= mobileBreakpoint && logoJ && logoG && logoBg) {
+      if (window.innerWidth < MOBILE_BREAKPOINT && logoJ && logoG && logoBg) {
         gsap.set([logoJ, logoG], { clearProps: 'x,y,scale,transformOrigin' })
         syncLogoVisibility(logoJ)
         syncLogoVisibility(logoG)
