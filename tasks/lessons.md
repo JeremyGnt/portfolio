@@ -73,6 +73,7 @@
 - Si un titre mobile doit garder un point decoratif colle au dernier mot, ne pas laisser le point dans un `inline-flex` global sur tout le titre; isoler explicitement le dernier mot avec le dot dans un conteneur non cassable.
 - Si l'utilisateur veut que toute la card inline ouvre un lien externe, rendre la surface entiere interactive au lieu de laisser seulement l'icone cliquable; sur mobile, ajouter aussi un feedback tactile via l'etat `:active`.
 - Si un espacement constant est demande entre description et badges, sortir les badges d'un positionnement absolu dans le mode inline concerne et les remettre dans le flux normal du composant.
+- Quand l'utilisateur precise un titre ou une description SEO exacte, ne pas reformuler pour "ameliorer" le positionnement: appliquer le libelle demande tel quel et n'ajuster le reste des signaux SEO qu'autour de cette consigne.
 - Si l'utilisateur veut ensuite centrer verticalement une rangee de badges inline deja remise dans le flux, reserver une petite hauteur de ligne et centrer via `align-items` avant de retoucher de nouveau les positions globales.
 - Quand l'utilisateur demande d'aligner l'espacement d'une page mobile sur une autre page de reference, recopier la meme structure de top spacing (reset de `.page`, reset du `page-inner`, padding du shell) au lieu de bricoler seulement un `margin-top`.
 - Quand un top spacing mobile semble deja aligne au niveau du shell mais reste visuellement trop grand, verifier aussi le `padding-top` du premier bloc de contenu; c'est souvent lui qui cree l'ecart residuel.

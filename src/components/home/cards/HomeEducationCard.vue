@@ -3,7 +3,7 @@ import { GraduationCap } from 'lucide-vue-next'
 </script>
 
 <template>
-  <div class="card glass bento-hover-card">
+  <div class="card glass bento-hover-card" data-nosnippet>
     <h2 class="section-title" style="margin-bottom: 1.5rem;">
       <span class="section-icon"><GraduationCap :size="20" /></span> Éducation
     </h2>

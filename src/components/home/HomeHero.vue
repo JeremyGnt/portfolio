@@ -8,7 +8,7 @@ function scrollToCardsSection() {
 <template>
   <div id="hero-section" class="home-hero">
     <div class="hero-content-shift-up hero-content-up">
-      <div class="hero-kicker-top fade-text gradient-text kicker-grid">
+      <div class="hero-kicker-top fade-text gradient-text kicker-grid" data-nosnippet>
         <span class="kicker-left kicker-col-left">ÉTUDIANT INGÉNIEUR</span>
         <span class="hero-dot subtitle-dot align-dot kicker-col-dot">&bull;</span>
         <span class="kicker-right kicker-col-right">BIG DATA &amp; IA</span>
@@ -29,6 +29,7 @@ function scrollToCardsSection() {
       </h1>
       <p
         class="hero-subtitle-bottom fade-text"
+        data-nosnippet
         style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;"
       >
         <span>20 ans</span>

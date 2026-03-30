@@ -1130,3 +1130,28 @@
 - `src/composables/useLogoThreeScene.ts` resynchronise maintenant la taille reelle du canvas du logo via un cycle de stabilisation sur plusieurs frames, un `ResizeObserver`, `pageshow`, `visibilitychange` et `visualViewport.resize`, ce qui force un rerender propre quand le viewport mobile ou le compositing bougent.
 - `src/shell/Logo3D.vue` force en plus une couche de compositing propre sur le conteneur et le canvas du logo (`translateZ(0)` + `backface-visibility`) pour reduire les glitches visuels mobiles sans toucher au comportement desktop.
 - Verification effectuee: `npm run build` passe apres ce correctif.
+
+## Google Snippet Repositioning
+
+- [completed] Auditer les sources SEO et les blocs visibles susceptibles d'alimenter le snippet Google de la home.
+- [completed] Renforcer le titre et la description SEO de la home, puis exclure les zones academiques visibles du snippet via `data-nosnippet`.
+- [completed] Verifier le build, controler le HTML produit et consigner l'outcome.
+
+### Outcome
+
+- La home envoie maintenant exactement le titre SEO `Jérémy Gonnet` et la description `Étudiant ingénieur, Big Data & IA, ECE Paris`, comme demande.
+- Les zones visibles `HomeHero` academique et carte `Education` restent marquees `data-nosnippet` pour limiter les snippets alternatifs plus longs ou plus verbeux pris dans le contenu de page.
+- Les donnees structurees (`WebSite`, `Person`, `AboutPage`) et le `manifest.json` sont alignes avec ce libelle.
+- Verification effectuee: `npm run build` passe; le HTML prerendu dans `dist/index.html` contient bien ce `title`, cette `meta description` et les attributs `data-nosnippet` attendus.
+
+## Google Images Og Card
+
+- [completed] Identifier l'asset source de la vignette Google Images et confirmer les textes encore embarques.
+- [completed] Remplacer dans l'image SEO le titre et la baseline par `Jérémy Gonnet` et `Étudiant ingénieur, Big Data & IA, ECE Paris`.
+- [completed] Verifier le build et controler l'asset final expose dans `dist`.
+
+### Outcome
+
+- La vignette image Google potentielle est bien pilotee par `public/og-image.svg`, qui affiche maintenant `Jérémy Gonnet` en titre visuel et `Étudiant ingénieur, Big Data & IA, ECE Paris` comme baseline.
+- Le SVG embarque aussi des balises internes `<title>` et `<desc>` avec ces memes libelles, en plus du texte visible dans l'image.
+- Verification effectuee: `npm run build` passe; `dist/og-image.svg` contient bien les nouveaux textes et sera donc servi apres deploiement.

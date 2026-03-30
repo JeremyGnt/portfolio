@@ -1,16 +1,18 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Jérémy Gonnet</title>
+  <desc>Étudiant ingénieur, Big Data &amp; IA, ECE Paris</desc>
   <rect width="1200" height="630" fill="#050505" />
   <rect x="38" y="38" width="1124" height="554" rx="36" fill="url(#panel)" stroke="rgba(255,255,255,0.12)" />
   <circle cx="974" cy="138" r="112" fill="url(#halo)" />
   <circle cx="222" cy="500" r="140" fill="url(#haloSoft)" />
   <text x="110" y="232" fill="white" font-family="Inter, Arial, sans-serif" font-size="64" font-weight="800" letter-spacing="-0.06em">
-    Jeremy Gonnet
+    Jérémy Gonnet
   </text>
   <text x="110" y="304" fill="#EBB207" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="0.18em">
     PORTFOLIO
   </text>
-  <text x="110" y="392" fill="rgba(255,255,255,0.82)" font-family="Arial, sans-serif" font-size="36">
-    Etudiant ingenieur en data & IA
+  <text x="110" y="392" fill="rgba(255,255,255,0.82)" font-family="Arial, sans-serif" font-size="34">
+    Étudiant ingénieur, Big Data &amp; IA, ECE Paris
   </text>
   <text x="110" y="454" fill="rgba(255,255,255,0.52)" font-family="Arial, sans-serif" font-size="26">
     jeremygonnet.com

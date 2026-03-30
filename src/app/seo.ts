@@ -7,7 +7,7 @@ export const SITE_LANGUAGE = 'fr-FR'
 export const DEFAULT_OG_IMAGE_URL = `${SITE_URL}/og-image.svg`
 export const DEFAULT_ROBOTS_CONTENT = 'index,follow,max-image-preview:large'
 export const PERSON_SUMMARY =
-  'Étudiant ingénieur en informatique, orienté développement logiciel, data, robotique et systèmes embarqués.'
+  'Étudiant ingénieur en informatique, spécialisé en Big Data & IA à l’ECE Paris.'
 
 const GOOGLE_SITE_VERIFICATION = import.meta.env.VITE_GOOGLE_SITE_VERIFICATION?.trim() ?? ''
 const GOOGLE_ANALYTICS_ID = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim() ?? ''
@@ -38,7 +38,7 @@ export type SeoRouteLike = {
 const DEFAULT_SEO: SeoDefinition = {
   title: 'Jérémy Gonnet',
   description:
-    'Portfolio de Jérémy Gonnet, étudiant ingénieur en Data & IA.',
+    'Étudiant ingénieur, Big Data & IA, ECE Paris',
 }
 
 function normalizePath(path: string) {
@@ -104,7 +104,7 @@ function buildStructuredData(route: SeoRouteLike) {
       description: PERSON_SUMMARY,
       image: DEFAULT_OG_IMAGE_URL,
       sameAs: [LINKEDIN_PROFILE_URL, GITHUB_PROFILE_URL],
-      jobTitle: 'Étudiant ingénieur en développement et data',
+      jobTitle: 'Étudiant ingénieur',
       knowsAbout: [
         'Développement web',
         'Data',
