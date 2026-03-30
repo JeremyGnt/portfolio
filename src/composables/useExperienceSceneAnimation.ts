@@ -7,6 +7,11 @@ gsap.registerPlugin(ScrollTrigger)
 
 const mobileExperienceBreakpoint = '(max-width: 720px)'
 const cardsReadyProgress = 0.94
+const desktopSceneMinScrollPercent = 220
+const desktopSceneScrollPerCardPercent = 78
+const desktopCardEntryStartOffset = 118
+const desktopCardEntryStep = 0.62
+const desktopCardEntryDuration = 1.08
 
 type SceneAnimationConfig = {
   endPercent: number
@@ -19,20 +24,20 @@ type SceneAnimationConfig = {
 }
 
 const createDesktopSceneConfig = (cards: HTMLElement[]): SceneAnimationConfig => ({
-  endPercent: Math.max(cards.length * 90, 250),
+  endPercent: Math.max(cards.length * desktopSceneScrollPerCardPercent, desktopSceneMinScrollPercent),
   setup: () => {
     gsap.set(cards, {
-      yPercent: 140,
+      yPercent: desktopCardEntryStartOffset,
       autoAlpha: 1,
       willChange: 'transform',
     })
   },
   entries: cards.map((card, index) => ({
     element: card,
-    position: index * 0.76,
+    position: index * desktopCardEntryStep,
     vars: {
       yPercent: 0,
-      duration: 1.16,
+      duration: desktopCardEntryDuration,
     },
   })),
 })
@@ -105,7 +110,7 @@ export function useExperienceSceneAnimation() {
           trigger: track,
           start: 'top top',
           end: `+=${sceneConfig.endPercent}%`,
-          scrub: 0.9,
+          scrub: 0.78,
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,

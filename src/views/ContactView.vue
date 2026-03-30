@@ -121,6 +121,7 @@ onBeforeUpdate(() => {
 })
 
 onMounted(() => {
+  document.body.classList.add('route-contact')
   scrollWindowToTopInstantly()
 
   animationContext = gsap.context(() => {
@@ -153,8 +154,7 @@ onMounted(() => {
       })
 
       gsap.set(cards, {
-        autoAlpha: 0.45,
-        willChange: 'opacity',
+        autoAlpha: 1,
       })
 
       const timeline = gsap.timeline({
@@ -180,17 +180,6 @@ onMounted(() => {
           x: () => getTrackMetrics().endX,
         },
         0,
-      )
-
-      timeline.to(
-        cards,
-        {
-          autoAlpha: 1,
-          duration: 0.28,
-          stagger: 0.05,
-          ease: 'power2.out',
-        },
-        0.02,
       )
     })
 
@@ -255,6 +244,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  document.body.classList.remove('route-contact')
   mediaQueries?.revert()
   mediaQueries = null
   animationContext?.revert()
@@ -416,8 +406,8 @@ onUnmounted(() => {
   width: 100%;
   overflow: hidden;
   background: transparent;
-  mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-image: none;
+  -webkit-mask-image: none;
 }
 
 .contact-cards-track {

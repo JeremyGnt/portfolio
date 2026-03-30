@@ -1,5 +1,91 @@
 # Todo
 
+## Landing Logo Fast Scroll Smoothing
+
+- [completed] Auditer le pipeline de scroll des lettres 3D sur `/` pour identifier les causes probables des saccades en scroll tres rapide.
+- [completed] Lisser la synchronisation entre docking GSAP et rotation Three.js en reduisant le travail fait a chaque event de scroll.
+- [completed] Verifier le correctif avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Le pipeline de `/` fait maintenant moins de travail pendant un scroll tres rapide: le signal de docking partage n'est plus renvoye a chaque micro-update de `ScrollTrigger`, seulement quand son etat utile change ou au refresh.
+- La rotation Three.js du logo 3D n'est plus recalculee brutalement sur chaque event natif de scroll: la synchro est maintenant batchée sur `requestAnimationFrame`, puis lissee par damping en mode `scroll`.
+- Les wrappers GSAP des lettres utilisent aussi `force3D`, ce qui aide a garder un transform plus stable pendant les grands deltas de scroll.
+- Verification effectuee: `npm run build` passe; les avertissements restants sont ceux deja connus sur le temps plugin Vite et la taille du chunk principal.
+
+## Landing Logo Dock Motion Restore
+
+- [completed] Reprendre le docking des lettres 3D sur `/` apres le retour utilisateur sur la disparition du mouvement pendant le scroll.
+- [completed] Restaurer le deplacement progressif des lettres vers leur position finale tout en gardant supprime le rebond d'attache de la capsule.
+- [completed] Verifier le correctif avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Les lettres 3D retrouvent bien leur deplacement progressif vers la capsule du header pendant le scroll sur `/`.
+- Le rebond final de la capsule reste retire: on conserve le mouvement principal des lettres, mais sans effet d'attache supplementaire une fois le docking atteint.
+- Verification effectuee: `npm run build` passe; les avertissements restants sont ceux deja connus sur le temps plugin Vite et la taille du chunk principal.
+
+## Landing Logo Dock Snap
+
+- [completed] Reprendre la phase d'attache des lettres 3D sur `/` dans `useHomeLogoAnchoring`.
+- [completed] Supprimer l'animation de docking des lettres vers leur position finale en la remplaçant par un snap au seuil d'ancrage.
+- [completed] Verifier le correctif avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Les lettres 3D de la landing ne glissent plus jusqu'a leur position finale: elles restent dans leur etat de depart puis se fixent directement au seuil de docking.
+- Le rebond de la capsule au moment de l'attache a aussi ete retire, ce qui supprime l'animation d'ancrage tout en conservant le seuil de docking partage avec la rotation scroll-driven reappliquee ensuite.
+- Verification effectuee: `npm run build` passe; les avertissements restants sont ceux deja connus sur le temps plugin Vite et la taille du chunk principal.
+
+## Experience Cards Earlier Reveal
+
+- [completed] Auditer la timeline GSAP de `/experience` pour identifier ce qui retarde trop l'apparition initiale des cards en desktop.
+- [completed] Resserer l'entree des cards en reduisant l'offset de depart et la distance totale de scroll necessaire.
+- [completed] Verifier le comportement avec `npm run build` puis consigner l'outcome.
+
+### Outcome
+
+- La timeline desktop de `/experience` demande maintenant moins de scroll avant que les cards commencent a vraiment entrer dans le viewport.
+- Les cards partent d'un offset vertical moins bas, leur stagger est plus resserre et le `scrub` suit un peu plus directement le geste, ce qui rend l'apparition initiale plus rapide sans changer le mode mobile.
+- Verification effectuee: `npm run build` passe; les avertissements restants sont ceux deja connus sur le temps plugin Vite et la taille du chunk principal.
+
+## Landing Logo Rotation After Dock Only
+
+- [completed] Reprendre le comportement des lettres 3D sur `/` pour distinguer la phase de docking et leur etat final ancre.
+- [completed] Reautoriser la rotation uniquement une fois les lettres arrivees a leur position finale, sans la remettre pendant leur trajet de docking.
+- [completed] Verifier le correctif avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Les lettres 3D de `/` ne tournent plus pendant leur trajet de docking vers la capsule du header, mais recommencent a tourner une fois ce docking termine.
+- Le seuil de docking est maintenant partage par `useHomeLogoAnchoring` et `useLogoThreeScene`, ce qui permet de rebasculer proprement vers la rotation scroll-driven seulement apres l'arrivee finale.
+- Les spins de navigation reutilisent aussi l'angle reel courant du logo 3D, ce qui evite un depart faux quand on quitte `/` apres avoir deja fait tourner les lettres une fois dockees.
+- Verification effectuee: `npm run build` passe; l'avertissement restant est celui deja connu sur la taille du chunk principal.
+
+## Landing Logo No Scroll Rotation
+
+- [completed] Auditer `src/composables/useLogoThreeScene.ts` pour identifier le point de pilotage de la rotation des lettres 3D pendant le scroll sur `/`.
+- [completed] Supprimer la rotation liee au scroll sur la landing en conservant les transitions de route du logo 3D.
+- [completed] Verifier le correctif avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Premiere etape du correctif: la rotation scroll-driven du logo 3D a d'abord ete neutralisee sur `/` pour supprimer toute rotation pendant le defilement.
+- Ce comportement a ensuite ete affine dans la tache suivante pour ne garder la rotation qu'apres le docking final des lettres sur la landing.
+- Verification effectuee: `npm run build` passe; les avertissements restants sont ceux deja connus sur le temps plugin Vite et la taille du chunk principal.
+
+## Landing Hero 3D Return Speed
+
+- [completed] Auditer `src/composables/useHomeLogoAnchoring.ts` pour reperer les constantes qui allongent le recentrage des lettres 3D sur `/`.
+- [completed] Resserer le rythme du retour des lettres vers leur position finale sur la landing sans toucher au comportement mobile.
+- [completed] Verifier le correctif avec `npm run build` puis consigner le resultat.
+
+### Outcome
+
+- Le recentrage des lettres 3D sur la landing desktop se termine maintenant avec moins de scroll et un suivi plus direct: la distance de scroll GSAP a ete reduite et le `scrub` a ete resserre dans `src/composables/useHomeLogoAnchoring.ts`.
+- Le docking des lettres `J` et `G` vers leur position finale se termine aussi plus tot dans la timeline, ce qui accelere specifiquement leur retour visuel sans toucher au comportement mobile.
+- Verification effectuee: `npm run build` passe; les avertissements restants sont ceux deja connus sur le temps plugin Vite et la taille du chunk principal.
+
 ## Header Logo Route Spin Speed Parity
 
 - [completed] Confirmer la constante qui pilote la vitesse de rotation de transition desktop/mobile du logo 3D.

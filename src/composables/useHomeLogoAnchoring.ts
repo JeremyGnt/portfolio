@@ -5,15 +5,48 @@ import { scrollWindowToTopInstantly, waitForNextAnimationFrame } from '../utils/
 
 gsap.registerPlugin(ScrollTrigger)
 
-const anchorScrollDistanceFactor = 3.4
-const anchorScrub = 0.95
+const anchorScrollDistanceFactor = 2.45
+const anchorScrub = 0.72
+const anchorDockingProgressThreshold = 0.41
 const mobileBreakpoint = 768
+const dockStateThresholdEpsilon = 0.5
+const defaultDockState = {
+  dockingScrollThreshold: 0,
+  isDocked: false,
+  progress: 0,
+}
+
+type HomeLogoDockStateDetail = typeof defaultDockState
+type HomeLogoDockStateWindow = Window & {
+  __homeLogoDockState?: HomeLogoDockStateDetail
+}
 
 export function useHomeLogoAnchoring() {
   let resizeTimer: number | null = null
   let stTimeline: gsap.core.Timeline | null = null
   let handleResize: (() => void) | null = null
   let handleLogoReady: ((event: Event) => void) | null = null
+  let lastDockState: HomeLogoDockStateDetail = defaultDockState
+
+  const dispatchDockState = (detail: HomeLogoDockStateDetail, force = false) => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const shouldDispatch =
+      force
+      || detail.isDocked !== lastDockState.isDocked
+      || Math.abs(detail.dockingScrollThreshold - lastDockState.dockingScrollThreshold) > dockStateThresholdEpsilon
+
+    lastDockState = detail
+
+    if (!shouldDispatch) {
+      return
+    }
+
+    ;(window as HomeLogoDockStateWindow).__homeLogoDockState = detail
+    window.dispatchEvent(new CustomEvent<HomeLogoDockStateDetail>('home-logo-dock-state', { detail }))
+  }
 
   const syncLogoVisibility = (logoEl: HTMLElement) => {
     const isReady = logoEl.dataset.threeReady === 'true'
@@ -23,6 +56,7 @@ export function useHomeLogoAnchoring() {
   const destroyAnchoring = () => {
     stTimeline?.kill()
     stTimeline = null
+    dispatchDockState(defaultDockState, true)
   }
 
   const calculateAndSetLogoAnimations = () => {
@@ -92,8 +126,20 @@ export function useHomeLogoAnchoring() {
     const dJ = getDeltas(rectJ, rectTargetJ)
     const dG = getDeltas(rectG, rectTargetG)
 
-    gsap.set(logoJ, { x: dJ.deltaX + 23, y: dJ.deltaY, scale: dJ.scale, transformOrigin: '50% 50%' })
-    gsap.set(logoG, { x: dG.deltaX - 21, y: dG.deltaY, scale: dG.scale, transformOrigin: '50% 50%' })
+    gsap.set(logoJ, {
+      x: dJ.deltaX + 23,
+      y: dJ.deltaY,
+      scale: dJ.scale,
+      transformOrigin: '50% 50%',
+      force3D: true,
+    })
+    gsap.set(logoG, {
+      x: dG.deltaX - 21,
+      y: dG.deltaY,
+      scale: dG.scale,
+      transformOrigin: '50% 50%',
+      force3D: true,
+    })
 
     syncLogoVisibility(logoJ)
     syncLogoVisibility(logoG)
@@ -107,39 +153,72 @@ export function useHomeLogoAnchoring() {
         end: () => '+=' + dJ.deltaY * anchorScrollDistanceFactor,
         scrub: anchorScrub,
         invalidateOnRefresh: true,
+        onRefresh: (self) => {
+          const dockingScrollThreshold =
+            self.start + (self.end - self.start) * anchorDockingProgressThreshold
+
+          dispatchDockState({
+            dockingScrollThreshold,
+            isDocked: self.progress >= anchorDockingProgressThreshold - 0.0001,
+            progress: self.progress,
+          })
+        },
+        onUpdate: (self) => {
+          const dockingScrollThreshold =
+            self.start + (self.end - self.start) * anchorDockingProgressThreshold
+
+          dispatchDockState({
+            dockingScrollThreshold,
+            isDocked: self.progress >= anchorDockingProgressThreshold - 0.0001,
+            progress: self.progress,
+          })
+        },
       },
     })
 
-    const dockingDuration = 0.5
-
-    stTimeline.to(logoJ, { x: 20, y: 0, scale: 1, ease: 'none', duration: dockingDuration }, 0)
-    stTimeline.to(logoG, { x: -20, y: 0, scale: 1, ease: 'none', duration: dockingDuration }, 0)
-    stTimeline.to(logoBg, { opacity: 1, ease: 'power2.inOut' }, 0)
     stTimeline.to(titleFadeTexts, { opacity: 0, y: -40, ease: 'power1.out' }, 0)
     stTimeline.to(otherFadeTexts, { opacity: 0, y: -40, stagger: 0.1, ease: 'power1.out' }, 0)
 
-    // Start bounce exactly when docking ends, not at timeline end.
-    const pillContainer = document.querySelector('.header-logo-card')
-    if (pillContainer) {
-      stTimeline.to(
-        pillContainer,
-        {
-          scale: 1.08,
-          duration: 0.15,
-          ease: 'power2.out',
-          transformOrigin: '50% 50%',
-        },
-        dockingDuration,
-      )
-      stTimeline.to(
-        pillContainer,
-        {
-          scale: 1,
-          duration: 0.4,
-          ease: 'back.out(3)',
-        },
-        dockingDuration + 0.15,
-      )
+    const dockingDuration = stTimeline.duration() * anchorDockingProgressThreshold
+    const dockingTime = stTimeline.duration() * anchorDockingProgressThreshold
+
+    stTimeline.to(
+      logoJ,
+      {
+        x: 20,
+        y: 0,
+        scale: 1,
+        ease: 'none',
+        duration: dockingDuration,
+        transformOrigin: '50% 50%',
+        force3D: true,
+      },
+      0,
+    )
+    stTimeline.to(
+      logoG,
+      {
+        x: -20,
+        y: 0,
+        scale: 1,
+        ease: 'none',
+        duration: dockingDuration,
+        transformOrigin: '50% 50%',
+        force3D: true,
+      },
+      0,
+    )
+    stTimeline.set(logoBg, { opacity: 1 }, dockingTime)
+
+    if (stTimeline.scrollTrigger) {
+      const { progress, start, end } = stTimeline.scrollTrigger
+      const dockingScrollThreshold = start + (end - start) * anchorDockingProgressThreshold
+
+      dispatchDockState({
+        dockingScrollThreshold,
+        isDocked: progress >= anchorDockingProgressThreshold - 0.0001,
+        progress,
+      }, true)
     }
   }
 
@@ -211,5 +290,7 @@ export function useHomeLogoAnchoring() {
       gsap.killTweensOf(pillContainer)
       gsap.set(pillContainer, { clearProps: 'scale,transformOrigin' })
     }
+
+    dispatchDockState(defaultDockState, true)
   })
 }

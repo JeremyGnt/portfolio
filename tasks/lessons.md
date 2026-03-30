@@ -89,3 +89,7 @@
 - Si le besoin final sur des badges mobiles est simplement "centres et en chevauchement sur l'image", preferer un slot de layout minimal dedie a ce groupe plutot qu'une logique adaptative supplementaire.
 - Si un chevauchement mobile doit etre visible sur toutes les cards, ne pas se contenter d'un overlap quasi nul; l'offset negatif doit depasser clairement le gap du layout pour rester perceptible sur tous les cas.
 - Si l'utilisateur veut les badges mobile "carrement sur la photo", assumer un overlap plus profond au lieu d'un simple bord-a-bord; le groupe doit entrer franchement dans l'image.
+- Si l'utilisateur demande de couper une animation seulement pendant une phase precise du scroll, ne pas neutraliser tout le mode associe; isoler d'abord le seuil exact entre "avant docking" et "apres docking".
+- Si l'utilisateur demande de supprimer l'animation d'attache d'un element a sa position finale, remplacer le tween d'approche par un snap au seuil cible au lieu de ne retirer qu'un effet secondaire comme le rebond.
+- Si l'utilisateur corrige ensuite qu'un mouvement de scroll a disparu, restaurer d'abord le tween principal et ne supprimer que l'effet terminal vise; ne pas confondre "pas d'attache" avec "pas de deplacement".
+- Pour un logo 3D synchronise au scroll, eviter de recalculer et diffuser l'etat complet a chaque event natif; batcher la sync sur `requestAnimationFrame` et ne publier les seuils partages que lorsqu'ils changent vraiment.

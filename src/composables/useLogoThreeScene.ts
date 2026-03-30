@@ -7,6 +7,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 const baseRotationX = 0
 const baseRotationY = 0
 const mobileRouteRotationDamping = 5.6
+const scrollRotationDamping = 12
 const fullRotation = Math.PI * 2
 const topNavigationThreshold = 24
 const routeOrder = ['/', '/experience', '/projects', '/contact']
@@ -33,8 +34,18 @@ type HeaderLogoRouteSpinDetail = {
   toPath: string
 }
 
-type HeaderLogoRouteSpinWindow = Window & {
+const defaultHomeLogoDockState = {
+  dockingScrollThreshold: 0,
+  isDocked: false,
+  progress: 0,
+}
+
+type HomeLogoDockStateDetail = typeof defaultHomeLogoDockState
+
+type HeaderLogoRuntimeWindow = Window & {
   __headerLogoRouteSpin?: HeaderLogoRouteSpinDetail
+  __headerLogoCurrentAngle?: number
+  __homeLogoDockState?: HomeLogoDockStateDetail
 }
 
 export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: string) {
@@ -45,6 +56,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
   let handleScroll: (() => void) | null = null
   let handleWheel: ((event: WheelEvent) => void) | null = null
   let handleRouteSpin: ((event: Event) => void) | null = null
+  let handleHomeDockState: ((event: Event) => void) | null = null
   let handlePageShow: (() => void) | null = null
   let handleVisibilityChange: (() => void) | null = null
   let handleViewportResize: (() => void) | null = null
@@ -58,6 +70,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
   let hasDispatchedReady = false
   let scrollStopTimer: number | null = null
   let sizeStabilizationFrameId: number | null = null
+  let scrollSyncFrameId: number | null = null
 
   onMounted(() => {
     if (!container.value) return
@@ -115,6 +128,10 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     let currentScrollVelocity = 0
     let shouldReturnFromMomentum = false
     let pendingRouteSpin: HeaderLogoRouteSpinDetail | null = null
+    let homeLogoDockState =
+      typeof window === 'undefined'
+        ? defaultHomeLogoDockState
+        : (window as HeaderLogoRuntimeWindow).__homeLogoDockState ?? defaultHomeLogoDockState
     let lastAppliedRouteSpinSequence = 0
     let lastSyncedRendererWidth = 0
     let lastSyncedRendererHeight = 0
@@ -129,7 +146,16 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     const getRouteRotationDamping = () => mobileRouteRotationDamping
     const getRendererPixelRatio = () => Math.min(window.devicePixelRatio || 1, maxPixelRatio)
 
-    const isScrollDrivenRoute = (path: string) => scrollDrivenRoutes.has(path) && !isMobileViewport()
+    const syncSharedCurrentAngle = (angle: number) => {
+      if (typeof window === 'undefined') {
+        return
+      }
+
+      ;(window as HeaderLogoRuntimeWindow).__headerLogoCurrentAngle = angle
+    }
+
+    const isScrollDrivenRoute = (path: string) =>
+      scrollDrivenRoutes.has(path) && !isMobileViewport() && (path !== '/' || homeLogoDockState.isDocked)
 
     let rotationSyncMode: 'scroll' | 'scrollMomentum' | 'animated' =
       isScrollDrivenRoute(route.path) ? 'scroll' : 'animated'
@@ -153,7 +179,19 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
 
     const setRotationTargetFromScroll = () => {
       const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0)
-      const progress = maxScroll === 0 ? 1 : Math.min(Math.max(lastKnownScrollTop / maxScroll, 0), 1)
+      let progress = maxScroll === 0 ? 1 : Math.min(Math.max(lastKnownScrollTop / maxScroll, 0), 1)
+
+      if (route.path === '/' && !isMobileViewport()) {
+        const rotationStartScroll = Math.min(homeLogoDockState.dockingScrollThreshold, maxScroll)
+        const rotationScrollDistance = Math.max(maxScroll - rotationStartScroll, 0)
+        const relativeScrollTop = Math.max(lastKnownScrollTop - rotationStartScroll, 0)
+
+        progress =
+          rotationScrollDistance <= 0
+            ? 0
+            : Math.min(Math.max(relativeScrollTop / rotationScrollDistance, 0), 1)
+      }
+
       const desiredAngle = baseRotationY + progress * fullRotation
       const rotationReference = textMesh ? logoGroup.rotation.y : currentRotationTargetY
       scrollRotationTargetY = getContinuousAngle(desiredAngle, rotationReference)
@@ -172,6 +210,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       if (textMesh) {
         logoGroup.rotation.x = baseRotationX
         logoGroup.rotation.y = baseRotationY
+        syncSharedCurrentAngle(baseRotationY)
       }
     }
 
@@ -180,7 +219,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
         return null
       }
 
-      return (window as HeaderLogoRouteSpinWindow).__headerLogoRouteSpin ?? null
+      return (window as HeaderLogoRuntimeWindow).__headerLogoRouteSpin ?? null
     }
 
     const applyRouteSpin = (detail: HeaderLogoRouteSpinDetail) => {
@@ -194,6 +233,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       if (textMesh) {
         logoGroup.rotation.x = baseRotationX
         logoGroup.rotation.y = detail.startAngle
+        syncSharedCurrentAngle(detail.startAngle)
         pendingRouteSpin = null
       }
 
@@ -332,11 +372,13 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       logoGroup.rotation.x = baseRotationX
       logoGroup.rotation.y = baseRotationY
       currentRotationTargetY = baseRotationY
+      syncSharedCurrentAngle(baseRotationY)
 
       if (pendingRouteSpin) {
         logoGroup.rotation.y = pendingRouteSpin.startAngle
         currentRotationTargetY = pendingRouteSpin.targetAngle
         scrollRotationTargetY = pendingRouteSpin.targetAngle
+        syncSharedCurrentAngle(pendingRouteSpin.startAngle)
         pendingRouteSpin = null
       }
 
@@ -366,11 +408,18 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       shouldReturnFromMomentum = false
       syncRotationTargetWithScroll(textMesh ? logoGroup.rotation.y : currentRotationTargetY)
       rotationSyncMode = 'scroll'
+      requestRender()
+    }
 
-      if (textMesh) {
-        logoGroup.rotation.x = baseRotationX
-        logoGroup.rotation.y = currentRotationTargetY
+    const queueScrollRotationSync = () => {
+      if (scrollSyncFrameId !== null) {
+        return
       }
+
+      scrollSyncFrameId = requestAnimationFrame(() => {
+        scrollSyncFrameId = null
+        updateScrollRotation()
+      })
     }
 
     handleResize = () => {
@@ -388,7 +437,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     }
 
     handleScroll = () => {
-      updateScrollRotation()
+      queueScrollRotationSync()
 
       if (!isScrollDrivenRoute(route.path)) {
         if (scrollStopTimer !== null) {
@@ -405,7 +454,6 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
         scrollStopTimer = null
         startScrollMomentum()
       }, scrollStopDelayMs)
-      requestRender()
     }
 
     handleWheel = (event: WheelEvent) => {
@@ -458,6 +506,22 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       applyRouteSpin(detail)
     }
     window.addEventListener('header-logo-route-spin', handleRouteSpin as EventListener)
+    handleHomeDockState = (event: Event) => {
+      const detail = (event as CustomEvent<HomeLogoDockStateDetail>).detail
+      homeLogoDockState = detail ?? defaultHomeLogoDockState
+
+      if (route.path !== '/' || isMobileViewport()) {
+        return
+      }
+
+      if (homeLogoDockState.isDocked) {
+        updateScrollRotation()
+      } else {
+        syncStaticRotationAtTop()
+        requestRender()
+      }
+    }
+    window.addEventListener('home-logo-dock-state', handleHomeDockState as EventListener)
     if (typeof ResizeObserver !== 'undefined') {
       resizeObserver = new ResizeObserver(() => {
         scheduleSizeStabilization(true)
@@ -511,6 +575,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
             scrollRotationTargetY = baseRotationY
             logoGroup.rotation.x = baseRotationX
             logoGroup.rotation.y = baseRotationY
+            syncSharedCurrentAngle(baseRotationY)
           } else {
             syncStaticRotationAtTop()
           }
@@ -531,6 +596,7 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
           if (textMesh) {
             logoGroup.rotation.x = baseRotationX
             logoGroup.rotation.y = currentRotationTargetY
+            syncSharedCurrentAngle(currentRotationTargetY)
           }
         }
 
@@ -571,6 +637,25 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
         logoGroup.rotation.y = nextRotationY
       }
 
+      if (textMesh && rotationSyncMode === 'scroll') {
+        const nextRotationY = THREE.MathUtils.damp(
+          logoGroup.rotation.y,
+          currentRotationTargetY,
+          scrollRotationDamping,
+          deltaSeconds,
+        )
+
+        logoGroup.rotation.x = baseRotationX
+        logoGroup.rotation.y = nextRotationY
+
+        isAnimating =
+          isAnimating || Math.abs(currentRotationTargetY - nextRotationY) > rotationSettleThreshold
+
+        if (!isAnimating) {
+          logoGroup.rotation.y = currentRotationTargetY
+        }
+      }
+
       if (textMesh && rotationSyncMode === 'scrollMomentum') {
         const nextRotationY = THREE.MathUtils.damp(
           logoGroup.rotation.y,
@@ -595,6 +680,10 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
             logoGroup.rotation.y = scrollRotationTargetY
           }
         }
+      }
+
+      if (textMesh) {
+        syncSharedCurrentAngle(logoGroup.rotation.y)
       }
 
       if (needsRender || isAnimating) {
@@ -636,6 +725,11 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
       handleRouteSpin = null
     }
 
+    if (handleHomeDockState) {
+      window.removeEventListener('home-logo-dock-state', handleHomeDockState as EventListener)
+      handleHomeDockState = null
+    }
+
     if (handlePageShow) {
       window.removeEventListener('pageshow', handlePageShow)
       handlePageShow = null
@@ -664,6 +758,11 @@ export function useLogoThreeScene(container: Ref<HTMLElement | null>, text?: str
     if (sizeStabilizationFrameId !== null) {
       cancelAnimationFrame(sizeStabilizationFrameId)
       sizeStabilizationFrameId = null
+    }
+
+    if (scrollSyncFrameId !== null) {
+      cancelAnimationFrame(scrollSyncFrameId)
+      scrollSyncFrameId = null
     }
 
     if (reqId !== null) {

@@ -327,6 +327,48 @@ withDefaults(defineProps<{
   border-radius: 1.7rem;
 }
 
+.project-preview-card--floating {
+  --project-card-padding: 1.35rem;
+  --project-card-media-inset: 0.45rem;
+  border-radius: 1.65rem;
+}
+
+.project-preview-card--floating .project-preview-card__year-ghost {
+  font-size: clamp(4.3rem, 8vw, 6.45rem);
+}
+
+.project-preview-card--floating .project-preview-card__content {
+  gap: 1rem;
+}
+
+.project-preview-card--floating .project-preview-card__title {
+  margin-top: 0.65rem;
+  font-size: clamp(1.58rem, 2.3vw, 2.05rem);
+  max-width: 12ch;
+}
+
+.project-preview-card--floating .project-preview-card__description {
+  font-size: 0.9rem;
+  line-height: 1.58;
+}
+
+.project-preview-card--floating .project-preview-card__badge-list--media {
+  padding: 0 0.85rem;
+  transform: translateY(-18%);
+}
+
+.project-preview-card--floating .project-preview-card__badge {
+  padding: 0.38rem 0.72rem;
+  font-size: 0.7rem;
+}
+
+.project-preview-card--floating .project-preview-card__media {
+  aspect-ratio: auto;
+  min-height: 0;
+  height: clamp(10rem, 21vh, 11rem);
+  border-radius: 1.2rem;
+}
+
 .project-preview-card--inline .project-preview-card__title {
   max-width: 12ch;
 }

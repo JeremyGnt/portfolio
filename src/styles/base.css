@@ -72,6 +72,7 @@ body {
   text-rendering: optimizeLegibility;
   background:
     linear-gradient(180deg, #000 0%, #111 100%);
+  background-attachment: fixed;
   color: var(--text);
   line-height: 1.6;
   min-height: 100dvh;
