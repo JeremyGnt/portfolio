@@ -13,7 +13,7 @@ export const appRoutes: RouteRecordRaw[] = [
       seo: {
         title: 'Jérémy Gonnet',
         description:
-          'Étudiant ingénieur, Big Data & IA, ECE Paris',
+          'Portfolio de Jérémy Gonnet — Étudiant ingénieur en 3ème année à l\'ECE Paris, spécialisé en Big Data & Intelligence Artificielle.',
       },
     },
   },
@@ -37,7 +37,7 @@ export const appRoutes: RouteRecordRaw[] = [
       seo: {
         title: 'Projets | Jérémy Gonnet',
         description:
-          'Parcourez les projets de Jérémy Gonnet en développement web, simulation, robotique, embarqué et programmation système.',
+          'Parcourez les projets de Jérémy Gonnet en Intelligence Artificielle, Machine Learning, Data et développement web.',
       },
     },
   },

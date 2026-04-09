@@ -20,10 +20,10 @@ function scrollToCardsSection() {
         <span class="home-hero-word home-hero-word-desktop" aria-hidden="true">
           <span id="target-g" class="target-letter" aria-hidden="true">G</span><span class="fade-text home-hero-last-name">onnet</span>
         </span>
-        <span class="home-hero-word home-hero-word-mobile home-hero-word-mobile-first" aria-hidden="true">
+        <span class="home-hero-word home-hero-word-mobile home-hero-word-mobile-first" aria-hidden="true" data-nosnippet>
           <span class="fade-text">Jérémy</span>
         </span>
-        <span class="home-hero-word home-hero-word-mobile home-hero-word-mobile-last" aria-hidden="true">
+        <span class="home-hero-word home-hero-word-mobile home-hero-word-mobile-last" aria-hidden="true" data-nosnippet>
           <span class="fade-text home-hero-last-name">Gonnet</span>
         </span>
       </h1>

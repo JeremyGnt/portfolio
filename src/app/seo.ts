@@ -4,7 +4,7 @@ import { GITHUB_PROFILE_URL, LINKEDIN_PROFILE_URL } from '../constants/externalL
 export const SITE_NAME = 'Jérémy Gonnet'
 export const SITE_URL = 'https://jeremygonnet.com'
 export const SITE_LANGUAGE = 'fr-FR'
-export const DEFAULT_OG_IMAGE_URL = `${SITE_URL}/og-image.svg`
+export const DEFAULT_OG_IMAGE_URL = `${SITE_URL}/og-image.png`
 export const DEFAULT_ROBOTS_CONTENT = 'index,follow,max-image-preview:large'
 export const PERSON_SUMMARY =
   'Étudiant ingénieur en informatique, spécialisé en Big Data & IA à l’ECE Paris.'
@@ -38,7 +38,7 @@ export type SeoRouteLike = {
 const DEFAULT_SEO: SeoDefinition = {
   title: 'Jérémy Gonnet',
   description:
-    'Étudiant ingénieur, Big Data & IA, ECE Paris',
+    'Portfolio de Jérémy Gonnet — Étudiant ingénieur en 3ème année à l\'ECE Paris, spécialisé en Big Data & Intelligence Artificielle.',
 }
 
 function normalizePath(path: string) {
@@ -106,10 +106,10 @@ function buildStructuredData(route: SeoRouteLike) {
       sameAs: [LINKEDIN_PROFILE_URL, GITHUB_PROFILE_URL],
       jobTitle: 'Étudiant ingénieur',
       knowsAbout: [
+        'Big Data',
+        'Intelligence Artificielle',
+        'Machine Learning',
         'Développement web',
-        'Data',
-        'Robotique',
-        'Systèmes embarqués',
       ],
     },
     {
@@ -241,6 +241,9 @@ export function renderHeadTags(route: SeoRouteLike) {
     `<meta property="og:description" content="${escapeHtml(seo.description)}" />`,
     `<meta property="og:url" content="${canonicalUrl}" />`,
     `<meta property="og:image" content="${DEFAULT_OG_IMAGE_URL}" />`,
+    '<meta property="og:image:type" content="image/png" />',
+    '<meta property="og:image:width" content="1024" />',
+    '<meta property="og:image:height" content="1024" />',
     '<meta property="og:image:alt" content="Aperçu du portfolio de Jérémy Gonnet" />',
     '<meta name="twitter:card" content="summary_large_image" />',
     `<meta name="twitter:title" content="${escapeHtml(seo.title)}" />`,
@@ -279,6 +282,9 @@ export function applyRouteSeo(route: RouteLocationNormalizedLoaded) {
   upsertMetaTag('property', 'og:description', seo.description)
   upsertMetaTag('property', 'og:url', canonicalUrl)
   upsertMetaTag('property', 'og:image', DEFAULT_OG_IMAGE_URL)
+  upsertMetaTag('property', 'og:image:type', 'image/png')
+  upsertMetaTag('property', 'og:image:width', '1024')
+  upsertMetaTag('property', 'og:image:height', '1024')
   upsertMetaTag('property', 'og:image:alt', 'Aperçu du portfolio de Jérémy Gonnet')
   upsertMetaTag('name', 'twitter:card', 'summary_large_image')
   upsertMetaTag('name', 'twitter:title', seo.title)
