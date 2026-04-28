@@ -37,7 +37,10 @@ withDefaults(defineProps<{
           <p class="project-preview-card__eyebrow">
             {{ project.category }}
           </p>
-          <h2 class="project-preview-card__title">
+          <h2
+            class="project-preview-card__title"
+            :style="project.titleMaxWidth ? { maxWidth: project.titleMaxWidth } : undefined"
+          >
             {{ project.title }}
           </h2>
         </div>

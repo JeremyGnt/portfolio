@@ -9,6 +9,8 @@ export interface ProjectData {
   imageSrc?: string
   imageAlt?: string
   externalUrl?: string
+  /** Override the default max-width on the card title (e.g. '18ch') to control line breaks */
+  titleMaxWidth?: string
 }
 
 export const projectsData: ProjectData[] = [
@@ -22,6 +24,19 @@ export const projectsData: ProjectData[] = [
     badges: ['ESP32', 'PID', 'IMU', 'Magnetometre'],
     imageSrc: '/projects/projet_drawbots.webp',
     imageAlt: 'Photo du robot Drawbot autonome',
+  },
+  {
+    id: 'compagnie-aerienne',
+    year: 2026,
+    title: 'Gestion de Compagnie Aérienne',
+    category: 'Application de gestion',
+    listTags: ['JAVA', 'POO'],
+    description: 'Système de gestion pour une compagnie aérienne intégrant la gestion des vols, de la flotte d\'avions, des équipages et la réservation de billets pour les passagers.',
+    badges: ['JAVA', 'POO', 'GIT'],
+    imageSrc: '/projects/projet-compagnieAerienne.webp',
+    imageAlt: 'Capture du projet de gestion de compagnie aérienne',
+    externalUrl: 'https://github.com/JeremyGnt/ING3-ProjetS2-CompagnieAerienne/',
+    titleMaxWidth: '20ch',
   },
   {
     id: 'airbnb-for-students',
