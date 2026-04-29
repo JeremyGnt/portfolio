@@ -228,8 +228,8 @@ withDefaults(defineProps<{
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  aspect-ratio: 16 / 10;
-  min-height: 11rem;
+  aspect-ratio: 4 / 3;
+  min-height: 14rem;
   margin-inline: calc(var(--project-card-media-inset) - var(--project-card-padding));
   margin-bottom: calc(var(--project-card-media-inset) - var(--project-card-padding));
   border-radius: 1.35rem;
@@ -368,7 +368,7 @@ withDefaults(defineProps<{
 .project-preview-card--floating .project-preview-card__media {
   aspect-ratio: auto;
   min-height: 0;
-  height: clamp(10rem, 21vh, 11rem);
+  height: clamp(12rem, 28vh, 15rem);
   border-radius: 1.2rem;
 }
 

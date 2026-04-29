@@ -15,6 +15,18 @@ export interface ProjectData {
 
 export const projectsData: ProjectData[] = [
   {
+    id: 'neural-speech-ia',
+    year: 2026,
+    title: 'Neural Speech IA',
+    category: 'Calcul embarqués',
+    listTags: ['Arduino', 'C'],
+    description: 'Conception d\'une IA de reconnaissance vocale 100% embarquée sur Arduino Due. Implémentation complète de la chaîne : numérisation audio, traitement du signal (MFCC) et classification des mots par réseau de neurones convolutionnel (CNN).',
+    badges: ['Arduino', 'Réseaux de neurones', 'C'],
+    imageSrc: '/projects/projet-neuralspeech.webp',
+    imageAlt: 'Visuel du projet Neural Speech IA',
+    externalUrl: 'https://github.com/JeremyGnt/Projet-NeuralSpeech/',
+  },
+  {
     id: 'drawbot',
     year: 2025,
     title: 'Drawbot autonome',
